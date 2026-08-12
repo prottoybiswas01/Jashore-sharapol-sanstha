@@ -155,9 +155,46 @@ app.post('/api/auth/register', async (req, res) => {
       permissions: []
     });
 
+    // Send Resend Welcome Email for New Registration
+    const recipientEmail = email || 'jashoresharapolsanstha@gmail.com';
+    sendResendEmail({
+      to: recipientEmail,
+      subject: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম! 🎉',
+      html: `
+        <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
+          <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            <div style="text-align: center; border-bottom: 2px solid #10b981; padding-bottom: 15px; margin-bottom: 25px;">
+              <h2 style="color: #10b981; margin: 0; font-size: 24px;">যশোর শারাপোল সংস্থা</h2>
+              <p style="color: #64748b; font-size: 14px; margin-top: 5px;">মানবসেবা ও মানবিক উন্নয়নে নিবেদিত</p>
+            </div>
+            <h3 style="color: #1e293b;">সম্মানিত ${name}, আপনার নিবন্ধন সফল হয়েছে! 🎉</h3>
+            <p style="line-height: 1.7; font-size: 15px; color: #475569;">
+              যশোর শারাপোল সংস্থায় একজন সাধারণ সদস্য ও স্বেচ্ছাসেবী রক্তদাতা হিসেবে যুক্ত হওয়ার জন্য আপনাকে আন্তরিক ধন্যবাদ ও অভিনন্দন জানাচ্ছি। 
+              আপনার মাধ্যমে আমরা আমাদের যশোর জেলায় সামাজিক উন্নয়ন ও জরুরি রক্তদানের সেবা আরও সুদৃঢ় করতে পারব।
+            </p>
+            <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 6px; margin: 20px 0;">
+              <strong style="color: #047857;">আপনার নিবন্ধিত তথ্য:</strong><br/>
+              👤 নাম: ${name}<br/>
+              🆔 ইউজারনাম: ${username}<br/>
+              📧 ইমেইল ঠিকানা: ${email || 'N/A'}<br/>
+              📞 মোবাইল নম্বর: ${phone}<br/>
+              🩸 রক্তের গ্রুপ: ${bloodGroup || 'N/A'}<br/>
+              📍 উপজেলা: ${upazila || 'N/A'}
+            </div>
+            <p style="line-height: 1.7; font-size: 14px; color: #64748b;">
+              জরুরি রক্তের প্রয়োজনে এলাকার অসহায় মানুষের পাশে দাঁড়ানোর উদাত্ত আহ্বানে সাড়া দেওয়ার জন্য আমাদের লাল সালাম।
+            </p>
+            <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+              © 2026 যশোর শারাপোল সংস্থা | চাঁচড়া মোড়, যশোর সদর।
+            </div>
+          </div>
+        </div>
+      `
+    });
+
     res.json({
       success: true,
-      message: 'রেজিস্ট্রেশন সফল হয়েছে! আপনি রক্তদাতা হিসেবে যুক্ত হয়েছেন।',
+      message: 'রেজিস্ট্রেশন সফল হয়েছে! ইমেইল নোটিফিকেশন পাঠানো হয়েছে ও আপনি রক্তদাতা হিসেবে যুক্ত হয়েছেন।',
       token,
       user: {
         id: newUser._id,

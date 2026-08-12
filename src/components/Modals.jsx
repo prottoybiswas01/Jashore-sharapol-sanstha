@@ -166,6 +166,7 @@ export default function Modals({ activeModal, onClose }) {
   // 2. Public User Registration Form
   const [pubName, setPubName] = useState('');
   const [pubUsername, setPubUsername] = useState('');
+  const [pubEmail, setPubEmail] = useState('');
   const [pubPass, setPubPass] = useState('');
   const [pubPhone, setPubPhone] = useState('');
   const [pubBlood, setPubBlood] = useState('O+');
@@ -176,6 +177,7 @@ export default function Modals({ activeModal, onClose }) {
     const res = await register({
       name: pubName,
       username: pubUsername,
+      email: pubEmail,
       password: pubPass,
       phone: pubPhone,
       bloodGroup: pubBlood,
@@ -184,7 +186,7 @@ export default function Modals({ activeModal, onClose }) {
     if (res.success) {
       alert(res.message);
       onClose();
-      setPubName(''); setPubUsername(''); setPubPass(''); setPubPhone('');
+      setPubName(''); setPubUsername(''); setPubEmail(''); setPubPass(''); setPubPhone('');
     } else {
       alert(res.message);
     }
@@ -435,21 +437,25 @@ export default function Modals({ activeModal, onClose }) {
             </div>
             <div class="modal-body">
               <form onSubmit={handlePublicRegister}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">আপনার পূর্ণ নাম *</label>
-                  <input type="text" class="form-control" value={pubName} onChange={e => setPubName(e.target.value)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">আপনার পূর্ণ নাম *</label>
+                  <input type="text" className="form-control" value={pubName} onChange={e => setPubName(e.target.value)} placeholder="যেমন: মোঃ সাকিব হাসান" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ব্যবহারকারী নাম (Username) *</label>
-                  <input type="text" class="form-control" value={pubUsername} onChange={e => setPubUsername(e.target.value)} placeholder="যেমন: karim123" required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">ব্যবহারকারী নাম (Username) *</label>
+                  <input type="text" className="form-control" value={pubUsername} onChange={e => setPubUsername(e.target.value)} placeholder="যেমন: sakib123" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">পাসওয়ার্ড *</label>
-                  <input type="password" class="form-control" value={pubPass} onChange={e => setPubPass(e.target.value)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">ইমেইল ঠিকানা (Email Address) *</label>
+                  <input type="email" className="form-control" value={pubEmail} onChange={e => setPubEmail(e.target.value)} placeholder="যেমন: user@gmail.com" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">মোবাইল নম্বর *</label>
-                  <input type="tel" class="form-control" value={pubPhone} onChange={e => setPubPhone(e.target.value)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">পাসওয়ার্ড *</label>
+                  <input type="password" className="form-control" value={pubPass} onChange={e => setPubPass(e.target.value)} required />
+                </div>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">মোবাইল নম্বর *</label>
+                  <input type="tel" className="form-control" value={pubPhone} onChange={e => setPubPhone(e.target.value)} placeholder="যেমন: 01711234567" required />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">রক্তের গ্রুপ *</label>

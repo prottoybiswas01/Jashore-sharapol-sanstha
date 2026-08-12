@@ -10,9 +10,9 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
     deleteSubAdminUser, fetchAdminUsers, showToast, setEditingActivity
   } = useData();
 
-  const [username, setUsername] = useState('prottoy');
-  const [email, setEmail] = useState('jashoresharapolsanstha@gmail.com');
-  const [password, setPassword] = useState('Prottoy57@');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [rbacSearchQuery, setRbacSearchQuery] = useState('');
   const [activeAdminTab, setActiveAdminTab] = useState('overview');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
