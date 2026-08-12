@@ -72,7 +72,7 @@ export default function AdminDashboard({ onOpenModal }) {
     );
   }
 
-  const totalDonationSum = donations.reduce((sum, d) => sum + (d.amount || 0), 0);
+  const totalDonationSum = donations.reduce((sum, d) => sum + (parseInt(d.amount) || 0), 0);
 
   return (
     <div class="admin-layout">
@@ -114,6 +114,12 @@ export default function AdminDashboard({ onOpenModal }) {
         {hasPermission('manage_blood') && (
           <div class={`admin-menu-item ${activeAdminTab === 'donors' ? 'active' : ''}`} onClick={() => setActiveAdminTab('donors')}>
             <i class="fa-solid fa-droplet"></i> রক্তদাতা ও আবেদন
+          </div>
+        )}
+
+        {hasPermission('manage_all') && (
+          <div class={`admin-menu-item ${activeAdminTab === 'donations' ? 'active' : ''}`} onClick={() => setActiveAdminTab('donations')}>
+            <i class="fa-solid fa-hand-holding-dollar"></i> অনুদান হিসাব ও ভেরিফিকেশন
           </div>
         )}
 
@@ -162,9 +168,10 @@ export default function AdminDashboard({ onOpenModal }) {
               <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}><i class="fa-solid fa-bolt" style={{ color: 'var(--accent-gold)' }}></i> অনুমোদিত কুইক অ্যাকশন (RBAC)</h3>
               <div class="flex gap-2 flex-wrap">
                 {hasPermission('manage_site') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('edit-site-settings')}><i class="fa-solid fa-pen"></i> ওয়েবসাইট কনটেন্ট সম্পাদনা</button>}
-                {hasPermission('manage_media') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন কাজের রেকর্ড যোগ (ছবি ফাইল আপলোড)</button>}
+                {hasPermission('manage_media') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন কাজের রেকর্ড যোগ (ছবি আপলোড)</button>}
                 {hasPermission('manage_content') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('add-plan')}><i class="fa-solid fa-lightbulb"></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ</button>}
                 {hasPermission('manage_committee') && <button class="btn btn-secondary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন কমিটি পদবী যোগ</button>}
+                {hasPermission('manage_all') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i class="fa-solid fa-hand-holding-dollar"></i> ম্যানুয়ালি অনুদান হিসাব যোগ</button>}
                 {hasPermission('manage_roles') && <button class="btn btn-blood btn-sm" onClick={() => onOpenModal('add-sub-user')}><i class="fa-solid fa-user-gear"></i> নতুন এডমিন রোল তৈরি</button>}
               </div>
             </div>
@@ -196,38 +203,44 @@ export default function AdminDashboard({ onOpenModal }) {
           <div>
             <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
               <h2>সামাজিক কাজের রেকর্ডসমূহ</h2>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন পোস্ট যোগ (ছবি সরাসরি আপলোড)</button>
+              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন পোস্ট যোগ (ছবি আপলোড)</button>
             </div>
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>ছবি</th>
-                    <th>শিরোনাম</th>
-                    <th>ক্যাটাগরি</th>
-                    <th>তারিখ</th>
-                    <th>স্থান</th>
-                    <th>অ্যাকশন</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activities.map(a => (
-                    <tr key={a.id}>
-                      <td><img src={a.image} style={{ width: '50px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} alt={a.title} /></td>
-                      <td><strong>{a.title}</strong></td>
-                      <td>{a.category}</td>
-                      <td>{a.date}</td>
-                      <td>{a.location}</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" onClick={() => deleteActivity(a.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                          <i class="fa-solid fa-trash"></i>
-                        </button>
-                      </td>
+            {activities.length === 0 ? (
+              <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
+                বর্তমানে কোনো কাজের পোস্ট নেই। উপরের "+ নতুন পোস্ট যোগ" বাটনে ক্লিক করে ডিভাইস থেকে ছবি সরাসরি আপলোড করুন।
+              </div>
+            ) : (
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ছবি</th>
+                      <th>শিরোনাম</th>
+                      <th>ক্যাটাগরি</th>
+                      <th>তারিখ</th>
+                      <th>স্থান</th>
+                      <th>অ্যাকশন</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {activities.map(a => (
+                      <tr key={a.id}>
+                        <td><img src={a.image} style={{ width: '50px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} alt={a.title} /></td>
+                        <td><strong>{a.title}</strong></td>
+                        <td>{a.category}</td>
+                        <td>{a.date}</td>
+                        <td>{a.location}</td>
+                        <td>
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteActivity(a.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
@@ -238,34 +251,40 @@ export default function AdminDashboard({ onOpenModal }) {
               <h2>ভবিষ্যৎ কাজের পরিকল্পনা</h2>
               <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-plan')}><i class="fa-solid fa-plus"></i> নতুন পরিকল্পনা যোগ করুন</button>
             </div>
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>পরিকল্পনার শিরোনাম</th>
-                    <th>ক্যাটাগরি</th>
-                    <th>টার্গেট তারিখ</th>
-                    <th>স্ট্যাটাস</th>
-                    <th>অ্যাকশন</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {plans.map(p => (
-                    <tr key={p.id}>
-                      <td><strong>{p.title}</strong></td>
-                      <td>{p.category}</td>
-                      <td>{p.targetDate || '-'}</td>
-                      <td><span class="badge badge-gold">{p.status || 'চলমান'}</span></td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" onClick={() => deleteFuturePlan(p.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                          <i class="fa-solid fa-trash"></i>
-                        </button>
-                      </td>
+            {plans.length === 0 ? (
+              <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
+                বর্তমানে কোনো ভবিষ্যৎ পরিকল্পনা নেই। "+ নতুন পরিকল্পনা যোগ করুন" বাটনে ক্লিক করে তথ্য সংরক্ষণ করুন।
+              </div>
+            ) : (
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>পরিকল্পনার শিরোনাম</th>
+                      <th>ক্যাটাগরি</th>
+                      <th>টার্গেট তারিখ</th>
+                      <th>স্ট্যাটাস</th>
+                      <th>অ্যাকশন</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {plans.map(p => (
+                      <tr key={p.id}>
+                        <td><strong>{p.title}</strong></td>
+                        <td>{p.category}</td>
+                        <td>{p.targetDate || '-'}</td>
+                        <td><span class="badge badge-gold">{p.status || 'চলমান'}</span></td>
+                        <td>
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteFuturePlan(p.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
@@ -274,36 +293,42 @@ export default function AdminDashboard({ onOpenModal }) {
           <div>
             <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
               <h2>পদবী ও কমিটির সদস্যবৃন্দ</h2>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন পদবী/সদস্য যোগ (ছবি সরাসরি আপলোড)</button>
+              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন পদবী/সদস্য যোগ (ছবি আপলোড)</button>
             </div>
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>ছবি</th>
-                    <th>নাম</th>
-                    <th>পদবী (Role)</th>
-                    <th>মোবাইল নম্বর</th>
-                    <th>অ্যাকশন</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {committee.map(c => (
-                    <tr key={c.id}>
-                      <td><img src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} /></td>
-                      <td><strong>{c.name}</strong></td>
-                      <td><span class="badge badge-primary">{c.role}</span></td>
-                      <td>{c.phone}</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                          <i class="fa-solid fa-trash"></i>
-                        </button>
-                      </td>
+            {committee.length === 0 ? (
+              <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
+                বর্তমানে কমিটির কোনো সদস্য তালিকা নেই। "+ নতুন পদবী/সদস্য যোগ" বাটনে ক্লিক করুন।
+              </div>
+            ) : (
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ছবি</th>
+                      <th>নাম</th>
+                      <th>পদবী (Role)</th>
+                      <th>মোবাইল নম্বর</th>
+                      <th>অ্যাকশন</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {committee.map(c => (
+                      <tr key={c.id}>
+                        <td><img src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} /></td>
+                        <td><strong>{c.name}</strong></td>
+                        <td><span class="badge badge-primary">{c.role}</span></td>
+                        <td>{c.phone}</td>
+                        <td>
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
@@ -326,26 +351,108 @@ export default function AdminDashboard({ onOpenModal }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {bloodRequests.map(r => (
-                    <tr key={r.id}>
-                      <td><strong>{r.patientName}</strong></td>
-                      <td><span class="badge badge-blood">{r.bloodGroup}</span></td>
-                      <td>{r.hospital}</td>
-                      <td>{r.contact}</td>
-                      <td>
-                        <button class="btn btn-primary btn-sm" onClick={() => deleteBloodRequest(r.id)}>
-                          <i class="fa-solid fa-check"></i> সম্পন্ন নিশ্চিত
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {bloodRequests.length === 0 ? (
+                    <tr><td colSpan="5" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>কোনো আবেদন নেই।</td></tr>
+                  ) : (
+                    bloodRequests.map(r => (
+                      <tr key={r.id}>
+                        <td><strong>{r.patientName}</strong></td>
+                        <td><span class="badge badge-blood">{r.bloodGroup}</span></td>
+                        <td>{r.hospital}</td>
+                        <td>{r.contact}</td>
+                        <td>
+                          <button class="btn btn-primary btn-sm" onClick={() => deleteBloodRequest(r.id)}>
+                            <i class="fa-solid fa-check"></i> সম্পন্ন নিশ্চিত
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>নিবন্ধিত রক্তদাতাদের তালিকা</h3>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>নাম</th>
+                    <th>গ্রুপ</th>
+                    <th>উপজেলা</th>
+                    <th>মোবাইল</th>
+                    <th>অ্যাকশন</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {donors.length === 0 ? (
+                    <tr><td colSpan="5" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>কোনো রক্তদাতা নিবন্ধিত নেই।</td></tr>
+                  ) : (
+                    donors.map(d => (
+                      <tr key={d.id}>
+                        <td><strong>{d.name}</strong></td>
+                        <td><span class="badge badge-blood">{d.bloodGroup}</span></td>
+                        <td>{d.upazila}</td>
+                        <td>{d.phone}</td>
+                        <td>
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteBloodDonor(d.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
         )}
 
-        {/* 7. RBAC ROLES & SUB-ADMIN USERS (SUPER ADMIN ONLY) */}
+        {/* 7. FINANCIAL DONATIONS LEDGER & REAL-TIME SUMMARY */}
+        {activeAdminTab === 'donations' && hasPermission('manage_all') && (
+          <div>
+            <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+              <div>
+                <h2>অনুদানের হিসাব ও রিয়েল-টাইম রেজিস্টার</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>মোট সর্বমোট সংগৃহীত অনুদান: <strong style={{ color: 'var(--primary)' }}>৳ {totalDonationSum.toLocaleString()}</strong></p>
+              </div>
+              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i class="fa-solid fa-plus"></i> ম্যানুয়ালি অনুদান যোগ</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>দাতা / শুভানুধ্যায়ী</th>
+                    <th>অনুদানের পরিমাণ</th>
+                    <th>পেমেন্ট মাধ্যম</th>
+                    <th>TrxID / রেফারেন্স</th>
+                    <th>তারিখ</th>
+                    <th>স্ট্যাটাস</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {donations.length === 0 ? (
+                    <tr><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>বর্তমানে কোনো অনুদান রেকর্ড জমা নেই।</td></tr>
+                  ) : (
+                    donations.map(d => (
+                      <tr key={d.id}>
+                        <td><strong>{d.donorName}</strong></td>
+                        <td style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
+                        <td><span class="badge badge-info">{d.method}</span></td>
+                        <td><code>{d.trxId || 'N/A'}</code></td>
+                        <td>{d.date || 'আজ'}</td>
+                        <td><span class="badge badge-primary">{d.status || 'অনুমোদিত'}</span></td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* 8. RBAC ROLES & SUB-ADMIN USERS (SUPER ADMIN ONLY) */}
         {activeAdminTab === 'rbac' && hasPermission('manage_roles') && (
           <div>
             <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>

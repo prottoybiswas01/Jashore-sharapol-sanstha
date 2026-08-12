@@ -4,7 +4,7 @@ import { useData } from '../context/DataContext';
 export default function Modals({ activeModal, onClose, onShowToast }) {
   const { 
     settings, updateSiteSettings, addActivity, addFuturePlan, 
-    addCommitteeMember, addBloodDonor, addBloodRequest, createSubAdminUser 
+    addCommitteeMember, addBloodDonor, addBloodRequest, addDonation, createSubAdminUser 
   } = useData();
 
   // Helper to convert selected image file to Base64 data string for MongoDB storage
@@ -17,7 +17,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageState(reader.result); // Base64 String
+        setImageState(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -122,7 +122,20 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setPlanTitle(''); setPlanDate(''); setPlanDesc('');
   };
 
-  // 7. Admin Add Sub-User (RBAC) Form
+  // 7. Admin Add Donation Manual Form
+  const [donName, setDonName] = useState('');
+  const [donAmount, setDonAmount] = useState('');
+  const [donMethod, setDonMethod] = useState('bKash');
+  const [donTrx, setDonTrx] = useState('');
+
+  const handleDonationSubmit = (e) => {
+    e.preventDefault();
+    addDonation({ donorName: donName, amount: parseInt(donAmount), method: donMethod, trxId: donTrx || 'CASH_ENTRY', date: new Date().toISOString().split('T')[0], status: 'অনুমোদিত' });
+    onClose();
+    setDonName(''); setDonAmount(''); setDonTrx('');
+  };
+
+  // 8. Admin Add Sub-User (RBAC) Form
   const [subName, setSubName] = useState('');
   const [subUsername, setSubUsername] = useState('');
   const [subPass, setSubPass] = useState('');
@@ -315,7 +328,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
         </div>
       )}
 
-      {/* Admin Add Committee Member Modal with Direct Photo Upload */}
+      {/* Admin Add Committee Member Modal */}
       {activeModal === 'add-member' && (
         <div class="modal-overlay open">
           <div class="modal-card">
@@ -378,6 +391,45 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
                   <textarea class="form-control" rows="3" value={planDesc} onChange={e => setPlanDesc(e.target.value)} placeholder="পরিকল্পনার বিবরণ লিখুন..." required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>পরিকল্পনা সংরক্ষণ করুন</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Add Donation Form Modal */}
+      {activeModal === 'add-donation' && (
+        <div class="modal-overlay open">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3 class="modal-title"><i class="fa-solid fa-hand-holding-dollar" style={{ color: 'var(--primary)' }}></i> ম্যানুয়ালি অনুদানের তথ্য হিসাবভুক্ত করুন</h3>
+              <span class="modal-close" onClick={onClose}>&times;</span>
+            </div>
+            <div class="modal-body">
+              <form onSubmit={handleDonationSubmit}>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">দাতার পূর্ণ নাম *</label>
+                  <input type="text" class="form-control" value={donName} onChange={e => setDonName(e.target.value)} placeholder="যেমন: মোঃ কামরুল ইসলাম" required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">অনুদানের পরিমাণ (টাকা) *</label>
+                  <input type="number" class="form-control" value={donAmount} onChange={e => setDonAmount(e.target.value)} placeholder="যেমন: ৫০০, ১০০০" required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">পেমেন্ট মাধ্যম *</label>
+                  <select class="form-control" value={donMethod} onChange={e => setDonMethod(e.target.value)}>
+                    <option value="bKash">bKash (বিকাশ)</option>
+                    <option value="Nagad">Nagad (নগদ)</option>
+                    <option value="Rocket">Rocket (রকেট)</option>
+                    <option value="Bank">Bank Transfer</option>
+                    <option value="Cash">নগদ ক্যাশ গ্রহণ</option>
+                  </select>
+                </div>
+                <div class="form-group" style={{ marginBottom: '1.5rem' }}>
+                  <label class="form-label">TrxID / রেফারেন্স (Optional)</label>
+                  <input type="text" class="form-control" value={donTrx} onChange={e => setDonTrx(e.target.value)} placeholder="যেমন: BK9X82M1 বা ক্যাশ গ্রহণ" />
+                </div>
+                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>অনুদান হিসাবে যুক্ত করুন</button>
               </form>
             </div>
           </div>

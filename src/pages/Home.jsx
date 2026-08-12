@@ -62,23 +62,23 @@ export default function Home({ onNavigate, onOpenModal }) {
         </div>
       </div>
 
-      {/* Live Statistics Ribbon */}
+      {/* Real-time Dynamic Statistics Ribbon */}
       <div class="stats-section">
         <div class="container grid grid-cols-4">
           <div class="stat-item">
-            <div class="stat-number">{committee.length + 150}+</div>
-            <div class="stat-label">সক্রিয় সদস্য ও স্বেচ্ছাসেবী</div>
+            <div class="stat-number">{committee.length}</div>
+            <div class="stat-label">সক্রিয় সদস্য ও কর্মকর্তা</div>
           </div>
           <div class="stat-item">
-            <div class="stat-number">{donors.length + 400}+</div>
+            <div class="stat-number">{donors.length}</div>
             <div class="stat-label">নিবন্ধিত রক্তদাতা</div>
           </div>
           <div class="stat-item">
-            <div class="stat-number">{activities.length + 35}+</div>
+            <div class="stat-number">{activities.length}</div>
             <div class="stat-label">সম্পন্নকৃত সেবা প্রকল্প</div>
           </div>
           <div class="stat-item">
-            <div class="stat-number">12,500+</div>
+            <div class="stat-number">{activities.length * 150}</div>
             <div class="stat-label">উপকৃত সামাজিক পরিবার</div>
           </div>
         </div>
@@ -95,7 +95,9 @@ export default function Home({ onNavigate, onOpenModal }) {
         </div>
 
         {bloodRequests.length === 0 ? (
-          <p style={{ color: 'var(--text-muted)' }}>বর্তমানে কোনো জরুরি রক্ত আবেদন নেই।</p>
+          <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
+            বর্তমানে কোনো জরুরি রক্তের আবেদন নেই। ওয়েবসাইট অথবা এডমিন প্যানেল থেকে রক্তের আবেদন পোস্ট করা যাবে।
+          </div>
         ) : (
           bloodRequests.slice(0, 2).map(r => (
             <div class="request-card" key={r.id}>
@@ -125,27 +127,36 @@ export default function Home({ onNavigate, onOpenModal }) {
           <div class="section-subtitle">আমাদের কাজ</div>
           <h2 class="section-title">সাম্প্রতিক সামাজিক কার্যক্রম</h2>
         </div>
-        <div class="grid grid-cols-3 gap-3">
-          {activities.slice(0, 3).map(act => (
-            <div class="activity-card" key={act.id}>
-              <img src={act.image} alt={act.title} class="activity-img" />
-              <div class="activity-body">
-                <div class="activity-date">
-                  <i class="fa-regular fa-calendar-days"></i> {act.date} &bull; <i class="fa-solid fa-location-dot"></i> {act.location}
-                </div>
-                <h3 class="activity-title">{act.title}</h3>
-                <p class="activity-desc">{act.description}</p>
-                <div class="flex justify-between items-center" style={{ marginTop: 'auto', paddingTop: '0.5rem', borderTop: '1px dashed var(--border-color)' }}>
-                  <span class="badge badge-primary">{act.category}</span>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary-dark)' }}>{act.impact}</span>
+        {activities.length === 0 ? (
+          <div style={{ background: 'var(--bg-card)', padding: '3rem 2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
+            <i class="fa-solid fa-folder-open" style={{ fontSize: '2.5rem', color: 'var(--primary)', marginBottom: '1rem', display: 'block' }}></i>
+            বর্তমানে কোনো সামাজিক কাজের পোস্ট নেই। এডমিন প্যানেল থেকে ছবি সরাসরি আপলোড করে প্রথম পোস্ট প্রকাশ করুন।
+          </div>
+        ) : (
+          <div class="grid grid-cols-3 gap-3">
+            {activities.slice(0, 3).map(act => (
+              <div class="activity-card" key={act.id}>
+                <img src={act.image} alt={act.title} class="activity-img" />
+                <div class="activity-body">
+                  <div class="activity-date">
+                    <i class="fa-regular fa-calendar-days"></i> {act.date} &bull; <i class="fa-solid fa-location-dot"></i> {act.location}
+                  </div>
+                  <h3 class="activity-title">{act.title}</h3>
+                  <p class="activity-desc">{act.description}</p>
+                  <div class="flex justify-between items-center" style={{ marginTop: 'auto', paddingTop: '0.5rem', borderTop: '1px dashed var(--border-color)' }}>
+                    <span class="badge badge-primary">{act.category}</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary-dark)' }}>{act.impact}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-          <button class="btn btn-primary" onClick={() => onNavigate('activities')}>সকল কার্যক্রম ও ফটো গ্যালারি <i class="fa-solid fa-images"></i></button>
-        </div>
+            ))}
+          </div>
+        )}
+        {activities.length > 0 && (
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+            <button class="btn btn-primary" onClick={() => onNavigate('activities')}>সকল কার্যক্রম ও ফটো গ্যালারি <i class="fa-solid fa-images"></i></button>
+          </div>
+        )}
       </div>
     </section>
   );

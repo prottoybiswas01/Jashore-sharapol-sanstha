@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { DataProvider, useData } from './context/DataContext';
 import Header from './components/Header';
@@ -18,8 +18,25 @@ function MainApp() {
   const [activeModal, setActiveModal] = useState(null);
   const { toastMessage } = useData();
 
+  // Check URL pathname for /admin or #admin on load
+  useEffect(() => {
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+
+    if (path === '/admin' || path === '/admin/' || hash === '#admin') {
+      setCurrentSection('admin');
+    }
+  }, []);
+
   const handleNavigate = (sectionId) => {
     setCurrentSection(sectionId);
+    if (sectionId === 'admin') {
+      window.history.pushState(null, '', '/admin');
+    } else if (sectionId === 'home') {
+      window.history.pushState(null, '', '/');
+    } else {
+      window.history.pushState(null, '', `/#${sectionId}`);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -33,7 +50,7 @@ function MainApp() {
 
   return (
     <div className="app-layout">
-      {/* Toast Overlay */}
+      {/* Toast Notification Container */}
       {toastMessage && (
         <div class="toast-container">
           <div class="toast">
