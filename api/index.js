@@ -184,6 +184,11 @@ app.get('/api/users', verifyToken, checkPermission('manage_roles'), async (req, 
 
 app.put('/api/users/:id/role', verifyToken, checkPermission('manage_roles'), async (req, res) => {
   try {
+    const targetUser = await User.findById(req.params.id);
+    if (targetUser && (targetUser.username === 'prottoy' || targetUser.username === 'admin')) {
+      return res.status(403).json({ success: false, message: 'প্রধান সুপার এডমিনের রোল পরিবর্তন করা সম্ভব নয়।' });
+    }
+
     const { role } = req.body;
     let perms = ['manage_blood'];
     if (role === 'MEDIA_ADMIN') perms = ['manage_media'];
@@ -237,6 +242,11 @@ app.post('/api/users', verifyToken, checkPermission('manage_roles'), async (req,
 
 app.delete('/api/users/:id', verifyToken, checkPermission('manage_roles'), async (req, res) => {
   try {
+    const targetUser = await User.findById(req.params.id);
+    if (targetUser && (targetUser.username === 'prottoy' || targetUser.username === 'admin')) {
+      return res.status(403).json({ success: false, message: 'প্রধান সুপার এডমিন অ্যাকাউন্ট মুছে ফেলা সম্ভব নয়।' });
+    }
+
     await User.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'এডমিন অ্যাকাউন্ট MongoDB থেকে স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {

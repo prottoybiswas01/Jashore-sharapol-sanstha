@@ -547,38 +547,51 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {subAdminUsers.map(u => (
-                    <tr key={u._id || u.id}>
-                      <td><strong>{u.name}</strong></td>
-                      <td><code>{u.username}</code></td>
-                      <td><span class="badge badge-gold">{u.role}</span></td>
-                      <td>
-                        {u.username !== 'admin' ? (
-                          <select 
-                            class="form-control" 
-                            style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
-                            value={u.role}
-                            onChange={(e) => handlePromoteRole(u._id || u.id, e.target.value)}
-                          >
-                            <option value="GENERAL_MEMBER">সাধারণ মেম্বার (General Member)</option>
-                            <option value="BLOOD_ADMIN">রক্তদান ম্যানেজার (Blood Manager)</option>
-                            <option value="MEDIA_ADMIN">মিডিয়া এডমিন (Media Admin)</option>
-                            <option value="CONTENT_ADMIN">পোস্ট সম্পাদক (Content Admin)</option>
-                            <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
-                          </select>
-                        ) : (
-                          <small style={{ color: 'var(--primary)', fontWeight: 600 }}>প্রধান সুপার এডমিন</small>
-                        )}
-                      </td>
-                      <td>
-                        {u.username !== 'admin' && (
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u._id || u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                            <i class="fa-solid fa-trash"></i>
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {[...subAdminUsers].sort((a, b) => (a.username === 'prottoy' ? -1 : b.username === 'prottoy' ? 1 : 0)).map(u => {
+                    const isPrimary = u.username === 'prottoy' || u.username === 'admin';
+                    return (
+                      <tr key={u._id || u.id} style={u.username === 'prottoy' ? { background: 'rgba(16, 185, 129, 0.06)' } : {}}>
+                        <td>
+                          <strong>{u.name}</strong>
+                          {u.username === 'prottoy' && (
+                            <span class="badge badge-primary" style={{ marginLeft: '0.4rem', fontSize: '0.7rem' }}>
+                              <i class="fa-solid fa-crown" style={{ color: 'var(--accent-gold)' }}></i> প্রধান অনার
+                            </span>
+                          )}
+                        </td>
+                        <td><code>{u.username}</code></td>
+                        <td><span class="badge badge-gold">{u.role}</span></td>
+                        <td>
+                          {!isPrimary ? (
+                            <select 
+                              class="form-control" 
+                              style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
+                              value={u.role}
+                              onChange={(e) => handlePromoteRole(u._id || u.id, e.target.value)}
+                            >
+                              <option value="GENERAL_MEMBER">সাধারণ মেম্বার (General Member)</option>
+                              <option value="BLOOD_ADMIN">রক্তদান ম্যানেজার (Blood Manager)</option>
+                              <option value="MEDIA_ADMIN">মিডিয়া এডমিন (Media Admin)</option>
+                              <option value="CONTENT_ADMIN">পোস্ট সম্পাদক (Content Admin)</option>
+                              <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
+                            </select>
+                          ) : (
+                            <small style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem' }}>
+                              <i class="fa-solid fa-shield-halved" style={{ color: 'var(--accent-gold)', marginRight: '0.2rem' }}></i> 
+                              প্রধান সুপার এডমিন
+                            </small>
+                          )}
+                        </td>
+                        <td>
+                          {!isPrimary && (
+                            <button class="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u._id || u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="মুছে ফেলুন">
+                              <i class="fa-solid fa-trash"></i>
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
