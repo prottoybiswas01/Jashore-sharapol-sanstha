@@ -172,6 +172,7 @@ export default function Modals({ activeModal, onClose }) {
   const [pubPhone, setPubPhone] = useState('');
   const [pubBlood, setPubBlood] = useState('O+');
   const [pubUpazila, setPubUpazila] = useState('যশোর সদর');
+  const [pubImg, setPubImg] = useState('');
 
   const handlePublicRegister = async (e) => {
     e.preventDefault();
@@ -182,12 +183,13 @@ export default function Modals({ activeModal, onClose }) {
       password: pubPass,
       phone: pubPhone,
       bloodGroup: pubBlood,
-      upazila: pubUpazila
+      upazila: pubUpazila,
+      image: pubImg
     });
     if (res.success) {
       alert(res.message);
       onClose();
-      setPubName(''); setPubUsername(''); setPubEmail(''); setPubPass(''); setPubPhone('');
+      setPubName(''); setPubUsername(''); setPubEmail(''); setPubPass(''); setPubPhone(''); setPubImg('');
     } else {
       alert(res.message);
     }
@@ -453,6 +455,16 @@ export default function Modals({ activeModal, onClose }) {
                   <input type="text" className="form-control" value={pubUsername} onChange={e => setPubUsername(e.target.value)} placeholder="যেমন: sakib123" required />
                 </div>
                 <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">আপনার এক কপি ছবি আপলোড করুন (Profile Photo)</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setPubImg)} />
+                  {pubImg && (
+                    <div style={{ marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <img src={pubImg} alt="Profile Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)' }} />
+                      <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি কমপ্রেসড ও সেভ হয়েছে!</small>
+                    </div>
+                  )}
+                </div>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
                   <label className="form-label">ইমেইল ঠিকানা (Email Address) *</label>
                   <input type="email" className="form-control" value={pubEmail} onChange={e => setPubEmail(e.target.value)} placeholder="যেমন: user@gmail.com" required />
                 </div>
@@ -636,40 +648,75 @@ export default function Modals({ activeModal, onClose }) {
             </div>
             <div class="modal-body">
               <form onSubmit={handleActSubmit}>
-                <div class="grid grid-cols-2 gap-2" style={{ marginBottom: '1rem' }}>
-                  <div class="form-group">
-                    <label class="form-label">প্রধান শিরোনাম (Main Title) *</label>
-                    <input type="text" class="form-control" value={actTitle} onChange={e => setActTitle(e.target.value)} placeholder="যেমন: বিনামূল্যে রক্তদান ক্যাম্প" required />
+                {/* Textbox 1: Main Title */}
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label" style={{ fontWeight: 700, color: 'var(--primary-dark)', fontSize: '0.95rem' }}>
+                    [টেক্সটবক্স ১] ১. কাজের প্রধান শিরোনাম (Main Title) *
+                  </label>
+                  <input type="text" className="form-control" value={actTitle} onChange={e => setActTitle(e.target.value)} placeholder="যেমন: বিনামূল্যে রক্তদান ও স্বাস্থ্য পরীক্ষা ক্যাম্প" required />
+                </div>
+
+                {/* Textbox 2: Subtitle */}
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label" style={{ fontWeight: 700, color: 'var(--primary-dark)', fontSize: '0.95rem' }}>
+                    [টেক্সটবক্স ২] ২. কাজের উপ-শিরোনাম / সংক্ষিপ্ত পয়েন্ট (Subtitle)
+                  </label>
+                  <input type="text" className="form-control" value={actSub} onChange={e => setActSub(e.target.value)} placeholder="যেমন: চাঁচড়া মোড় কেন্দ্রিক ২০০ পরিবারকে স্বাস্থ্য সেবা প্রদান" />
+                </div>
+
+                {/* Textbox 3: Details & Description */}
+                <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <div className="flex justify-between items-center" style={{ marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <label className="form-label" style={{ marginBottom: 0, fontWeight: 700, color: 'var(--primary-dark)', fontSize: '0.95rem' }}>
+                      [টেক্সটবক্স ৩] ৩. কাজের বিস্তারিত বিবরণ ও সেকশন (Details) *
+                    </label>
+                    <div className="flex gap-1">
+                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('heading', setActDesc, actDesc)}>
+                        + সেকশন টাইটেল
+                      </button>
+                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('bullet', setActDesc, actDesc)}>
+                        + বুলেট পয়েন্ট
+                      </button>
+                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('divider', setActDesc, actDesc)}>
+                        + বিভাজক
+                      </button>
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">উপ-শিরোনাম / সংক্ষিপ্ত হাইলাইট (Subtitle)</label>
-                    <input type="text" class="form-control" value={actSub} onChange={e => setActSub(e.target.value)} placeholder="যেমন: চাঁচড়া মোড় সেবা কেন্দ্র" />
+                  <textarea className="form-control" rows="4" value={actDesc} onChange={e => setActDesc(e.target.value)} placeholder="## সেকশন টাইটেল&#10;* **পয়েন্ট নাম:** বিস্তারিত বিবরণ..." required></textarea>
+
+                  {actDesc && (
+                    <div style={{ marginTop: '0.75rem', padding: '1rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
+                      <small style={{ color: 'var(--primary)', fontWeight: 700, display: 'block', marginBottom: '0.4rem' }}>
+                        <i className="fa-solid fa-eye"></i> লাইভ ফরম্যাটিং প্রিভিউ (Section Preview):
+                      </small>
+                      {renderFormattedContent(actDesc)}
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-3 gap-2" style={{ marginBottom: '1rem' }}>
+                  <div className="form-group">
+                    <label className="form-label">ক্যাটাগরি</label>
+                    <input type="text" className="form-control" value={actCat} onChange={e => setActCat(e.target.value)} placeholder="স্বাস্থ্য সেবা / ত্রাণ" />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">তারিখ *</label>
+                    <input type="date" className="form-control" value={actDate} onChange={e => setActDate(e.target.value)} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">মোট খরচ (টাকা ৳)</label>
+                    <input type="number" className="form-control" value={actExpense} onChange={e => setActExpense(e.target.value)} placeholder="যেমন: ২৫০০০" />
                   </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2" style={{ marginBottom: '1rem' }}>
-                  <div class="form-group">
-                    <label class="form-label">ক্যাটাগরি</label>
-                    <input type="text" class="form-control" value={actCat} onChange={e => setActCat(e.target.value)} placeholder="স্বাস্থ্য সেবা / ত্রাণ" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">তারিখ *</label>
-                    <input type="date" class="form-control" value={actDate} onChange={e => setActDate(e.target.value)} required />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">মোট খরচ (টাকা ৳)</label>
-                    <input type="number" class="form-control" value={actExpense} onChange={e => setActExpense(e.target.value)} placeholder="যেমন: ২৫০০০" />
-                  </div>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">কাজের স্থান</label>
+                  <input type="text" className="form-control" value={actLoc} onChange={e => setActLoc(e.target.value)} placeholder="যেমন: যশোর সদর" />
                 </div>
 
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">কাজের স্থান</label>
-                  <input type="text" class="form-control" value={actLoc} onChange={e => setActLoc(e.target.value)} placeholder="যেমন: যশোর সদর" />
-                </div>
-
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">কাজের ছবি আপলোড (Auto Compressed) *</label>
-                  <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setActImg)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">কাজের ছবি আপলোড (Auto Compressed) *</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setActImg)} required />
                   {actImg && (
                     <div style={{ marginTop: '0.5rem' }}>
                       <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি কমপ্রেসড ও লোড হয়েছে:</small>
@@ -678,36 +725,9 @@ export default function Modals({ activeModal, onClose }) {
                   )}
                 </div>
 
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ইউটিউব ভিডিও লিংক (Optional Video URL)</label>
-                  <input type="url" class="form-control" value={actVideo} onChange={e => setActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
-                </div>
-
-                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <div class="flex justify-between items-center" style={{ marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <label class="form-label" style={{ marginBottom: 0 }}>বিবরণ (ডিটেইলস ও সেকশন) *</label>
-                    <div class="flex gap-1">
-                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('heading', setActDesc, actDesc)}>
-                        + সেকশন টাইটেল
-                      </button>
-                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('bullet', setActDesc, actDesc)}>
-                        + বুলেট পয়েন্ট
-                      </button>
-                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('divider', setActDesc, actDesc)}>
-                        + বিভাজক
-                      </button>
-                    </div>
-                  </div>
-                  <textarea class="form-control" rows="4" value={actDesc} onChange={e => setActDesc(e.target.value)} placeholder="## সেকশন টাইটেল&#10;* **পয়েন্ট নাম:** বিস্তারিত বিবরণ..." required></textarea>
-
-                  {actDesc && (
-                    <div style={{ marginTop: '0.75rem', padding: '1rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                      <small style={{ color: 'var(--primary)', fontWeight: 700, display: 'block', marginBottom: '0.4rem' }}>
-                        <i class="fa-solid fa-eye"></i> লাইভ ফরম্যাটিং প্রিভিউ (Section Preview):
-                      </small>
-                      {renderFormattedContent(actDesc)}
-                    </div>
-                  )}
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">ইউটিউব ভিডিও লিংক (Optional Video URL)</label>
+                  <input type="url" className="form-control" value={actVideo} onChange={e => setActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
                 </div>
 
                 <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>রেকর্ড প্রকাশ ও মঙ্গোডিবিতে সেভ করুন</button>

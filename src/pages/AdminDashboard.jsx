@@ -75,10 +75,6 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
               <label className="form-label">ব্যবহারকারী নাম (Username) *</label>
               <input type="text" className="form-control" value={username} onChange={e => setUsername(e.target.value)} required />
             </div>
-            <div className="form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>
-              <label className="form-label">ইমেইল ঠিকানা (Email Address) *</label>
-              <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} placeholder="jashoresharapolsanstha@gmail.com" required />
-            </div>
             <div className="form-group" style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
               <label className="form-label">পাসওয়ার্ড (Password) *</label>
               <input type="password" className="form-control" value={password} onChange={e => setPassword(e.target.value)} required />

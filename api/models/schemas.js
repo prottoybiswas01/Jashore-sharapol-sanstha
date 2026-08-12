@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String },
   password: { type: String, required: true },
   phone: { type: String },
+  image: { type: String }, // User profile image uploaded during registration
   role: { type: String, default: 'GENERAL_MEMBER' }, // SUPER_ADMIN, MEDIA_ADMIN, CONTENT_ADMIN, BLOOD_ADMIN, GENERAL_MEMBER
   committeeRole: { type: String, default: '' }, // e.g. 'সভাপতি', 'সহ-সভাপতি', etc.
   permissions: [{ type: String }]

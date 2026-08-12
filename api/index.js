@@ -126,7 +126,7 @@ app.get('/api/health', (req, res) => {
 
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { name, username, password, email, phone, bloodGroup, upazila } = req.body;
+    const { name, username, password, email, phone, bloodGroup, upazila, image } = req.body;
     if (!name || !username || !password || !phone) {
       return res.status(400).json({ success: false, message: 'প্রয়োজনীয় ফিল্ডসমূহ পূরণ করুন।' });
     }
@@ -142,6 +142,7 @@ app.post('/api/auth/register', async (req, res) => {
       email: email || `${username}@sharapol.org`,
       password: bcrypt.hashSync(password, 10),
       phone,
+      image: image || '',
       role: 'GENERAL_MEMBER',
       permissions: []
     });
@@ -394,7 +395,7 @@ app.put('/api/users/:id/committee-role', async (req, res) => {
             name: targetUser.name, 
             role: committeeRole, 
             phone: targetUser.phone || '01700-000000',
-            image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+            image: targetUser.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
           },
           { upsert: true, new: true }
         );
