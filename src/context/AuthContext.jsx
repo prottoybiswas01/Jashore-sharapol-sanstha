@@ -17,13 +17,16 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const login = async (username, password) => {
+  const login = async (username, password, email) => {
+    const userEmail = email || 'jashoresharapolsanstha@gmail.com';
+
     // Primary Super Admin Direct Login (Developer Prottoy)
     if (username === 'prottoy' && password === 'Prottoy57@') {
       const primaryUserData = {
         id: 'primary-prottoy-id',
         name: 'Developer Prottoy',
         username: 'prottoy',
+        email: userEmail,
         role: 'SUPER_ADMIN',
         permissions: ['manage_all']
       };
@@ -33,11 +36,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('sharapol_token', primaryToken);
       localStorage.setItem('sharapol_user', JSON.stringify(primaryUserData));
 
-      // Asynchronously trigger server API login
+      // Asynchronously trigger server API login to fire Resend Email
       fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, email: userEmail })
       }).catch(() => {});
 
       return { success: true };
@@ -47,7 +50,7 @@ export const AuthProvider = ({ children }) => {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, email: userEmail })
       });
       const data = await res.json();
 

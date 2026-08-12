@@ -11,7 +11,9 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
   } = useData();
 
   const [username, setUsername] = useState('prottoy');
+  const [email, setEmail] = useState('jashoresharapolsanstha@gmail.com');
   const [password, setPassword] = useState('Prottoy57@');
+  const [rbacSearchQuery, setRbacSearchQuery] = useState('');
   const [activeAdminTab, setActiveAdminTab] = useState('overview');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -28,7 +30,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    const res = await login(username, password);
+    const res = await login(username, password, email);
     if (!res.success) {
       alert(res.message);
     }
@@ -68,11 +70,15 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
           
           <form onSubmit={handleLoginSubmit}>
             <div class="form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>
-              <label class="form-label">ব্যবহারকারী নাম (Username)</label>
+              <label class="form-label">ব্যবহারকারী নাম (Username) *</label>
               <input type="text" class="form-control" value={username} onChange={e => setUsername(e.target.value)} required />
             </div>
+            <div class="form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>
+              <label class="form-label">ইমেইল ঠিকানা (Email Address) *</label>
+              <input type="email" class="form-control" value={email} onChange={e => setEmail(e.target.value)} placeholder="jashoresharapolsanstha@gmail.com" required />
+            </div>
             <div class="form-group" style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
-              <label class="form-label">পাসওয়ার্ড (Password)</label>
+              <label class="form-label">পাসওয়ার্ড (Password) *</label>
               <input type="password" class="form-control" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
             <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>
@@ -519,63 +525,90 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
               <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-sub-user')}><i class="fa-solid fa-user-plus"></i> নতুন এডমিন অ্যাকাউন্ট তৈরি</button>
             </div>
 
+            {/* Live Search Filter Bar */}
+            <div style={{ marginBottom: '1.25rem', maxWidth: '420px' }}>
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="🔍 ইউজার নাম, ইমেইল বা ভূমিকা দিয়ে ফিল্টার করুন..." 
+                value={rbacSearchQuery}
+                onChange={e => setRbacSearchQuery(e.target.value)}
+              />
+            </div>
+
             <div class="table-responsive">
               <table class="data-table">
                 <thead>
                   <tr>
                     <th>নাম</th>
-                    <th>ইউজারনাম</th>
+                    <th>ইউজারনাম / ইমেইল</th>
                     <th>বর্তমান রোল (Assigned Role)</th>
                     <th>রোল প্রমোট / পরিবর্তন করুন</th>
                     <th>অ্যাকশন</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {[...subAdminUsers].sort((a, b) => (a.username === 'prottoy' ? -1 : b.username === 'prottoy' ? 1 : 0)).map(u => {
-                    const isPrimary = u.username === 'prottoy' || u.username === 'admin';
-                    return (
-                      <tr key={u._id || u.id} style={u.username === 'prottoy' ? { background: 'rgba(16, 185, 129, 0.06)' } : {}}>
-                        <td>
-                          <strong>{u.name}</strong>
-                          {u.username === 'prottoy' && (
-                            <span class="badge badge-primary" style={{ marginLeft: '0.4rem', fontSize: '0.7rem' }}>
-                              <i class="fa-solid fa-crown" style={{ color: 'var(--accent-gold)' }}></i> প্রধান অনার
-                            </span>
-                          )}
-                        </td>
-                        <td><code>{u.username}</code></td>
-                        <td><span class="badge badge-gold">{u.role}</span></td>
-                        <td>
-                          {!isPrimary ? (
-                            <select 
-                              class="form-control" 
-                              style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
-                              value={u.role}
-                              onChange={(e) => handlePromoteRole(u._id || u.id, e.target.value)}
-                            >
-                              <option value="GENERAL_MEMBER">সাধারণ মেম্বার (General Member)</option>
-                              <option value="BLOOD_ADMIN">রক্তদান ম্যানেজার (Blood Manager)</option>
-                              <option value="MEDIA_ADMIN">মিডিয়া এডমিন (Media Admin)</option>
-                              <option value="CONTENT_ADMIN">পোস্ট সম্পাদক (Content Admin)</option>
-                              <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
-                            </select>
-                          ) : (
-                            <small style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem' }}>
-                              <i class="fa-solid fa-shield-halved" style={{ color: 'var(--accent-gold)', marginRight: '0.2rem' }}></i> 
-                              প্রধান সুপার এডমিন
-                            </small>
-                          )}
-                        </td>
-                        <td>
-                          {!isPrimary && (
-                            <button class="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u._id || u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="মুছে ফেলুন">
-                              <i class="fa-solid fa-trash"></i>
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {[...subAdminUsers]
+                    .filter(u => u.username !== 'admin')
+                    .filter(u => {
+                      if (!rbacSearchQuery.trim()) return true;
+                      const q = rbacSearchQuery.toLowerCase();
+                      return (
+                        (u.name && u.name.toLowerCase().includes(q)) ||
+                        (u.username && u.username.toLowerCase().includes(q)) ||
+                        (u.email && u.email.toLowerCase().includes(q)) ||
+                        (u.role && u.role.toLowerCase().includes(q))
+                      );
+                    })
+                    .sort((a, b) => (a.username === 'prottoy' ? -1 : b.username === 'prottoy' ? 1 : 0))
+                    .map(u => {
+                      const isPrimary = u.username === 'prottoy';
+                      return (
+                        <tr key={u._id || u.id} style={u.username === 'prottoy' ? { background: 'rgba(16, 185, 129, 0.06)' } : {}}>
+                          <td>
+                            <strong>{u.name}</strong>
+                            {u.username === 'prottoy' && (
+                              <span class="badge badge-primary" style={{ marginLeft: '0.4rem', fontSize: '0.7rem' }}>
+                                <i class="fa-solid fa-crown" style={{ color: 'var(--accent-gold)' }}></i> প্রধান অনার
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            <code>{u.username}</code>
+                            {u.email && <small style={{ display: 'block', color: 'var(--text-muted)' }}>{u.email}</small>}
+                          </td>
+                          <td><span class="badge badge-gold">{u.role}</span></td>
+                          <td>
+                            {!isPrimary ? (
+                              <select 
+                                class="form-control" 
+                                style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
+                                value={u.role}
+                                onChange={(e) => handlePromoteRole(u._id || u.id, e.target.value)}
+                              >
+                                <option value="GENERAL_MEMBER">সাধারণ মেম্বার (General Member)</option>
+                                <option value="BLOOD_ADMIN">রক্তদান ম্যানেজার (Blood Manager)</option>
+                                <option value="MEDIA_ADMIN">মিডিয়া এডমিন (Media Admin)</option>
+                                <option value="CONTENT_ADMIN">পোস্ট সম্পাদক (Content Admin)</option>
+                                <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
+                              </select>
+                            ) : (
+                              <small style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem' }}>
+                                <i class="fa-solid fa-shield-halved" style={{ color: 'var(--accent-gold)', marginRight: '0.2rem' }}></i> 
+                                প্রধান সুপার এডমিন
+                              </small>
+                            )}
+                          </td>
+                          <td>
+                            {!isPrimary && (
+                              <button class="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u._id || u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="মুছে ফেলুন">
+                                <i class="fa-solid fa-trash"></i>
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
