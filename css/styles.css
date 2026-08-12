@@ -48,7 +48,7 @@
   --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Fonts */
-  --font-bengali: 'Hind Siliguri', sans-serif;
+  --font-bengali: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-latin: 'Outfit', sans-serif;
 }
 
@@ -75,14 +75,18 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   font-family: var(--font-bengali);
   background-color: var(--bg-main);
   color: var(--text-main);
-  line-height: 1.6;
+  line-height: 1.65;
   overflow-x: hidden;
+  word-break: break-word;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -393,7 +397,7 @@ input, select, textarea {
 .hero-title {
   font-size: 2.75rem;
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.25;
   margin-bottom: 1.25rem;
   letter-spacing: -0.5px;
 }

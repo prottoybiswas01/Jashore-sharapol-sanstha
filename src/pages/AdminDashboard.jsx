@@ -72,6 +72,8 @@ export default function AdminDashboard({ onOpenModal }) {
     );
   }
 
+  const totalDonationSum = donations.reduce((sum, d) => sum + (d.amount || 0), 0);
+
   return (
     <div class="admin-layout">
       {/* Sidebar Nav */}
@@ -151,8 +153,8 @@ export default function AdminDashboard({ onOpenModal }) {
                 <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--secondary)' }}>{committee.length}</div>
               </div>
               <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>জরুরি রক্তের আবেদন</div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b45309' }}>{bloodRequests.length}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>মোট প্রাপ্ত অনুদান</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b45309' }}>৳ {totalDonationSum.toLocaleString()}</div>
               </div>
             </div>
 
@@ -160,7 +162,8 @@ export default function AdminDashboard({ onOpenModal }) {
               <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}><i class="fa-solid fa-bolt" style={{ color: 'var(--accent-gold)' }}></i> অনুমোদিত কুইক অ্যাকশন (RBAC)</h3>
               <div class="flex gap-2 flex-wrap">
                 {hasPermission('manage_site') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('edit-site-settings')}><i class="fa-solid fa-pen"></i> ওয়েবসাইট কনটেন্ট সম্পাদনা</button>}
-                {hasPermission('manage_media') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন কাজের রেকর্ড যোগ</button>}
+                {hasPermission('manage_media') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন কাজের রেকর্ড যোগ (ছবি ফাইল আপলোড)</button>}
+                {hasPermission('manage_content') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('add-plan')}><i class="fa-solid fa-lightbulb"></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ</button>}
                 {hasPermission('manage_committee') && <button class="btn btn-secondary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন কমিটি পদবী যোগ</button>}
                 {hasPermission('manage_roles') && <button class="btn btn-blood btn-sm" onClick={() => onOpenModal('add-sub-user')}><i class="fa-solid fa-user-gear"></i> নতুন এডমিন রোল তৈরি</button>}
               </div>
@@ -193,7 +196,7 @@ export default function AdminDashboard({ onOpenModal }) {
           <div>
             <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
               <h2>সামাজিক কাজের রেকর্ডসমূহ</h2>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন পোস্ট যোগ</button>
+              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন পোস্ট যোগ (ছবি সরাসরি আপলোড)</button>
             </div>
             <div class="table-responsive">
               <table class="data-table">
@@ -210,7 +213,7 @@ export default function AdminDashboard({ onOpenModal }) {
                 <tbody>
                   {activities.map(a => (
                     <tr key={a.id}>
-                      <td><img src={a.image} style={{ width: '50px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} /></td>
+                      <td><img src={a.image} style={{ width: '50px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} alt={a.title} /></td>
                       <td><strong>{a.title}</strong></td>
                       <td>{a.category}</td>
                       <td>{a.date}</td>
@@ -228,11 +231,12 @@ export default function AdminDashboard({ onOpenModal }) {
           </div>
         )}
 
-        {/* 4. PLANS */}
+        {/* 4. PLANS (FUTURE PLANS) */}
         {activeAdminTab === 'plans' && hasPermission('manage_content') && (
           <div>
             <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
               <h2>ভবিষ্যৎ কাজের পরিকল্পনা</h2>
+              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-plan')}><i class="fa-solid fa-plus"></i> নতুন পরিকল্পনা যোগ করুন</button>
             </div>
             <div class="table-responsive">
               <table class="data-table">
@@ -270,7 +274,7 @@ export default function AdminDashboard({ onOpenModal }) {
           <div>
             <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
               <h2>পদবী ও কমিটির সদস্যবৃন্দ</h2>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন পদবী/সদস্য যোগ</button>
+              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন পদবী/সদস্য যোগ (ছবি সরাসরি আপলোড)</button>
             </div>
             <div class="table-responsive">
               <table class="data-table">
@@ -286,7 +290,7 @@ export default function AdminDashboard({ onOpenModal }) {
                 <tbody>
                   {committee.map(c => (
                     <tr key={c.id}>
-                      <td><img src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} /></td>
+                      <td><img src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} /></td>
                       <td><strong>{c.name}</strong></td>
                       <td><span class="badge badge-primary">{c.role}</span></td>
                       <td>{c.phone}</td>

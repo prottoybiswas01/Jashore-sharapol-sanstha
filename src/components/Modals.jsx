@@ -7,7 +7,23 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     addCommitteeMember, addBloodDonor, addBloodRequest, createSubAdminUser 
   } = useData();
 
-  // Dynamic Site Settings Form State
+  // Helper to convert selected image file to Base64 data string for MongoDB storage
+  const handleImageFileChange = (e, setImageState) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('ছবি নির্বাচন ৫ মেগাবাইটের মধ্যে হতে হবে।');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageState(reader.result); // Base64 String
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // 1. Dynamic Site Settings Form
   const [siteForm, setSiteForm] = useState({
     topTickerNotice: settings.topTickerNotice || '',
     heroTitleText: settings.heroTitleText || '',
@@ -15,7 +31,8 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     aboutDescription: settings.aboutDescription || '',
     contactPhone: settings.contactPhone || '',
     contactEmail: settings.contactEmail || '',
-    contactAddress: settings.contactAddress || ''
+    contactAddress: settings.contactAddress || '',
+    heroImageUrl: settings.heroImageUrl || ''
   });
 
   const handleSettingsSubmit = (e) => {
@@ -24,7 +41,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     onClose();
   };
 
-  // 1. Blood Request Form
+  // 2. Blood Request Form
   const [reqPatient, setReqPatient] = useState('');
   const [reqGroup, setReqGroup] = useState('O+');
   const [reqHospital, setReqHospital] = useState('');
@@ -38,7 +55,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setReqPatient(''); setReqHospital(''); setReqPhone(''); setReqDetails('');
   };
 
-  // 2. Blood Donor Register Form
+  // 3. Blood Donor Register Form
   const [regName, setRegName] = useState('');
   const [regGroup, setRegGroup] = useState('A+');
   const [regUpazila, setRegUpazila] = useState('যশোর সদর');
@@ -52,7 +69,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setRegName(''); setRegPhone(''); setRegDate('');
   };
 
-  // 3. Admin Add Member Form
+  // 4. Admin Add Member Form (With Direct Photo File Upload)
   const [memName, setMemName] = useState('');
   const [memRole, setMemRole] = useState('');
   const [memPhone, setMemPhone] = useState('');
@@ -60,12 +77,17 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
 
   const handleMemberSubmit = (e) => {
     e.preventDefault();
-    addCommitteeMember({ name: memName, role: memRole, phone: memPhone || '01700-000000', image: memImg || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80' });
+    addCommitteeMember({ 
+      name: memName, 
+      role: memRole, 
+      phone: memPhone || '01700-000000', 
+      image: memImg || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80' 
+    });
     onClose();
     setMemName(''); setMemRole(''); setMemPhone(''); setMemImg('');
   };
 
-  // 4. Admin Add Activity Form
+  // 5. Admin Add Activity Form (With Direct Photo File Upload)
   const [actTitle, setActTitle] = useState('');
   const [actCat, setActCat] = useState('স্বাস্থ্য সেবা');
   const [actDate, setActDate] = useState('');
@@ -75,12 +97,32 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
 
   const handleActSubmit = (e) => {
     e.preventDefault();
-    addActivity({ title: actTitle, category: actCat, date: actDate, location: actLoc, image: actImg || 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80', description: actDesc });
+    addActivity({ 
+      title: actTitle, 
+      category: actCat, 
+      date: actDate, 
+      location: actLoc, 
+      image: actImg || 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80', 
+      description: actDesc 
+    });
     onClose();
-    setActTitle(''); setActDate(''); setActDesc('');
+    setActTitle(''); setActDate(''); setActDesc(''); setActImg('');
   };
 
-  // 5. Admin Add Sub-User (RBAC) Form
+  // 6. Admin Add Future Plan Form
+  const [planTitle, setPlanTitle] = useState('');
+  const [planCat, setPlanCat] = useState('শিক্ষা');
+  const [planDate, setPlanDate] = useState('');
+  const [planDesc, setPlanDesc] = useState('');
+
+  const handlePlanSubmit = (e) => {
+    e.preventDefault();
+    addFuturePlan({ title: planTitle, category: planCat, targetDate: planDate, description: planDesc, status: 'পরিকল্পিত' });
+    onClose();
+    setPlanTitle(''); setPlanDate(''); setPlanDesc('');
+  };
+
+  // 7. Admin Add Sub-User (RBAC) Form
   const [subName, setSubName] = useState('');
   const [subUsername, setSubUsername] = useState('');
   const [subPass, setSubPass] = useState('');
@@ -118,6 +160,13 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">হোমপেজ বিবরণ (Hero Description)</label>
                   <textarea class="form-control" rows="3" value={siteForm.heroDescription} onChange={e => setSiteForm({ ...siteForm, heroDescription: e.target.value })} required></textarea>
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">হিরো ব্যানার ছবি আপলোড (Hero Photo Upload)</label>
+                  <input type="file" accept="image/*" class="form-control" onChange={e => handleImageFileChange(e, (b64) => setSiteForm({ ...siteForm, heroImageUrl: b64 }))} />
+                  {siteForm.heroImageUrl && (
+                    <img src={siteForm.heroImageUrl} style={{ width: '100px', height: '60px', objectFit: 'cover', marginTop: '0.5rem', borderRadius: '4px' }} alt="Hero preview" />
+                  )}
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">আমাদের কথা বিবরণ (About Us Text)</label>
@@ -223,55 +272,65 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
         </div>
       )}
 
-      {/* Admin Add Activity Modal */}
+      {/* Admin Add Activity Modal with Direct Image File Upload */}
       {activeModal === 'add-activity' && (
         <div class="modal-overlay open">
           <div class="modal-card">
             <div class="modal-header">
-              <h3 class="modal-title">নতুন কাজের রেকর্ড যোগ করুন</h3>
+              <h3 class="modal-title"><i class="fa-solid fa-plus" style={{ color: 'var(--primary)' }}></i> নতুন কাজের রেকর্ড যোগ করুন</h3>
               <span class="modal-close" onClick={onClose}>&times;</span>
             </div>
             <div class="modal-body">
               <form onSubmit={handleActSubmit}>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">শিরোনাম *</label>
-                  <input type="text" class="form-control" value={actTitle} onChange={e => setActTitle(e.target.value)} required />
+                  <input type="text" class="form-control" value={actTitle} onChange={e => setActTitle(e.target.value)} placeholder="কাজের নাম" required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">ক্যাটাগরি</label>
+                  <input type="text" class="form-control" value={actCat} onChange={e => setActCat(e.target.value)} placeholder="স্বাস্থ্য সেবা / ত্রাণ" />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">তারিখ *</label>
                   <input type="date" class="form-control" value={actDate} onChange={e => setActDate(e.target.value)} required />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ছবি ইউআরএল (Image URL)</label>
-                  <input type="url" class="form-control" value={actImg} onChange={e => setActImg(e.target.value)} placeholder="https://..." />
+                  <label class="form-label">কাজের ছবি সরাসরি ডিভাইস থেকে আপলোড করুন *</label>
+                  <input type="file" accept="image/*" class="form-control" onChange={e => handleImageFileChange(e, setActImg)} required />
+                  {actImg && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি লোড হয়েছে:</small>
+                      <img src={actImg} style={{ width: '100px', height: '60px', objectFit: 'cover', display: 'block', borderRadius: '4px', marginTop: '0.2rem' }} alt="Preview" />
+                    </div>
+                  )}
                 </div>
                 <div class="form-group" style={{ marginBottom: '1.25rem' }}>
                   <label class="form-label">বিবরণ</label>
                   <textarea class="form-control" rows="3" value={actDesc} onChange={e => setActDesc(e.target.value)} required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>রেকর্ড প্রকাশ করুন</button>
+                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>রেকর্ড প্রকাশ ও মঙ্গোডিবিতে সেভ করুন</button>
               </form>
             </div>
           </div>
         </div>
       )}
 
-      {/* Admin Add Committee Member Modal */}
+      {/* Admin Add Committee Member Modal with Direct Photo Upload */}
       {activeModal === 'add-member' && (
         <div class="modal-overlay open">
           <div class="modal-card">
             <div class="modal-header">
-              <h3 class="modal-title">নতুন কমিটি পদবী যোগ করুন</h3>
+              <h3 class="modal-title"><i class="fa-solid fa-user-plus" style={{ color: 'var(--primary)' }}></i> নতুন কমিটি পদবী যোগ করুন</h3>
               <span class="modal-close" onClick={onClose}>&times;</span>
             </div>
             <div class="modal-body">
               <form onSubmit={handleMemberSubmit}>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">সদস্যের নাম *</label>
-                  <input type="text" class="form-control" value={memName} onChange={e => setMemName(e.target.value)} required />
+                  <input type="text" class="form-control" value={memName} onChange={e => setMemName(e.target.value)} placeholder="নাম লিখুন" required />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">পদবী (Role) *</label>
+                  <label class="form-label">পদবী (Role / Designation) *</label>
                   <input type="text" class="form-control" value={memRole} onChange={e => setMemRole(e.target.value)} placeholder="যেমন: সভাপতি / সাধারণ সম্পাদক" required />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
@@ -279,17 +338,53 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
                   <input type="tel" class="form-control" value={memPhone} onChange={e => setMemPhone(e.target.value)} />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">ছবি লিংক</label>
-                  <input type="url" class="form-control" value={memImg} onChange={e => setMemImg(e.target.value)} />
+                  <label class="form-label">সদস্যের ছবি সরাসরি আপলোড করুন (Direct Photo Upload)</label>
+                  <input type="file" accept="image/*" class="form-control" onChange={e => handleImageFileChange(e, setMemImg)} />
+                  {memImg && (
+                    <img src={memImg} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginTop: '0.5rem', display: 'block' }} alt="Member Preview" />
+                  )}
                 </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>পদবী সংরক্ষণ করুন</button>
+                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>পদবী ও তথ্য সংরক্ষণ করুন</button>
               </form>
             </div>
           </div>
         </div>
       )}
 
-      {/* Admin Add Sub-Admin Account Modal (RBAC) */}
+      {/* Admin Add Future Plan Modal */}
+      {activeModal === 'add-plan' && (
+        <div class="modal-overlay open">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3 class="modal-title"><i class="fa-solid fa-lightbulb" style={{ color: 'var(--accent-gold)' }}></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ করুন</h3>
+              <span class="modal-close" onClick={onClose}>&times;</span>
+            </div>
+            <div class="modal-body">
+              <form onSubmit={handlePlanSubmit}>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">পরিকল্পনার শিরোনাম *</label>
+                  <input type="text" class="form-control" value={planTitle} onChange={e => setPlanTitle(e.target.value)} placeholder="যেমন: বিনামূল্যে ব্লাড ব্যাংক নির্মাণ" required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">ক্যাটাগরি</label>
+                  <input type="text" class="form-control" value={planCat} onChange={e => setPlanCat(e.target.value)} placeholder="শিক্ষা / জনস্বাস্থ্য" />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">সম্ভাব্য টার্গেট তারিখ</label>
+                  <input type="date" class="form-control" value={planDate} onChange={e => setPlanDate(e.target.value)} />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label class="form-label">বিস্তারিত বিবরণ *</label>
+                  <textarea class="form-control" rows="3" value={planDesc} onChange={e => setPlanDesc(e.target.value)} placeholder="পরিকল্পনার বিবরণ লিখুন..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>পরিকল্পনা সংরক্ষণ করুন</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Add Sub-User Account Modal (RBAC) */}
       {activeModal === 'add-sub-user' && (
         <div class="modal-overlay open">
           <div class="modal-card">
@@ -314,10 +409,10 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
                 <div class="form-group" style={{ marginBottom: '1.25rem' }}>
                   <label class="form-label">অর্পিত রোল (Assigned Role & Permissions) *</label>
                   <select class="form-control" value={subRole} onChange={e => setSubRole(e.target.value)}>
-                    <option value="BLOOD_ADMIN">রক্তদান ব্যবস্থাপক (Blood Manager - রক্তের আবেদন ও ডোনার ডিরেক্টরি)</option>
-                    <option value="MEDIA_ADMIN">ছবি ও গ্যালারি সম্পাদক (Media Admin - ফটো ও কাজের রেকর্ড)</option>
-                    <option value="CONTENT_ADMIN">সংবাদ ও পোস্ট সম্পাদক (Content Admin - পোস্ট ও ভবিষ্যৎ পরিকল্পনা)</option>
-                    <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin - সম্পূর্ণ অ্যাক্সেস)</option>
+                    <option value="BLOOD_ADMIN">রক্তদান ব্যবস্থাপক (Blood Manager)</option>
+                    <option value="MEDIA_ADMIN">ছবি ও গ্যালারি সম্পাদক (Media Admin)</option>
+                    <option value="CONTENT_ADMIN">সংবাদ ও পোস্ট সম্পাদক (Content Admin)</option>
+                    <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
                   </select>
                 </div>
                 <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>অ্যাকাউন্ট তৈরি করুন</button>
