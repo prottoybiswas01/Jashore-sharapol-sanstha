@@ -5,9 +5,9 @@ import { compressImageFile } from '../utils/imageCompressor';
 
 export default function Modals({ activeModal, onClose }) {
   const { 
-    settings, updateSiteSettings, addActivity, likeActivity, addFuturePlan, 
+    settings, updateSiteSettings, addActivity, updateActivity, likeActivity, addFuturePlan, 
     addCommitteeMember, addBloodDonor, addBloodRequest, addDonation, createSubAdminUser,
-    selectedActivity, setSelectedActivity 
+    selectedActivity, setSelectedActivity, editingActivity, setEditingActivity
   } = useData();
 
   const { register } = useAuth();
@@ -25,16 +25,24 @@ export default function Modals({ activeModal, onClose }) {
     }
   };
 
-  // Helper to format YouTube Embed URL
+  // Helper to format YouTube Embed URL with 100% reliability
   const getEmbedVideoUrl = (url) => {
     if (!url) return null;
-    if (url.includes('youtube.com/watch?v=')) {
-      return url.replace('watch?v=', 'embed/');
+    const cleanUrl = url.trim();
+    
+    // Extract 11-character YouTube video ID
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = cleanUrl.match(regExp);
+
+    if (match && match[2] && match[2].length === 11) {
+      return `https://www.youtube-nocookie.com/embed/${match[2]}?autoplay=0&rel=0`;
     }
-    if (url.includes('youtu.be/')) {
-      return url.replace('youtu.be/', 'youtube.com/embed/');
+    
+    if (cleanUrl.includes('youtube.com/embed/')) {
+      return cleanUrl;
     }
-    return url;
+    
+    return null;
   };
 
   // 1. Dynamic Site Settings Form
@@ -150,6 +158,43 @@ export default function Modals({ activeModal, onClose }) {
     });
     onClose();
     setActTitle(''); setActDate(''); setActDesc(''); setActImg(''); setActVideo('');
+  };
+
+  // 6.b Admin Edit Activity Form
+  const [editActTitle, setEditActTitle] = useState('');
+  const [editActCat, setEditActCat] = useState('');
+  const [editActDate, setEditActDate] = useState('');
+  const [editActLoc, setEditActLoc] = useState('');
+  const [editActImg, setEditActImg] = useState('');
+  const [editActVideo, setEditActVideo] = useState('');
+  const [editActDesc, setEditActDesc] = useState('');
+
+  React.useEffect(() => {
+    if (editingActivity) {
+      setEditActTitle(editingActivity.title || '');
+      setEditActCat(editingActivity.category || 'স্বাস্থ্য সেবা');
+      setEditActDate(editingActivity.date || '');
+      setEditActLoc(editingActivity.location || 'যশোর');
+      setEditActImg(editingActivity.image || '');
+      setEditActVideo(editingActivity.videoUrl || '');
+      setEditActDesc(editingActivity.description || '');
+    }
+  }, [editingActivity]);
+
+  const handleEditActSubmit = (e) => {
+    e.preventDefault();
+    if (!editingActivity) return;
+    updateActivity(editingActivity._id || editingActivity.id, {
+      title: editActTitle,
+      category: editActCat,
+      date: editActDate,
+      location: editActLoc,
+      image: editActImg,
+      videoUrl: editActVideo,
+      description: editActDesc
+    });
+    setEditingActivity(null);
+    onClose();
   };
 
   // 7. Admin Add Future Plan Form
@@ -476,6 +521,57 @@ export default function Modals({ activeModal, onClose }) {
                   <textarea class="form-control" rows="3" value={actDesc} onChange={e => setActDesc(e.target.value)} required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>রেকর্ড প্রকাশ ও মঙ্গোডিবিতে সেভ করুন</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Edit Activity Modal */}
+      {activeModal === 'edit-activity' && editingActivity && (
+        <div class="modal-overlay open">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3 class="modal-title"><i class="fa-solid fa-pen-to-square" style={{ color: 'var(--primary)' }}></i> কাজের রেকর্ড সম্পাদনা করুন</h3>
+              <span class="modal-close" onClick={() => { setEditingActivity(null); onClose(); }}>&times;</span>
+            </div>
+            <div class="modal-body">
+              <form onSubmit={handleEditActSubmit}>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">শিরোনাম *</label>
+                  <input type="text" class="form-control" value={editActTitle} onChange={e => setEditActTitle(e.target.value)} required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">ক্যাটাগরি</label>
+                  <input type="text" class="form-control" value={editActCat} onChange={e => setEditActCat(e.target.value)} />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">তারিখ *</label>
+                  <input type="date" class="form-control" value={editActDate} onChange={e => setEditActDate(e.target.value)} required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">কাজের স্থান</label>
+                  <input type="text" class="form-control" value={editActLoc} onChange={e => setEditActLoc(e.target.value)} />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">ছবি পরিবর্তন করুন (Auto Compressed Upload)</label>
+                  <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setEditActImg)} />
+                  {editActImg && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <small style={{ color: 'var(--primary)', fontWeight: 600 }}>বর্তমান ছবি:</small>
+                      <img src={editActImg} style={{ width: '100px', height: '60px', objectFit: 'cover', display: 'block', borderRadius: '4px', marginTop: '0.2rem' }} alt="Preview" />
+                    </div>
+                  )}
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">ইউটিউব ভিডিও লিংক (YouTube Video URL)</label>
+                  <input type="url" class="form-control" value={editActVideo} onChange={e => setEditActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label class="form-label">বিবরণ</label>
+                  <textarea class="form-control" rows="4" value={editActDesc} onChange={e => setEditActDesc(e.target.value)} required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>আপডেট পরিবর্তনসমূহ সেভ করুন</button>
               </form>
             </div>
           </div>

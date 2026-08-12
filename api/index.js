@@ -308,6 +308,15 @@ app.post('/api/activities/:id/like', async (req, res) => {
   }
 });
 
+app.put('/api/activities/:id', verifyToken, checkPermission('manage_media'), async (req, res) => {
+  try {
+    const updated = await Activity.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json({ success: true, message: 'কাজের রেকর্ডটি সফলভাবে সম্পাদনা করা হয়েছে!', activity: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'রেকর্ড সম্পাদনা করতে ব্যর্থ হয়েছে।' });
+  }
+});
+
 app.delete('/api/activities/:id', verifyToken, checkPermission('manage_media'), async (req, res) => {
   try {
     await Activity.findByIdAndDelete(req.params.id);
@@ -338,6 +347,15 @@ app.post('/api/plans', verifyToken, checkPermission('manage_content'), async (re
   }
 });
 
+app.put('/api/plans/:id', verifyToken, checkPermission('manage_content'), async (req, res) => {
+  try {
+    const updated = await FuturePlan.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json({ success: true, message: 'পরিকল্পনাটি সফলভাবে সম্পাদনা করা হয়েছে!', plan: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'পরিকল্পনা সম্পাদনা করতে ব্যর্থ হয়েছে।' });
+  }
+});
+
 app.delete('/api/plans/:id', verifyToken, checkPermission('manage_content'), async (req, res) => {
   try {
     await FuturePlan.findByIdAndDelete(req.params.id);
@@ -365,6 +383,15 @@ app.post('/api/committee', verifyToken, checkPermission('manage_committee'), asy
     res.json({ success: true, message: 'নতুন কমিটি পদবী MongoDB-তে সেভ হয়েছে!', member: newMember });
   } catch (error) {
     res.status(500).json({ success: false, message: 'সদস্য যোগ করা যায়নি।' });
+  }
+});
+
+app.put('/api/committee/:id', verifyToken, checkPermission('manage_committee'), async (req, res) => {
+  try {
+    const updated = await CommitteeMember.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json({ success: true, message: 'কমিটির পদবী সফলভাবে সম্পাদনা করা হয়েছে!', member: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'সদস্যের তথ্য সম্পাদনা করতে ব্যর্থ হয়েছে।' });
   }
 });
 

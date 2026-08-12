@@ -1157,3 +1157,18 @@ input, select, textarea {
     grid-template-columns: 1fr;
   }
 }
+
+/* Donation Page 2-Column Split Grid System */
+.donation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.25rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .donation-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}

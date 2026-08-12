@@ -135,6 +135,28 @@ export const DataProvider = ({ children }) => {
     } catch (e) {}
   };
 
+  const updateActivity = async (id, updatedData) => {
+    try {
+      const res = await fetch(`/api/activities/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updatedData)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setActivities(prev => prev.map(a => ((a._id === id || a.id === id) ? data.activity : a)));
+        showToast('কাজের রেকর্ড সফলভাবে সম্পাদনা করা হয়েছে!');
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (e) {
+      showToast('সম্পাদনা করতে ব্যর্থ হয়েছে।', 'error');
+    }
+  };
+
   const deleteActivity = async (id) => {
     try {
       const res = await fetch(`/api/activities/${id}`, {
@@ -334,10 +356,12 @@ export const DataProvider = ({ children }) => {
     } catch (e) {}
   };
 
+  const [editingActivity, setEditingActivity] = useState(null);
+
   return (
     <DataContext.Provider value={{
-      isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, selectedActivity, toastMessage,
-      setSelectedActivity, showToast, updateSiteSettings, addActivity, likeActivity, deleteActivity, addFuturePlan, deleteFuturePlan,
+      isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, selectedActivity, editingActivity, toastMessage,
+      setSelectedActivity, setEditingActivity, showToast, updateSiteSettings, addActivity, updateActivity, likeActivity, deleteActivity, addFuturePlan, deleteFuturePlan,
       addCommitteeMember, deleteCommitteeMember, addBloodDonor, deleteBloodDonor,
       addBloodRequest, deleteBloodRequest, addDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers
     }}>

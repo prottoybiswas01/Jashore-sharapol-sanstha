@@ -7,7 +7,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
   const { 
     settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers,
     deleteActivity, deleteFuturePlan, deleteCommitteeMember, deleteBloodDonor, deleteBloodRequest,
-    deleteSubAdminUser, fetchAdminUsers, showToast
+    deleteSubAdminUser, fetchAdminUsers, showToast, setEditingActivity
   } = useData();
 
   const [username, setUsername] = useState('admin');
@@ -292,9 +292,14 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                         <td>{a.date}</td>
                         <td>{a.location}</td>
                         <td>
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteActivity(a._id || a.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                            <i class="fa-solid fa-trash"></i>
-                          </button>
+                          <div class="flex items-center gap-1">
+                            <button class="btn btn-outline btn-sm" onClick={() => { setEditingActivity(a); onOpenModal('edit-activity'); }} style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }} title="সম্পাদনা করুন">
+                              <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="btn btn-outline btn-sm" onClick={() => deleteActivity(a._id || a.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="মুছে ফেলুন">
+                              <i class="fa-solid fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

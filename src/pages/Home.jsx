@@ -1,5 +1,6 @@
 import React from 'react';
 import { useData } from '../context/DataContext';
+import JashoreMap from '../components/JashoreMap';
 
 export default function Home({ onNavigate, onOpenModal }) {
   const { settings, activities, bloodRequests, committee, donors, setSelectedActivity } = useData();
@@ -168,6 +169,11 @@ export default function Home({ onNavigate, onOpenModal }) {
             <button class="btn btn-primary" onClick={() => onNavigate('activities')}>সকল কার্যক্রম ও ফটো গ্যালারি <i class="fa-solid fa-images"></i></button>
           </div>
         )}
+      </div>
+
+      {/* Interactive Map Section */}
+      <div class="container">
+        <JashoreMap />
       </div>
     </section>
   );
