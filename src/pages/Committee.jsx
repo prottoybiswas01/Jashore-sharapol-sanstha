@@ -45,7 +45,7 @@ export default function Committee() {
           </div>
           <h2 className="section-title">কার্যনির্বাহী কমিটি ও পরিষদবর্গ</h2>
           <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem', fontSize: '0.95rem', maxWidth: '650px', margin: '0.5rem auto 0' }}>
-            যশোর শারাপোল সংস্থার মানবিক ও সামাজিক উন্নয়ন কার্যক্রম পরিচালনাকারী নির্বাহী কর্মকর্তাবৃন্দ
+            দুরন্ত (Duronto) সামাজিক কল্যাণ সংস্থার মানবিক ও উন্নয়ন কার্যক্রম পরিচালনাকারী নির্বাহী কর্মকর্তাবৃন্দ
           </p>
         </div>
 

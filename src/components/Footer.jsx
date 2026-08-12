@@ -9,15 +9,14 @@ export default function Footer({ onNavigate, onOpenModal }) {
       <div className="container footer-grid">
         <div>
           <div className="brand-logo" style={{ marginBottom: '1rem' }}>
-            <div className="logo-icon" style={{ width: '40px', height: '40px', fontSize: '1.2rem' }}>
-              <i className="fa-solid fa-hand-holding-heart"></i>
-            </div>
+            <img src="/logo.png" style={{ height: '40px', width: 'auto' }} alt="Duronto Logo" />
             <div className="brand-text">
-              <h1 style={{ color: 'white', fontSize: '1.2rem' }}>যশোর শারাপোল সংস্থা</h1>
+              <h1 style={{ color: 'white', fontSize: '1.3rem', fontWeight: 800 }}>দুরন্ত (Duronto)</h1>
+              <p style={{ color: 'var(--accent-gold)', fontSize: '0.75rem', margin: 0 }}>Help • Educate • Empower</p>
             </div>
           </div>
           <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '1rem', lineHeight: '1.6' }}>
-            যশোর জেলার মানুষের সেবায় নিবেদিত প্রাণ একটি অরাজনৈতিক জনকল্যাণমূলক সমাজসেবা সংস্থা।
+            মানবসেবা, রক্তের প্রয়োজন মেটানো, শিক্ষা সহায়তা ও সামাজিক উন্নয়নে নিবেদিত একটি অরাজনৈতিক সমাজকল্যাণমূলক প্রতিষ্ঠান।
           </p>
           <div className="flex gap-2" style={{ fontSize: '1.25rem', color: '#cbd5e1' }}>
             <a href="#" aria-label="Facebook"><i className="fa-brands fa-facebook"></i></a>
@@ -48,20 +47,20 @@ export default function Footer({ onNavigate, onOpenModal }) {
         <div>
           <h4 className="footer-title">যোগাযোগের ঠিকানা</h4>
           <p style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-            <i className="fa-solid fa-location-dot" style={{ color: 'var(--primary)' }}></i> {settings.contactAddress}
+            <i className="fa-solid fa-location-dot" style={{ color: 'var(--primary)' }}></i> {settings.contactAddress || 'চাঁচড়া মোড়, যশোর সদর, যশোর।'}
           </p>
           <p style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-            <i className="fa-solid fa-phone" style={{ color: 'var(--primary)' }}></i> হেল্পলাইন: {settings.contactPhone}
+            <i className="fa-solid fa-phone" style={{ color: 'var(--primary)' }}></i> হেল্পলাইন: {settings.contactPhone || '01711-123456'}
           </p>
           <p style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>
-            <i className="fa-solid fa-envelope" style={{ color: 'var(--primary)' }}></i> ইমেইল: {settings.contactEmail}
+            <i className="fa-solid fa-envelope" style={{ color: 'var(--primary)' }}></i> ইমেইল: jashoresharapolsanstha@gmail.com
           </p>
         </div>
       </div>
 
       <div className="footer-bottom">
         <div className="container">
-          &copy; ২০২৬ যশোর শারাপোল সংস্থা (Jashore Sharapol Sanstha). সর্বস্বত্ব সংরক্ষিত।
+          &copy; ২০২৬ দুরন্ত (Duronto). সর্বস্বত্ব সংরক্ষিত। | Help • Educate • Empower
         </div>
       </div>
     </footer>

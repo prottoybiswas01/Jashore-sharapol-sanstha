@@ -65,18 +65,18 @@ connectDB().then(async (res) => {
       const settingsCount = await SiteSettings.countDocuments();
       if (settingsCount === 0) {
         await SiteSettings.create({
-          topTickerNotice: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম | রক্তের জন্য যোগাযোগ করুন: 01711-123456',
-          heroBadgeText: 'যশোর জেলা কেন্দ্রিক সামাজিক সংগঠন',
-          heroTitleText: 'এক সাথে গড়ি উন্নত ও মানবিক যশোর',
-          heroDescription: 'যশোর শারাপোল সংস্থা একটি সেবামূলক সামাজিক সংগঠন। রক্তদান, শীতার্ত মানুষের পাশে দাঁড়ানো, শিক্ষা সহায়তা ও এলাকার সার্বিক উন্নয়নে আমরা নিবেদিত।',
+          topTickerNotice: 'দুরন্ত সংস্থায় আপনাকে স্বাগতম | Help • Educate • Empower | রক্তের জন্য যোগাযোগ করুন: 01711-123456',
+          heroBadgeText: 'অরাজনৈতিক সামাজিক উন্নয়ন সংগঠন',
+          heroTitleText: 'এক সাথে গড়ি উন্নত, শিক্ষিত ও মানবিক সমাজ',
+          heroDescription: 'দুরন্ত (Duronto) একটি সেবামূলক সামাজিক কল্যাণ সংগঠন। রক্তদান, শীতার্ত মানুষের পাশে দাঁড়ানো, সুবিধা বঞ্চিত শিশুদের শিক্ষা সহায়তা ও সমাজের সার্বিক উন্নয়নে আমরা নিবেদিত।',
           heroImageUrl: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80',
-          aboutTitle: 'যশোর শারাপোল সংস্থা সম্পর্কে',
-          aboutDescription: "'যশোর শারাপোল সংস্থা' যশোর জেলার একটি সেবামুখী ও অরাজনৈতিক সামাজিক কল্যাণমূলক সংস্থা। এলাকার মানুষের পাশে দাঁড়ানো, জরুরি রক্তদানে তাৎক্ষণিক সহায়তা প্রদান, সুবিধাবঞ্চিত শিশুদের শিক্ষা সহায়তা এবং পরিবেশ রক্ষায় উদ্যোগ নেওয়া আমাদের মূল অঙ্গীকার।",
+          aboutTitle: 'দুরন্ত (Duronto) সম্পর্কে',
+          aboutDescription: "'দুরন্ত (Duronto)' একটি সেবামুখী ও অরাজনৈতিক সামাজিক কল্যাণমূলক প্রতিষ্ঠান। এলাকার মানুষের পাশে দাঁড়ানো, জরুরি রক্তদানে তাৎক্ষণিক সহায়তা প্রদান, সুবিধার বঞ্চিত শিশুদের শিক্ষা সামগ্রী সহায়তা এবং দারিদ্র্য বিমোচনে উদ্যোগ নেওয়া আমাদের মূল অঙ্গীকার।",
           contactPhone: '01711-123456',
-          contactEmail: 'info@jashoresharapol.org',
+          contactEmail: 'jashoresharapolsanstha@gmail.com',
           contactAddress: 'কেন্দ্রীয় কার্যালয়: চাঁচড়া মোড়, যশোর সদর, যশোর।'
         });
-        console.log('✅ Initial SiteSettings created in MongoDB Atlas Cloud');
+        console.log('✅ Initial Duronto SiteSettings created in MongoDB Atlas Cloud');
       }
 
       // Clean up legacy admin account if present
@@ -105,7 +105,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     success: true,
     security: 'HIGH_SECURITY_VERIFIED',
-    message: 'Jashore Sharapol Sanstha MERN API Active.',
+    message: 'Duronto MERN API Active.',
     database: isConnectedToMongo ? 'MongoDB Atlas Cloud' : 'Connecting to MongoDB...'
   });
 });

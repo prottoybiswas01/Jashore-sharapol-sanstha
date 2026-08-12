@@ -48,35 +48,38 @@ function MainApp() {
     setActiveModal(null);
   };
 
-  // Full Screen Glassmorphic Loading Screen while MongoDB Data Fetches
+  // Custom Duronto GIF Loading Screen
   if (isLoading) {
     return (
       <div style={{
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
-        background: 'var(--bg-main)',
+        background: '#ffffff',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 9999
+        zIndex: 99999,
+        padding: '2rem'
       }}>
-        <div style={{
-          width: '60px',
-          height: '60px',
-          border: '5px solid var(--primary-light)',
-          borderTopColor: 'var(--primary)',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
-        <style>{`
-          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        `}</style>
-        <h3 style={{ marginTop: '1.5rem', color: 'var(--primary-dark)', fontSize: '1.2rem', fontWeight: 700 }}>
-          যশোর শারাপোল সংস্থা
-        </h3>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.3rem' }}>
-          মঙ্গোডিবি ক্লাউড ডেটাবেজ থেকে তথ্য লোড হচ্ছে...
+        <img 
+          src="/loading.gif" 
+          alt="Duronto Loading..." 
+          style={{
+            maxWidth: '300px',
+            maxHeight: '300px',
+            width: '100%',
+            height: 'auto',
+            objectFit: 'contain',
+            borderRadius: '20px',
+            boxShadow: '0 15px 35px rgba(234, 88, 12, 0.15)'
+          }}
+        />
+        <h2 style={{ marginTop: '1.75rem', color: 'var(--primary-dark)', fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+          দুরন্ত (Duronto)
+        </h2>
+        <p style={{ color: 'var(--primary)', fontSize: '0.95rem', marginTop: '0.3rem', fontWeight: 700 }}>
+          Help • Educate • Empower
         </p>
       </div>
     );

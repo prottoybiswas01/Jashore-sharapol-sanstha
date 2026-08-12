@@ -29,22 +29,27 @@ export default function Header({ currentSection, onNavigate, onOpenModal }) {
       <header className="navbar">
         <div className="container nav-container">
           <a className="brand-logo" onClick={() => handleNavClick('home')}>
-            <div className="logo-icon">
-              <i className="fa-solid fa-hand-holding-heart"></i>
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Duronto Logo" 
+              style={{ height: '48px', width: 'auto', objectFit: 'contain' }}
+            />
             <div className="brand-text">
-              <h1>যশোর শারাপোল সংস্থা</h1>
-              <p className="brand-subtext">মানবসেবা ও মানবিক উন্নয়নে নিবেদিত</p>
+              <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary-dark)', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                দুরন্ত <span style={{ fontSize: '0.75rem', padding: '0.1rem 0.45rem', background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: '4px', textTransform: 'uppercase' }}>Duronto</span>
+              </h1>
+              <p className="brand-subtext">Help • Educate • Empower</p>
             </div>
           </a>
 
           <ul className={`nav-menu ${isMobileMenuOpen ? 'open' : ''}`}>
             <li className="mobile-drawer-header">
               <div className="flex items-center gap-2">
-                <div className="logo-icon" style={{ width: '32px', height: '32px', fontSize: '1rem' }}>
-                  <i className="fa-solid fa-hand-holding-heart"></i>
+                <img src="/logo.png" style={{ height: '36px', width: 'auto' }} alt="Duronto" />
+                <div>
+                  <strong style={{ fontSize: '1rem', color: 'var(--primary-dark)', display: 'block' }}>দুরন্ত (Duronto)</strong>
+                  <small style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Help • Educate • Empower</small>
                 </div>
-                <strong style={{ fontSize: '1rem', color: 'var(--primary-dark)' }}>ন্যাভিগেশন মেনু</strong>
               </div>
               <button className="drawer-close-btn" onClick={() => setIsMobileMenuOpen(false)}>
                 <i className="fa-solid fa-xmark"></i>

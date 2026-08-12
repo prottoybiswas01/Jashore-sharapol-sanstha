@@ -1,15 +1,15 @@
 /* ==========================================================================
-   Jashore Sharapol Sanstha (যশোর শারাপোল সংস্থা) - CSS Design System
+   Duronto (দুরন্ত) - Premium CSS Design System
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Color Palette */
-  --primary: #059669;
-  --primary-hover: #047857;
-  --primary-light: #d1fae5;
-  --primary-dark: #064e3b;
+  /* Color Palette - Duronto Vibrant Brand Colors */
+  --primary: #ea580c;
+  --primary-hover: #c2410c;
+  --primary-light: #ffedd5;
+  --primary-dark: #9a3412;
   
   --secondary: #0f172a;
   --secondary-light: #1e293b;
@@ -20,7 +20,7 @@
   --blood-red-hover: #b91c1c;
   --blood-red-light: #fee2e2;
   
-  --bg-main: #f8fafc;
+  --bg-main: #fffcf9;
   --bg-card: #ffffff;
   --bg-glass: rgba(255, 255, 255, 0.95);
   
@@ -28,14 +28,14 @@
   --text-muted: #64748b;
   --text-white: #ffffff;
   
-  --border-color: #e2e8f0;
-  --border-focus: #059669;
+  --border-color: #f1f5f9;
+  --border-focus: #ea580c;
   
   /* Shadows & Glassmorphism */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 20px 35px -10px rgba(5, 150, 105, 0.15);
-  --shadow-glow: 0 0 25px rgba(5, 150, 105, 0.3);
+  --shadow-sm: 0 2px 4px rgba(234, 88, 12, 0.05);
+  --shadow-md: 0 10px 25px -5px rgba(234, 88, 12, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 20px 35px -10px rgba(234, 88, 12, 0.18);
+  --shadow-glow: 0 0 25px rgba(234, 88, 12, 0.35);
   --glass-border: 1px solid rgba(255, 255, 255, 0.3);
   --backdrop-blur: blur(12px);
 

@@ -68,7 +68,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
             <i className="fa-solid fa-lock"></i>
           </div>
           <h2 style={{ fontSize: '1.4rem', marginBottom: '0.4rem' }}>এডমিন প্যানেলে লগইন</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>যশোর শারাপোল সংস্থার অফিসিয়াল প্যানেল পরিচালনা করুন</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>দুরন্ত (Duronto) অফিশিয়াল প্যানেল পরিচালনা করুন</p>
           
           <form onSubmit={handleLoginSubmit}>
             <div className="form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>

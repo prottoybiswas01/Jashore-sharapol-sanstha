@@ -54,7 +54,7 @@ export default function Home({ onNavigate, onOpenModal }) {
 
           <div className="hero-card-preview">
             <div className="main-hero-img-card">
-              <img src={settings.heroImageUrl} alt="যশোর শারাপোল সংস্থা" />
+              <img src={settings.heroImageUrl} alt="দুরন্ত (Duronto)" />
               <div className="hero-floating-badge">
                 <div className="flex items-center gap-2">
                   <i className="fa-solid fa-award" style={{ color: 'var(--accent-gold)', fontSize: '1.4rem' }}></i>
