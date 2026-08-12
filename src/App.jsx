@@ -105,7 +105,7 @@ function MainApp() {
       <main id="main-app-content">
         {currentSection === 'home' && <Home onNavigate={handleNavigate} onOpenModal={handleOpenModal} />}
         {currentSection === 'about' && <About />}
-        {currentSection === 'activities' && <Activities />}
+        {currentSection === 'activities' && <Activities onOpenModal={handleOpenModal} />}
         {currentSection === 'committee' && <Committee />}
         {currentSection === 'blood' && <BloodService onOpenModal={handleOpenModal} />}
         {currentSection === 'donate' && <Donate />}

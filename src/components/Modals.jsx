@@ -5,8 +5,9 @@ import { compressImageFile } from '../utils/imageCompressor';
 
 export default function Modals({ activeModal, onClose }) {
   const { 
-    settings, updateSiteSettings, addActivity, addFuturePlan, 
-    addCommitteeMember, addBloodDonor, addBloodRequest, addDonation, createSubAdminUser 
+    settings, updateSiteSettings, addActivity, likeActivity, addFuturePlan, 
+    addCommitteeMember, addBloodDonor, addBloodRequest, addDonation, createSubAdminUser,
+    selectedActivity, setSelectedActivity 
   } = useData();
 
   const { register } = useAuth();
@@ -22,6 +23,18 @@ export default function Modals({ activeModal, onClose }) {
         alert('ছবি প্রসেসিং করতে সমস্যা হয়েছে।');
       }
     }
+  };
+
+  // Helper to format YouTube Embed URL
+  const getEmbedVideoUrl = (url) => {
+    if (!url) return null;
+    if (url.includes('youtube.com/watch?v=')) {
+      return url.replace('watch?v=', 'embed/');
+    }
+    if (url.includes('youtu.be/')) {
+      return url.replace('youtu.be/', 'youtube.com/embed/');
+    }
+    return url;
   };
 
   // 1. Dynamic Site Settings Form
@@ -115,12 +128,13 @@ export default function Modals({ activeModal, onClose }) {
     setMemName(''); setMemRole(''); setMemPhone(''); setMemImg('');
   };
 
-  // 6. Admin Add Activity Form (With Compressed Photo Upload)
+  // 6. Admin Add Activity Form (With Compressed Photo & Video Support)
   const [actTitle, setActTitle] = useState('');
   const [actCat, setActCat] = useState('স্বাস্থ্য সেবা');
   const [actDate, setActDate] = useState('');
   const [actLoc, setActLoc] = useState('যশোর');
   const [actImg, setActImg] = useState('');
+  const [actVideo, setActVideo] = useState('');
   const [actDesc, setActDesc] = useState('');
 
   const handleActSubmit = (e) => {
@@ -131,10 +145,11 @@ export default function Modals({ activeModal, onClose }) {
       date: actDate, 
       location: actLoc, 
       image: actImg || 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80', 
+      videoUrl: actVideo,
       description: actDesc 
     });
     onClose();
-    setActTitle(''); setActDate(''); setActDesc(''); setActImg('');
+    setActTitle(''); setActDate(''); setActDesc(''); setActImg(''); setActVideo('');
   };
 
   // 7. Admin Add Future Plan Form
@@ -180,6 +195,58 @@ export default function Modals({ activeModal, onClose }) {
 
   return (
     <>
+      {/* Activity Details Popup Modal */}
+      {activeModal === 'view-activity' && selectedActivity && (
+        <div class="modal-overlay open">
+          <div class="modal-card" style={{ maxWidth: '750px' }}>
+            <div class="modal-header">
+              <h3 class="modal-title">{selectedActivity.title}</h3>
+              <span class="modal-close" onClick={() => { setSelectedActivity(null); onClose(); }}>&times;</span>
+            </div>
+            <div class="modal-body">
+              {/* Image Preview */}
+              {selectedActivity.image && (
+                <img 
+                  src={selectedActivity.image} 
+                  alt={selectedActivity.title} 
+                  style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }} 
+                />
+              )}
+
+              {/* YouTube Video Player Embed (if provided) */}
+              {selectedActivity.videoUrl && getEmbedVideoUrl(selectedActivity.videoUrl) && (
+                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
+                  <iframe 
+                    src={getEmbedVideoUrl(selectedActivity.videoUrl)} 
+                    title="Activity Video"
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              )}
+
+              <div class="flex items-center gap-3" style={{ marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                <span><i class="fa-regular fa-calendar-days"></i> {selectedActivity.date}</span>
+                <span>&bull;</span>
+                <span><i class="fa-solid fa-location-dot"></i> {selectedActivity.location}</span>
+                <span class="badge badge-primary">{selectedActivity.category}</span>
+              </div>
+
+              <p style={{ fontSize: '1.05rem', color: 'var(--text-main)', lineHeight: '1.8', marginBottom: '1.5rem' }}>
+                {selectedActivity.description}
+              </p>
+
+              <div class="flex justify-between items-center" style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+                <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{selectedActivity.impact}</span>
+                <button class="btn btn-blood btn-sm" onClick={() => likeActivity(selectedActivity._id || selectedActivity.id)}>
+                  <i class="fa-solid fa-heart"></i> লাইক দিন ({selectedActivity.likes || 0})
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Public Member & Donor Registration Modal */}
       {activeModal === 'public-register' && (
         <div class="modal-overlay open">
@@ -368,7 +435,7 @@ export default function Modals({ activeModal, onClose }) {
         </div>
       )}
 
-      {/* Admin Add Activity Modal with Auto Image Compressor */}
+      {/* Admin Add Activity Modal with Compressed Photo & YouTube Video Input */}
       {activeModal === 'add-activity' && (
         <div class="modal-overlay open">
           <div class="modal-card">
@@ -391,7 +458,7 @@ export default function Modals({ activeModal, onClose }) {
                   <input type="date" class="form-control" value={actDate} onChange={e => setActDate(e.target.value)} required />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">কাজের ছবি আপলোড করুন (Auto Compressed to WebP/JPEG) *</label>
+                  <label class="form-label">কাজের ছবি আপলোড (Auto Compressed) *</label>
                   <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setActImg)} required />
                   {actImg && (
                     <div style={{ marginTop: '0.5rem' }}>
@@ -399,6 +466,10 @@ export default function Modals({ activeModal, onClose }) {
                       <img src={actImg} style={{ width: '100px', height: '60px', objectFit: 'cover', display: 'block', borderRadius: '4px', marginTop: '0.2rem' }} alt="Preview" />
                     </div>
                   )}
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">ইউটিউব ভিডিও লিংক (Optional Video URL)</label>
+                  <input type="url" class="form-control" value={actVideo} onChange={e => setActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1.25rem' }}>
                   <label class="form-label">বিবরণ</label>

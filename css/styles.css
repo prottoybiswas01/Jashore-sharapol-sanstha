@@ -271,7 +271,7 @@ input, select, textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 75px;
+  height: 70px;
 }
 
 .brand-logo {
@@ -284,21 +284,21 @@ input, select, textarea {
 }
 
 .logo-icon {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--accent-gold) 100%);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 800;
   box-shadow: var(--shadow-sm);
 }
 
 .brand-text h1 {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--primary-dark);
   line-height: 1.1;
@@ -310,7 +310,7 @@ input, select, textarea {
 }
 
 .brand-text p {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -318,22 +318,22 @@ input, select, textarea {
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   list-style: none;
 }
 
 .nav-link {
   font-weight: 500;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--text-main);
-  padding: 0.45rem 0.7rem;
+  padding: 0.4rem 0.65rem;
   border-radius: var(--radius-sm);
   transition: var(--transition-fast);
   cursor: pointer;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
 }
 
 .nav-link:hover, .nav-link.active {
@@ -352,11 +352,11 @@ input, select, textarea {
   .mobile-toggle { display: block; }
   .nav-menu {
     position: fixed;
-    top: 75px;
+    top: 70px;
     left: -100%;
     width: 80%;
     max-width: 300px;
-    height: calc(100vh - 75px);
+    height: calc(100vh - 70px);
     background: var(--bg-card);
     flex-direction: column;
     align-items: flex-start;
@@ -372,7 +372,7 @@ input, select, textarea {
 /* Hero Section */
 .hero {
   position: relative;
-  padding: 4.5rem 0 3.5rem;
+  padding: 4rem 0 3.5rem;
   background: radial-gradient(circle at top right, rgba(5, 150, 105, 0.12), transparent 40%),
               radial-gradient(circle at bottom left, rgba(220, 38, 38, 0.08), transparent 40%);
   overflow: hidden;
@@ -513,7 +513,7 @@ input, select, textarea {
   color: var(--text-main);
 }
 
-/* Activities Cards */
+/* Activity Cards (Full Responsive Aspect Ratio & Click Hover) */
 .activity-card {
   background: var(--bg-card);
   border-radius: var(--radius-md);
@@ -523,17 +523,33 @@ input, select, textarea {
   transition: var(--transition-normal);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .activity-card:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.activity-img-wrap {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: var(--bg-main);
+  position: relative;
 }
 
 .activity-img {
-  height: 200px;
   width: 100%;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
+  transition: var(--transition-normal);
+}
+
+.activity-card:hover .activity-img {
+  transform: scale(1.05);
 }
 
 .activity-body {
@@ -564,6 +580,10 @@ input, select, textarea {
   color: var(--text-muted);
   margin-bottom: 1rem;
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Committee Cards */
@@ -691,11 +711,12 @@ input, select, textarea {
   justify-content: center;
 }
 
-/* Admin Dashboard Styles */
+/* Admin Dashboard Styles (Fixed Padding & Responsive Sidebar) */
 .admin-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: calc(100vh - 75px);
+  min-height: calc(100vh - 70px);
+  margin-top: 0;
 }
 
 @media (max-width: 992px) {
@@ -785,7 +806,7 @@ input, select, textarea {
 .modal-card {
   background: var(--bg-card);
   width: 100%;
-  max-width: 550px;
+  max-width: 650px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   overflow: hidden;

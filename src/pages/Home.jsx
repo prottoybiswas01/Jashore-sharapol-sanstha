@@ -2,7 +2,12 @@ import React from 'react';
 import { useData } from '../context/DataContext';
 
 export default function Home({ onNavigate, onOpenModal }) {
-  const { settings, activities, bloodRequests, committee, donors } = useData();
+  const { settings, activities, bloodRequests, committee, donors, setSelectedActivity } = useData();
+
+  const handleActivityClick = (act) => {
+    setSelectedActivity(act);
+    onOpenModal('view-activity');
+  };
 
   return (
     <section class="page-section">
@@ -100,7 +105,7 @@ export default function Home({ onNavigate, onOpenModal }) {
           </div>
         ) : (
           bloodRequests.slice(0, 2).map(r => (
-            <div class="request-card" key={r.id}>
+            <div class="request-card" key={r.id || r._id}>
               <div class="flex items-center gap-3">
                 <div class="blood-badge-large">{r.bloodGroup}</div>
                 <div>
@@ -121,7 +126,7 @@ export default function Home({ onNavigate, onOpenModal }) {
         )}
       </div>
 
-      {/* Recent Activities Highlights */}
+      {/* Recent Activities Highlights (Click Card Opens Full Details & Video Popup) */}
       <div class="container" style={{ padding: '2rem 1.5rem 4rem' }}>
         <div class="section-header">
           <div class="section-subtitle">আমাদের কাজ</div>
@@ -130,22 +135,26 @@ export default function Home({ onNavigate, onOpenModal }) {
         {activities.length === 0 ? (
           <div style={{ background: 'var(--bg-card)', padding: '3rem 2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
             <i class="fa-solid fa-folder-open" style={{ fontSize: '2.5rem', color: 'var(--primary)', marginBottom: '1rem', display: 'block' }}></i>
-            বর্তমানে কোনো সামাজিক কাজের পোস্ট নেই। এডমিন প্যানেল থেকে ছবি সরাসরি আপলোড করে প্রথম পোস্ট প্রকাশ করুন।
+            বর্তমানে কোনো সামাজিক কাজের পোস্ট নেই। এডমিন প্যানেল থেকে ছবি ও ভিডিও লিংক সরাসরি আপলোড করে প্রথম পোস্ট প্রকাশ করুন।
           </div>
         ) : (
           <div class="grid grid-cols-3 gap-3">
             {activities.slice(0, 3).map(act => (
-              <div class="activity-card" key={act.id}>
-                <img src={act.image} alt={act.title} class="activity-img" />
+              <div class="activity-card" key={act.id || act._id} onClick={() => handleActivityClick(act)}>
+                <div class="activity-img-wrap">
+                  <img src={act.image} alt={act.title} class="activity-img" />
+                </div>
                 <div class="activity-body">
                   <div class="activity-date">
                     <i class="fa-regular fa-calendar-days"></i> {act.date} &bull; <i class="fa-solid fa-location-dot"></i> {act.location}
                   </div>
                   <h3 class="activity-title">{act.title}</h3>
                   <p class="activity-desc">{act.description}</p>
-                  <div class="flex justify-between items-center" style={{ marginTop: 'auto', paddingTop: '0.5rem', borderTop: '1px dashed var(--border-color)' }}>
+                  <div class="flex justify-between items-center" style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '1px dashed var(--border-color)' }}>
                     <span class="badge badge-primary">{act.category}</span>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary-dark)' }}>{act.impact}</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary-dark)' }}>
+                      <i class="fa-solid fa-heart" style={{ color: 'var(--blood-red)' }}></i> {act.likes || 0}
+                    </span>
                   </div>
                 </div>
               </div>

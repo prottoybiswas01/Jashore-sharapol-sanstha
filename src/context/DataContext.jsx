@@ -27,6 +27,7 @@ export const DataProvider = ({ children }) => {
   const [bloodRequests, setBloodRequests] = useState([]);
   const [donations, setDonations] = useState([]);
   const [subAdminUsers, setSubAdminUsers] = useState([]);
+  const [selectedActivity, setSelectedActivity] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
   // Fetch All Primary Data Directly from MongoDB Database
@@ -119,6 +120,19 @@ export const DataProvider = ({ children }) => {
     } catch (e) {
       showToast('কাজের রেকর্ড সেভ করতে ব্যর্থ হয়েছে।', 'error');
     }
+  };
+
+  const likeActivity = async (id) => {
+    try {
+      const res = await fetch(`/api/activities/${id}/like`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        setActivities(prev => prev.map(a => (a._id === id || a.id === id) ? { ...a, likes: data.likes } : a));
+        if (selectedActivity && (selectedActivity._id === id || selectedActivity.id === id)) {
+          setSelectedActivity(prev => ({ ...prev, likes: data.likes }));
+        }
+      }
+    } catch (e) {}
   };
 
   const deleteActivity = async (id) => {
@@ -322,8 +336,8 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider value={{
-      isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, toastMessage,
-      showToast, updateSiteSettings, addActivity, deleteActivity, addFuturePlan, deleteFuturePlan,
+      isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, selectedActivity, toastMessage,
+      setSelectedActivity, showToast, updateSiteSettings, addActivity, likeActivity, deleteActivity, addFuturePlan, deleteFuturePlan,
       addCommitteeMember, deleteCommitteeMember, addBloodDonor, deleteBloodDonor,
       addBloodRequest, deleteBloodRequest, addDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers
     }}>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useData } from '../context/DataContext';
+import JashoreMap from '../components/JashoreMap';
 
 export default function About() {
   const { settings } = useData();
@@ -12,7 +13,7 @@ export default function About() {
           <h2 class="section-title">{settings.aboutTitle}</h2>
         </div>
 
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '850px', margin: '0 auto 3rem' }}>
           <h3 style={{ fontSize: '1.75rem', marginBottom: '1rem', color: 'var(--primary-dark)', textAlign: 'center' }}>আমাদের মূল উদ্দেশ্য ও লক্ষ্য</h3>
           <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: '2rem', textAlign: 'center', lineHeight: '1.8' }}>
             {settings.aboutDescription}
@@ -30,6 +31,9 @@ export default function About() {
             </div>
           </div>
         </div>
+
+        {/* Interactive Bangladesh Map Highlighting Jashore District */}
+        <JashoreMap />
       </div>
     </section>
   );

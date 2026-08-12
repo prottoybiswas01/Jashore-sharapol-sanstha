@@ -33,7 +33,6 @@ connectDB().then(async (res) => {
   isConnectedToMongo = res;
   if (res) {
     try {
-      // Ensure initial SiteSettings document exists in MongoDB Atlas if empty
       const settingsCount = await SiteSettings.countDocuments();
       if (settingsCount === 0) {
         await SiteSettings.create({
@@ -51,7 +50,6 @@ connectDB().then(async (res) => {
         console.log('✅ Initial SiteSettings created in MongoDB Atlas Cloud');
       }
 
-      // Ensure Super Admin exists in MongoDB Atlas if empty
       const userCount = await User.countDocuments();
       if (userCount === 0) {
         await User.create({
@@ -84,7 +82,6 @@ app.get('/api/health', (req, res) => {
 // Public & Admin Auth Routes
 // ----------------------------------------------------
 
-// Public User Registration (Auto Register as Blood Donor / Member)
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { name, username, password, email, phone, bloodGroup, upazila } = req.body;
@@ -107,7 +104,6 @@ app.post('/api/auth/register', async (req, res) => {
       permissions: []
     });
 
-    // Auto Register in Blood Donor Directory if blood group provided
     if (bloodGroup && upazila) {
       await BloodDonor.create({
         name,
@@ -144,7 +140,6 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// Admin Login Route
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -178,7 +173,6 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Get All Users (Super Admin Only)
 app.get('/api/users', verifyToken, checkPermission('manage_roles'), async (req, res) => {
   try {
     const users = await User.find().select('-password');
@@ -188,7 +182,6 @@ app.get('/api/users', verifyToken, checkPermission('manage_roles'), async (req, 
   }
 });
 
-// Update User Role & Permissions (Super Admin Promotion)
 app.put('/api/users/:id/role', verifyToken, checkPermission('manage_roles'), async (req, res) => {
   try {
     const { role } = req.body;
@@ -210,7 +203,6 @@ app.put('/api/users/:id/role', verifyToken, checkPermission('manage_roles'), asy
   }
 });
 
-// Create Sub-Admin User (RBAC)
 app.post('/api/users', verifyToken, checkPermission('manage_roles'), async (req, res) => {
   try {
     const { name, username, password, email, role } = req.body;
@@ -243,11 +235,10 @@ app.post('/api/users', verifyToken, checkPermission('manage_roles'), async (req,
   }
 });
 
-// Delete Sub-Admin Account
 app.delete('/api/users/:id', verifyToken, checkPermission('manage_roles'), async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: 'এডমিন অ্যাকাউন্ট MongoDB থেকে মুছে ফেলা হয়েছে।' });
+    res.json({ success: true, message: 'এডমিন অ্যাকাউন্ট MongoDB থেকে স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'মুছে ফেলতে ব্যর্থ হয়েছে।' });
   }
@@ -288,7 +279,7 @@ app.put('/api/settings', verifyToken, checkPermission('manage_site'), async (req
 });
 
 // ----------------------------------------------------
-// Activities Routes
+// Activities Routes (With YouTube Video & Likes)
 // ----------------------------------------------------
 app.get('/api/activities', async (req, res) => {
   try {
@@ -308,10 +299,19 @@ app.post('/api/activities', verifyToken, checkPermission('manage_media'), async 
   }
 });
 
+app.post('/api/activities/:id/like', async (req, res) => {
+  try {
+    const act = await Activity.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, { new: true });
+    res.json({ success: true, likes: act ? act.likes : 0 });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'লাইক যোগ করা যায়নি।' });
+  }
+});
+
 app.delete('/api/activities/:id', verifyToken, checkPermission('manage_media'), async (req, res) => {
   try {
     await Activity.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: 'রেকর্ডটি MongoDB থেকে মুছে ফেলা হয়েছে।' });
+    res.json({ success: true, message: 'রেকর্ডটি MongoDB থেকে স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'রেকর্ডটি মোছা সম্ভব হয়নি।' });
   }
@@ -341,7 +341,7 @@ app.post('/api/plans', verifyToken, checkPermission('manage_content'), async (re
 app.delete('/api/plans/:id', verifyToken, checkPermission('manage_content'), async (req, res) => {
   try {
     await FuturePlan.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: 'পরিকল্পনাটি MongoDB থেকে মুছে ফেলা হয়েছে।' });
+    res.json({ success: true, message: 'পরিকল্পনাটি MongoDB থেকে স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'মুছে ফেলা সম্ভব হয়নি।' });
   }
@@ -371,7 +371,7 @@ app.post('/api/committee', verifyToken, checkPermission('manage_committee'), asy
 app.delete('/api/committee/:id', verifyToken, checkPermission('manage_committee'), async (req, res) => {
   try {
     await CommitteeMember.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: 'সদস্যের তথ্য MongoDB থেকে মুছে ফেলা হয়েছে।' });
+    res.json({ success: true, message: 'সদস্যের তথ্য MongoDB থেকে স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'তথ্য মোছা সম্ভব হয়নি।' });
   }
@@ -401,7 +401,7 @@ app.post('/api/blood/donors', async (req, res) => {
 app.delete('/api/blood/donors/:id', verifyToken, checkPermission('manage_blood'), async (req, res) => {
   try {
     await BloodDonor.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: 'রক্তদাতার নাম MongoDB থেকে মুছে ফেলা হয়েছে।' });
+    res.json({ success: true, message: 'রক্তদাতার নাম MongoDB থেকে স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'সরানো সম্ভব হয়নি।' });
   }
@@ -458,7 +458,7 @@ app.post('/api/donations', async (req, res) => {
 app.delete('/api/donations/:id', verifyToken, checkPermission('manage_all'), async (req, res) => {
   try {
     await Donation.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: 'অনুদানের হিসাব মুছে ফেলা হয়েছে।' });
+    res.json({ success: true, message: 'অনুদানের হিসাব স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'মুছে ফেলা সম্ভব হয়নি।' });
   }
