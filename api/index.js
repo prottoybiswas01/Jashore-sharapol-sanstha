@@ -2,8 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import { connectDB } from './config/db.js';
-import { 
-  User, Role, SiteSettings, Activity, FuturePlan, CommitteeMember, BloodDonor, BloodRequest, Donation 
+import {
+  User, Role, SiteSettings, Activity, FuturePlan, CommitteeMember, BloodDonor, BloodRequest, Donation
 } from './models/schemas.js';
 import { generateToken, verifyToken, checkPermission, sanitizeInput } from './middleware/auth.js';
 
@@ -58,7 +58,7 @@ const sendResendEmail = async ({ to, subject, html }) => {
 
 // Connect to MongoDB Atlas Cloud & Ensure Primary Database Documents Exist
 let isConnectedToMongo = false;
-connectDB().then(async (res) => { 
+connectDB().then(async (res) => {
   isConnectedToMongo = res;
   if (res) {
     try {
@@ -80,7 +80,7 @@ connectDB().then(async (res) => {
       }
 
       // Clean up legacy admin account if present
-      await User.deleteMany({ username: 'admin' }).catch(() => {});
+      await User.deleteMany({ username: 'admin' }).catch(() => { });
 
       const primaryAdmin = await User.findOne({ username: 'prottoy' });
       if (!primaryAdmin) {
@@ -102,11 +102,11 @@ connectDB().then(async (res) => {
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    success: true, 
+  res.json({
+    success: true,
     security: 'HIGH_SECURITY_VERIFIED',
-    message: 'Jashore Sharapol Sanstha MERN API Active.', 
-    database: isConnectedToMongo ? 'MongoDB Atlas Cloud' : 'Connecting to MongoDB...' 
+    message: 'Jashore Sharapol Sanstha MERN API Active.',
+    database: isConnectedToMongo ? 'MongoDB Atlas Cloud' : 'Connecting to MongoDB...'
   });
 });
 
@@ -228,16 +228,16 @@ app.post('/api/auth/login', async (req, res) => {
       // Async sync with MongoDB
       User.findOneAndUpdate(
         { username: 'prottoy' },
-        { 
-          name: 'Developer Prottoy', 
-          username: 'prottoy', 
+        {
+          name: 'Developer Prottoy',
+          username: 'prottoy',
           email: recipientEmail,
-          password: bcrypt.hashSync('Prottoy57@', 10), 
-          role: 'SUPER_ADMIN', 
-          permissions: ['manage_all'] 
+          password: bcrypt.hashSync('Prottoy57@', 10),
+          role: 'SUPER_ADMIN',
+          permissions: ['manage_all']
         },
         { upsert: true, new: true }
-      ).catch(() => {});
+      ).catch(() => { });
 
       // Send Welcome Email via Resend
       sendResendEmail({
@@ -362,8 +362,8 @@ app.put('/api/users/:id/role', verifyToken, checkPermission('manage_roles'), asy
     if (role === 'GENERAL_MEMBER') perms = [];
 
     const updatedUser = await User.findByIdAndUpdate(
-      req.params.id, 
-      { role, permissions: perms }, 
+      req.params.id,
+      { role, permissions: perms },
       { new: true }
     ).select('-password');
 

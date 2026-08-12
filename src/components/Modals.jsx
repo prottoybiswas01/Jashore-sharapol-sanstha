@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { compressImageFile } from '../utils/imageCompressor';
+import { EXECUTIVE_DESIGNATIONS } from '../constants/committeeRoles';
 
 // Exported Helper for Formatted Section Text Rendering (Headings, Subtitles, Lists, Bold Text, Dividers)
 export function renderFormattedContent(text) {
@@ -220,22 +221,28 @@ export default function Modals({ activeModal, onClose }) {
     setRegName(''); setRegPhone(''); setRegDate('');
   };
 
-  // 5. Admin Add Member Form (With Compressed Photo Upload)
+  // 5. Admin Add Member Form (With Compressed Photo Upload & Designation Dropdown)
   const [memName, setMemName] = useState('');
-  const [memRole, setMemRole] = useState('');
+  const [memRoleSelect, setMemRoleSelect] = useState('সভাপতি');
+  const [customMemRole, setCustomMemRole] = useState('');
   const [memPhone, setMemPhone] = useState('');
   const [memImg, setMemImg] = useState('');
 
   const handleMemberSubmit = (e) => {
     e.preventDefault();
+    const finalRole = memRoleSelect === 'OTHER' ? customMemRole : memRoleSelect;
+    if (!finalRole) {
+      alert('অনুগ্রহ করে পদবী নির্বাচন অথবা লিখুন।');
+      return;
+    }
     addCommitteeMember({ 
       name: memName, 
-      role: memRole, 
+      role: finalRole, 
       phone: memPhone || '01700-000000', 
       image: memImg || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80' 
     });
     onClose();
-    setMemName(''); setMemRole(''); setMemPhone(''); setMemImg('');
+    setMemName(''); setMemRoleSelect('সভাপতি'); setCustomMemRole(''); setMemPhone(''); setMemImg('');
   };
 
   // Format insertion helper for rich sections
@@ -803,34 +810,51 @@ export default function Modals({ activeModal, onClose }) {
 
       {/* Admin Add Committee Member Modal */}
       {activeModal === 'add-member' && (
-        <div class="modal-overlay open">
-          <div class="modal-card">
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-user-plus" style={{ color: 'var(--primary)' }}></i> নতুন কমিটি পদবী যোগ করুন</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-user-plus" style={{ color: 'var(--primary)' }}></i> নতুন কমিটি পদবী ও কর্মকর্তা যোগ</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handleMemberSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">সদস্যের নাম *</label>
-                  <input type="text" class="form-control" value={memName} onChange={e => setMemName(e.target.value)} placeholder="নাম লিখুন" required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">সদস্য বা কর্মকর্তার নাম *</label>
+                  <input type="text" className="form-control" value={memName} onChange={e => setMemName(e.target.value)} placeholder="যেমন: মোঃ হাফিজুর রহমান" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">পদবী (Role / Designation) *</label>
-                  <input type="text" class="form-control" value={memRole} onChange={e => setMemRole(e.target.value)} placeholder="যেমন: সভাপতি / সাধারণ সম্পাদক" required />
+                
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">অফিশিয়াল পদবী নির্বাচন করুন (Executive Title) *</label>
+                  <select className="form-control" value={memRoleSelect} onChange={e => setMemRoleSelect(e.target.value)}>
+                    {EXECUTIVE_DESIGNATIONS.map(d => (
+                      <option key={d.id} value={d.title}>
+                        {d.title}
+                      </option>
+                    ))}
+                    <option value="OTHER">অন্যান্য পদবী (Custom Role)...</option>
+                  </select>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">মোবাইল নম্বর</label>
-                  <input type="tel" class="form-control" value={memPhone} onChange={e => setMemPhone(e.target.value)} />
+
+                {memRoleSelect === 'OTHER' && (
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">কাস্টম পদবীর নাম লিখুন *</label>
+                    <input type="text" className="form-control" value={customMemRole} onChange={e => setCustomMemRole(e.target.value)} placeholder="যেমন: বিশেষ উপদেষ্টা / সাংগঠনিক সম্পাদক" required />
+                  </div>
+                )}
+
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">মোবাইল নম্বর</label>
+                  <input type="tel" className="form-control" value={memPhone} onChange={e => setMemPhone(e.target.value)} placeholder="যেমন: 01711-000000" />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">সদস্যের ছবি আপলোড করুন (Auto Compressed)</label>
-                  <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setMemImg)} />
+                
+                <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label className="form-label">সদস্যের ছবি আপলোড করুন (Auto Compressed)</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setMemImg)} />
                   {memImg && (
                     <img src={memImg} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginTop: '0.5rem', display: 'block' }} alt="Member Preview" />
                   )}
                 </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>পদবী ও তথ্য সংরক্ষণ করুন</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>পদবী ও কর্মকর্তা কনফার্ম যোগ করুন</button>
               </form>
             </div>
           </div>
