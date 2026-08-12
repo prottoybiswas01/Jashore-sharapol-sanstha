@@ -60,29 +60,29 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
 
   if (!user) {
     return (
-      <div style={{ padding: '5rem 1rem', maxWidth: '480px', margin: '0 auto' }}>
-        <div style={{ background: 'var(--bg-card)', padding: '2.5rem', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
-          <div style={{ width: '70px', height: '70px', background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '2rem' }}>
-            <i class="fa-solid fa-lock"></i>
+      <div style={{ padding: '3rem 1rem', maxWidth: '480px', margin: '0 auto' }}>
+        <div style={{ background: 'var(--bg-card)', padding: '2rem 1.5rem', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
+          <div style={{ width: '60px', height: '60px', background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem', fontSize: '1.75rem' }}>
+            <i className="fa-solid fa-lock"></i>
           </div>
-          <h2 style={{ fontSize: '1.6rem', marginBottom: '0.5rem' }}>এডমিন প্যানেলে লগইন</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>যশোর শারাপোল সংস্থার অফিসিয়াল প্যানেল পরিচালনা করুন</p>
+          <h2 style={{ fontSize: '1.4rem', marginBottom: '0.4rem' }}>এডমিন প্যানেলে লগইন</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>যশোর শারাপোল সংস্থার অফিসিয়াল প্যানেল পরিচালনা করুন</p>
           
           <form onSubmit={handleLoginSubmit}>
-            <div class="form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>
-              <label class="form-label">ব্যবহারকারী নাম (Username) *</label>
-              <input type="text" class="form-control" value={username} onChange={e => setUsername(e.target.value)} required />
+            <div className="form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>
+              <label className="form-label">ব্যবহারকারী নাম (Username) *</label>
+              <input type="text" className="form-control" value={username} onChange={e => setUsername(e.target.value)} required />
             </div>
-            <div class="form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>
-              <label class="form-label">ইমেইল ঠিকানা (Email Address) *</label>
-              <input type="email" class="form-control" value={email} onChange={e => setEmail(e.target.value)} placeholder="jashoresharapolsanstha@gmail.com" required />
+            <div className="form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>
+              <label className="form-label">ইমেইল ঠিকানা (Email Address) *</label>
+              <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} placeholder="jashoresharapolsanstha@gmail.com" required />
             </div>
-            <div class="form-group" style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
-              <label class="form-label">পাসওয়ার্ড (Password) *</label>
-              <input type="password" class="form-control" value={password} onChange={e => setPassword(e.target.value)} required />
+            <div className="form-group" style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+              <label className="form-label">পাসওয়ার্ড (Password) *</label>
+              <input type="password" className="form-control" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
-            <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>
-              <i class="fa-solid fa-right-to-bracket"></i> প্রবেশ করুন
+            <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+              <i className="fa-solid fa-right-to-bracket"></i> প্রবেশ করুন
             </button>
           </form>
         </div>
@@ -95,108 +95,108 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
   return (
     <div>
       {/* Mobile Admin Bar */}
-      <div class="admin-mobile-bar">
-        <button class="btn btn-outline btn-sm" onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}>
-          <i class="fa-solid fa-bars"></i> এডমিন নেভিগেশন
+      <div className="admin-mobile-bar">
+        <button className="btn btn-outline btn-sm" onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}>
+          <i className="fa-solid fa-bars"></i> {isMobileSidebarOpen ? 'মেনু বন্ধ করুন' : 'এডমিন নেভিগেশন'}
         </button>
         {onNavigate && (
-          <button class="btn btn-outline btn-sm" onClick={() => onNavigate('home')}>
-            <i class="fa-solid fa-globe"></i> ওয়েবসাইটে ফেরত যান
+          <button className="btn btn-outline btn-sm" onClick={() => onNavigate('home')}>
+            <i className="fa-solid fa-globe"></i> ওয়েবসাইটে ফেরত যান
           </button>
         )}
       </div>
 
-      <div class="admin-layout">
+      <div className="admin-layout">
         {/* Sidebar Nav */}
-        <aside class={`admin-sidebar ${isMobileSidebarOpen ? 'mobile-open' : ''}`}>
+        <aside className={`admin-sidebar ${isMobileSidebarOpen ? 'mobile-open' : ''}`}>
           <div style={{ paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1rem' }}>
             <h3 style={{ color: 'white', fontSize: '1.15rem', marginBottom: '0.2rem' }}>
-              <i class="fa-solid fa-shield-halved" style={{ color: 'var(--primary)' }}></i> এডমিন প্যানেল
+              <i className="fa-solid fa-shield-halved" style={{ color: 'var(--primary)' }}></i> এডমিন প্যানেল
             </h3>
             <small style={{ color: '#94a3b8', display: 'block' }}>
               {user.name} &bull; <strong style={{ color: 'var(--primary-light)' }}>{user.role}</strong>
             </small>
           </div>
 
-          <div class={`admin-menu-item ${activeAdminTab === 'overview' ? 'active' : ''}`} onClick={() => handleTabClick('overview')}>
-            <i class="fa-solid fa-chart-pie"></i> ওভারভিউ
+          <div className={`admin-menu-item ${activeAdminTab === 'overview' ? 'active' : ''}`} onClick={() => handleTabClick('overview')}>
+            <i className="fa-solid fa-chart-pie"></i> ওভারভিউ
           </div>
 
           {hasPermission('manage_site') && (
-            <div class={`admin-menu-item ${activeAdminTab === 'site-cms' ? 'active' : ''}`} onClick={() => handleTabClick('site-cms')}>
-              <i class="fa-solid fa-pen-to-square"></i> ওয়েবসাইট কনটেন্ট এডিটর
+            <div className={`admin-menu-item ${activeAdminTab === 'site-cms' ? 'active' : ''}`} onClick={() => handleTabClick('site-cms')}>
+              <i className="fa-solid fa-pen-to-square"></i> ওয়েবসাইট কনটেন্ট এডিটর
             </div>
           )}
 
           {hasPermission('manage_media') && (
-            <div class={`admin-menu-item ${activeAdminTab === 'activities' ? 'active' : ''}`} onClick={() => handleTabClick('activities')}>
-              <i class="fa-solid fa-list-check"></i> কাজের রেকর্ড পরিচালনা
+            <div className={`admin-menu-item ${activeAdminTab === 'activities' ? 'active' : ''}`} onClick={() => handleTabClick('activities')}>
+              <i className="fa-solid fa-list-check"></i> কাজের রেকর্ড পরিচালনা
             </div>
           )}
 
           {hasPermission('manage_content') && (
-            <div class={`admin-menu-item ${activeAdminTab === 'plans' ? 'active' : ''}`} onClick={() => handleTabClick('plans')}>
-              <i class="fa-solid fa-lightbulb"></i> ভবিষ্যৎ পরিকল্পনা
+            <div className={`admin-menu-item ${activeAdminTab === 'plans' ? 'active' : ''}`} onClick={() => handleTabClick('plans')}>
+              <i className="fa-solid fa-lightbulb"></i> ভবিষ্যৎ পরিকল্পনা
             </div>
           )}
 
           {hasPermission('manage_committee') && (
-            <div class={`admin-menu-item ${activeAdminTab === 'committee' ? 'active' : ''}`} onClick={() => handleTabClick('committee')}>
-              <i class="fa-solid fa-users-gear"></i> পদবী ও সদস্যবৃন্দ
+            <div className={`admin-menu-item ${activeAdminTab === 'committee' ? 'active' : ''}`} onClick={() => handleTabClick('committee')}>
+              <i className="fa-solid fa-users-gear"></i> পদবী ও সদস্যবৃন্দ
             </div>
           )}
 
           {hasPermission('manage_blood') && (
-            <div class={`admin-menu-item ${activeAdminTab === 'donors' ? 'active' : ''}`} onClick={() => handleTabClick('donors')}>
-              <i class="fa-solid fa-droplet"></i> রক্তদাতা ও আবেদন
+            <div className={`admin-menu-item ${activeAdminTab === 'donors' ? 'active' : ''}`} onClick={() => handleTabClick('donors')}>
+              <i className="fa-solid fa-droplet"></i> রক্তদাতা ও আবেদন
             </div>
           )}
 
           {hasPermission('manage_all') && (
-            <div class={`admin-menu-item ${activeAdminTab === 'donations' ? 'active' : ''}`} onClick={() => handleTabClick('donations')}>
-              <i class="fa-solid fa-hand-holding-dollar"></i> অনুদান হিসাব ও ভেরিফিকেশন
+            <div className={`admin-menu-item ${activeAdminTab === 'donations' ? 'active' : ''}`} onClick={() => handleTabClick('donations')}>
+              <i className="fa-solid fa-hand-holding-dollar"></i> অনুদান হিসাব ও ভেরিফিকেশন
             </div>
           )}
 
           {hasPermission('manage_roles') && (
-            <div class={`admin-menu-item ${activeAdminTab === 'rbac' ? 'active' : ''}`} onClick={() => handleTabClick('rbac')}>
-              <i class="fa-solid fa-user-gear"></i> আরবিএসি (RBAC) রোলস ও ইউজার্স
+            <div className={`admin-menu-item ${activeAdminTab === 'rbac' ? 'active' : ''}`} onClick={() => handleTabClick('rbac')}>
+              <i className="fa-solid fa-user-gear"></i> আরবিএসি (RBAC) রোলস ও ইউজার্স
             </div>
           )}
 
           {onNavigate && (
-            <div class="admin-menu-item" style={{ color: 'var(--primary-light)', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '0.85rem' }} onClick={() => onNavigate('home')}>
-              <i class="fa-solid fa-globe"></i> মূল ওয়েবসাইটে ফেরত যান
+            <div className="admin-menu-item" style={{ color: 'var(--primary-light)', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '0.85rem' }} onClick={() => onNavigate('home')}>
+              <i className="fa-solid fa-globe"></i> মূল ওয়েবসাইটে ফেরত যান
             </div>
           )}
 
-          <div class="admin-menu-item" style={{ color: '#f87171', marginTop: '0.4rem' }} onClick={logout}>
-            <i class="fa-solid fa-right-from-bracket"></i> লগআউট করুন
+          <div className="admin-menu-item" style={{ color: '#f87171', marginTop: '0.4rem' }} onClick={logout}>
+            <i className="fa-solid fa-right-from-bracket"></i> লগআউট করুন
           </div>
         </aside>
 
         {/* Main Admin Content Area */}
-        <main class="admin-content">
+        <main className="admin-content">
           
           {/* 1. OVERVIEW */}
           {activeAdminTab === 'overview' && (
             <div>
-              <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                   <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>এডমিন ড্যাশবোর্ড ওভারভিউ</h2>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>স্বাগতম, {user.name}! প্যানেলের সকল সেকশন পরিচালনা করুন</p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   {onNavigate && (
-                    <button class="btn btn-outline btn-sm" onClick={() => onNavigate('home')}>
-                      <i class="fa-solid fa-globe"></i> মূল ওয়েবসাইট
+                    <button className="btn btn-outline btn-sm" onClick={() => onNavigate('home')}>
+                      <i className="fa-solid fa-globe"></i> মূল ওয়েবসাইট
                     </button>
                   )}
-                  <span class="badge badge-primary"><i class="fa-solid fa-circle" style={{ fontSize: '0.5rem', marginRight: '0.3rem' }}></i> আপনার রোল: {user.role}</span>
+                  <span className="badge badge-primary"><i className="fa-solid fa-circle" style={{ fontSize: '0.5rem', marginRight: '0.3rem' }}></i> আপনার রোল: {user.role}</span>
                 </div>
               </div>
 
-              <div class="admin-stats-grid">
+              <div className="admin-stats-grid">
                 <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>মোট সম্পন্ন কাজ</div>
                   <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>{activities.length}</div>
@@ -216,25 +216,23 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
               </div>
 
               <div style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}><i class="fa-solid fa-bolt" style={{ color: 'var(--accent-gold)' }}></i> অনুমোদিত কুইক অ্যাকশন (RBAC)</h3>
-                <div class="quick-actions-grid">
-                  {hasPermission('manage_site') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('edit-site-settings')}><i class="fa-solid fa-pen"></i> ওয়েবসাইট কনটেন্ট সম্পাদনা</button>}
-                  {hasPermission('manage_media') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন কাজের রেকর্ড যোগ (ছবি আপলোড)</button>}
-                  {hasPermission('manage_content') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('add-plan')}><i class="fa-solid fa-lightbulb"></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ</button>}
-                  {hasPermission('manage_committee') && <button class="btn btn-secondary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন কমিটি পদবী যোগ</button>}
-                  {hasPermission('manage_all') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i class="fa-solid fa-hand-holding-dollar"></i> ম্যানুয়ালি অনুদান হিসাব যোগ</button>}
-                  {hasPermission('manage_roles') && <button class="btn btn-blood btn-sm" onClick={() => onOpenModal('add-sub-user')}><i class="fa-solid fa-user-gear"></i> নতুন এডমিন রোল তৈরি</button>}
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}><i className="fa-solid fa-bolt" style={{ color: 'var(--accent-gold)' }}></i> অনুমোদিত কুইক অ্যাকশন (RBAC)</h3>
+                <div className="quick-actions-grid">
+                  {hasPermission('manage_site') && <button className="btn btn-outline btn-sm" onClick={() => onOpenModal('edit-site-settings')}><i className="fa-solid fa-pen"></i> ওয়েবসাইট কনটেন্ট সম্পাদনা</button>}
+                  {hasPermission('manage_media') && <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i className="fa-solid fa-plus"></i> নতুন কাজের রেকর্ড যোগ (ছবি আপলোড)</button>}
+                  {hasPermission('manage_content') && <button className="btn btn-outline btn-sm" onClick={() => onOpenModal('add-plan')}><i className="fa-solid fa-lightbulb"></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ</button>}
+                  {hasPermission('manage_committee') && <button className="btn btn-secondary btn-sm" onClick={() => onOpenModal('add-member')}><i className="fa-solid fa-user-plus"></i> নতুন কমিটি পদবী যোগ</button>}
+                  {hasPermission('manage_all') && <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i className="fa-solid fa-hand-holding-dollar"></i> ম্যানুয়ালি অনুদান হিসাব যোগ</button>}
+                  {hasPermission('manage_roles') && <button className="btn btn-blood btn-sm" onClick={() => onOpenModal('add-sub-user')}><i className="fa-solid fa-user-gear"></i> নতুন এডমিন রোল তৈরি</button>}
                 </div>
               </div>
             </div>
           )}
-
-        {/* 2. SITE CONTENT EDITOR (CMS) */}
         {activeAdminTab === 'site-cms' && hasPermission('manage_site') && (
           <div>
-            <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <h2>ওয়েবসাইট কনটেন্ট এডিটর (Dynamic CMS)</h2>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('edit-site-settings')}><i class="fa-solid fa-pen-to-square"></i> কনটেন্ট সম্পাদন করুন</button>
+              <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('edit-site-settings')}><i className="fa-solid fa-pen-to-square"></i> কনটেন্ট সম্পাদন করুন</button>
             </div>
             <div style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
               <h4 style={{ color: 'var(--primary-dark)', marginBottom: '0.5rem' }}>টপ জরুরি নোটিশ:</h4>
@@ -252,17 +250,17 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
         {/* 3. ACTIVITIES */}
         {activeAdminTab === 'activities' && hasPermission('manage_media') && (
           <div>
-            <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <h2>সামাজিক কাজের রেকর্ডসমূহ</h2>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন পোস্ট যোগ (ছবি আপলোড)</button>
+              <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i className="fa-solid fa-plus"></i> নতুন পোস্ট যোগ (ছবি আপলোড)</button>
             </div>
             {activities.length === 0 ? (
               <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
                 বর্তমানে কোনো কাজের পোস্ট নেই। উপরের "+ নতুন পোস্ট যোগ" বাটনে ক্লিক করে ডিভাইস থেকে ছবি সরাসরি আপলোড করুন।
               </div>
             ) : (
-              <div class="table-responsive">
-                <table class="data-table">
+              <div className="table-responsive">
+                <table className="data-table">
                   <thead>
                     <tr>
                       <th>ছবি</th>
@@ -291,12 +289,12 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                           )}
                         </td>
                         <td>
-                          <div class="flex items-center gap-1">
-                            <button class="btn btn-outline btn-sm" onClick={() => { setEditingActivity(a); onOpenModal('edit-activity'); }} style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }} title="সম্পাদনা করুন">
-                              <i class="fa-solid fa-pen-to-square"></i>
+                          <div className="flex items-center gap-1">
+                            <button className="btn btn-outline btn-sm" onClick={() => { setEditingActivity(a); onOpenModal('edit-activity'); }} style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }} title="সম্পাদনা করুন">
+                              <i className="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button class="btn btn-outline btn-sm" onClick={() => deleteActivity(a._id || a.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="মুছে ফেলুন">
-                              <i class="fa-solid fa-trash"></i>
+                            <button className="btn btn-outline btn-sm" onClick={() => deleteActivity(a._id || a.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="মুছে ফেলুন">
+                              <i className="fa-solid fa-trash"></i>
                             </button>
                           </div>
                         </td>
@@ -312,17 +310,17 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
         {/* 4. PLANS (FUTURE PLANS) */}
         {activeAdminTab === 'plans' && hasPermission('manage_content') && (
           <div>
-            <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <h2>ভবিষ্যৎ কাজের পরিকল্পনা</h2>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-plan')}><i class="fa-solid fa-plus"></i> নতুন পরিকল্পনা যোগ করুন</button>
+              <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('add-plan')}><i className="fa-solid fa-plus"></i> নতুন পরিকল্পনা যোগ করুন</button>
             </div>
             {plans.length === 0 ? (
               <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
                 বর্তমানে কোনো ভবিষ্যৎ পরিকল্পনা নেই। "+ নতুন পরিকল্পনা যোগ করুন" বাটনে ক্লিক করে তথ্য সংরক্ষণ করুন।
               </div>
             ) : (
-              <div class="table-responsive">
-                <table class="data-table">
+              <div className="table-responsive">
+                <table className="data-table">
                   <thead>
                     <tr>
                       <th>পরিকল্পনার শিরোনাম</th>
@@ -338,10 +336,10 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                         <td><strong>{p.title}</strong></td>
                         <td>{p.category}</td>
                         <td>{p.targetDate || '-'}</td>
-                        <td><span class="badge badge-gold">{p.status || 'চলমান'}</span></td>
+                        <td><span className="badge badge-gold">{p.status || 'চলমান'}</span></td>
                         <td>
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteFuturePlan(p._id || p.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                            <i class="fa-solid fa-trash"></i>
+                          <button className="btn btn-outline btn-sm" onClick={() => deleteFuturePlan(p._id || p.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                            <i className="fa-solid fa-trash"></i>
                           </button>
                         </td>
                       </tr>
@@ -356,17 +354,17 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
         {/* 5. COMMITTEE */}
         {activeAdminTab === 'committee' && hasPermission('manage_committee') && (
           <div>
-            <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <h2>পদবী ও কমিটির সদস্যবৃন্দ</h2>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন পদবী/সদস্য যোগ (ছবি আপলোড)</button>
+              <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('add-member')}><i className="fa-solid fa-user-plus"></i> নতুন পদবী/সদস্য যোগ (ছবি আপলোড)</button>
             </div>
             {committee.length === 0 ? (
               <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
                 বর্তমানে কমিটির কোনো সদস্য তালিকা নেই। "+ নতুন পদবী/সদস্য যোগ" বাটনে ক্লিক করুন।
               </div>
             ) : (
-              <div class="table-responsive">
-                <table class="data-table">
+              <div className="table-responsive">
+                <table className="data-table">
                   <thead>
                     <tr>
                       <th>ছবি</th>
@@ -381,11 +379,11 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                       <tr key={c.id || c._id}>
                         <td><img src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} /></td>
                         <td><strong>{c.name}</strong></td>
-                        <td><span class="badge badge-primary">{c.role}</span></td>
+                        <td><span className="badge badge-primary">{c.role}</span></td>
                         <td>{c.phone}</td>
                         <td>
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c._id || c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                            <i class="fa-solid fa-trash"></i>
+                          <button className="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c._id || c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                            <i className="fa-solid fa-trash"></i>
                           </button>
                         </td>
                       </tr>

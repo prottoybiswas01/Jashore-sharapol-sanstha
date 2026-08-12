@@ -92,48 +92,48 @@ export default function JashoreMap() {
   return (
     <div style={{
       background: 'var(--bg-card)',
-      padding: '2.5rem 2rem',
+      padding: '2rem 1.25rem',
       borderRadius: 'var(--radius-lg)',
       border: '1px solid var(--border-color)',
       boxShadow: 'var(--shadow-md)',
-      margin: '3rem 0'
+      margin: '2rem 0'
     }}>
       {/* Map Header */}
-      <div class="section-header" style={{ marginBottom: '2rem' }}>
-        <div class="section-subtitle">
-          <i class="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> ইন্টারঅ্যাক্টিভ ডিজিটাল ম্যাপ
+      <div className="section-header" style={{ marginBottom: '1.5rem' }}>
+        <div className="section-subtitle">
+          <i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> ইন্টারঅ্যাক্টিভ ডিজিটাল ম্যাপ
         </div>
-        <h2 class="section-title">যশোর জেলা ও সারাদেশে আমাদের সেবামুখী কর্মক্ষেত্র</h2>
-        <p style={{ color: 'var(--text-muted)', maxWidth: '680px', margin: '0.5rem auto 0' }}>
+        <h2 className="section-title">যশোর জেলা ও সারাদেশে আমাদের সেবামুখী কর্মক্ষেত্র</h2>
+        <p style={{ color: 'var(--text-muted)', maxWidth: '680px', margin: '0.5rem auto 0', fontSize: '0.9rem' }}>
           ম্যাপের যেকোনো উপজেলায় ক্লিক অথবা হোভার করে আমাদের রক্তদান পয়েন্ট, সক্রিয় স্বেচ্ছাসেবক ও উন্নয়নমূলক কাজের অবস্থান সরাসরি দেখুন।
         </p>
       </div>
 
       {/* Filter Category Pills */}
-      <div class="flex justify-center gap-2 flex-wrap" style={{ marginBottom: '2rem' }}>
+      <div className="flex justify-center gap-2 flex-wrap" style={{ marginBottom: '1.5rem' }}>
         <button 
-          class={`btn btn-sm ${filterType === 'all' ? 'btn-primary' : 'btn-outline'}`}
+          className={`btn btn-sm ${filterType === 'all' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setFilterType('all')}
         >
-          <i class="fa-solid fa-layer-group"></i> সকল সেবামুখী পয়েন্ট (৮টি)
+          <i className="fa-solid fa-layer-group"></i> সকল সেবামুখী পয়েন্ট (৮টি)
         </button>
         <button 
-          class={`btn btn-sm ${filterType === 'blood' ? 'btn-blood' : 'btn-outline'}`}
+          className={`btn btn-sm ${filterType === 'blood' ? 'btn-blood' : 'btn-outline'}`}
           onClick={() => setFilterType('blood')}
         >
-          <i class="fa-solid fa-droplet"></i> জরুরি রক্তদান কেন্দ্র
+          <i className="fa-solid fa-droplet"></i> জরুরি রক্তদান কেন্দ্র
         </button>
         <button 
-          class={`btn btn-sm ${filterType === 'social' ? 'btn-primary' : 'btn-outline'}`}
+          className={`btn btn-sm ${filterType === 'social' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setFilterType('social')}
         >
-          <i class="fa-solid fa-hands-holding-child"></i> শিক্ষা ও সামাজিক উন্নয়ন
+          <i className="fa-solid fa-hands-holding-child"></i> শিক্ষা ও সামাজিক উন্নয়ন
         </button>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 items-center" style={{ minHeight: '440px' }}>
+      <div className="grid grid-cols-2 gap-4 items-center">
         {/* Vector SVG Bangladesh & Jashore Upazilas Map */}
-        <div style={{ textAlignment: 'center', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', padding: '1.5rem', border: '1px solid var(--border-color)' }}>
+        <div style={{ textAlignment: 'center', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', padding: '1rem', border: '1px solid var(--border-color)' }}>
           <svg viewBox="0 0 450 480" style={{ width: '100%', maxHeight: '420px', filter: 'drop-shadow(0 8px 16px rgba(5, 150, 105, 0.12))' }}>
             <defs>
               <linearGradient id="jashoreGlow" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -200,23 +200,15 @@ export default function JashoreMap() {
                   onMouseEnter={() => setSelectedRegion(key)}
                   style={{ cursor: 'pointer' }}
                 >
-                  {/* Glowing Outer Ripple */}
-                  {isSelected && (
-                    <circle cx={u.coordinates.x} cy={u.coordinates.y} r="22" fill="rgba(5, 150, 105, 0.25)">
-                      <animate attributeName="r" values="16;28;16" dur="1.8s" repeatCount="indefinite" />
-                      <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.8s" repeatCount="indefinite" />
-                    </circle>
-                  )}
-
-                  {/* Marker Pin Base */}
+                  {/* Glowing Outer Circle when active */}
                   <circle 
                     cx={u.coordinates.x} 
                     cy={u.coordinates.y} 
-                    r={isSelected ? "11" : "8"} 
-                    fill={isSelected ? "url(#activeGlow)" : "url(#jashoreGlow)"}
+                    r={isSelected ? "14" : "9"} 
+                    fill={isSelected ? "url(#activeGlow)" : "url(#jashoreGlow)"} 
+                    opacity={isSelected ? "1" : "0.85"}
                     stroke="#ffffff"
-                    strokeWidth="2"
-                    style={{ transition: 'all 0.3s ease' }}
+                    strokeWidth={isSelected ? "2.5" : "1.5"}
                   />
 
                   {/* Center Dot */}
@@ -230,7 +222,7 @@ export default function JashoreMap() {
                   {/* Upazila Name Label */}
                   <text 
                     x={u.coordinates.x} 
-                    y={u.coordinates.y + (isSelected ? 24 : 20)} 
+                    y={u.coordinates.y + (isSelected ? 28 : 24)} 
                     textAnchor="middle" 
                     fill={isSelected ? "var(--blood-red)" : "var(--text-main)"}
                     fontSize={isSelected ? "12" : "10"}
@@ -246,32 +238,32 @@ export default function JashoreMap() {
           {/* Active Legend Badge */}
           <div style={{
             position: 'absolute',
-            bottom: '1rem',
-            left: '1rem',
+            bottom: '0.75rem',
+            left: '0.75rem',
             background: 'var(--bg-card)',
-            padding: '0.4rem 0.8rem',
+            padding: '0.35rem 0.65rem',
             borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--border-color)',
-            fontSize: '0.8rem',
+            fontSize: '0.75rem',
             fontWeight: 700,
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
+            gap: '0.35rem',
             boxShadow: 'var(--shadow-sm)'
           }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--primary)', display: 'inline-block' }}></span>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)', display: 'inline-block' }}></span>
             সক্রিয় সেবামুখী পিন পয়েন্ট
           </div>
         </div>
 
         {/* Selected Upazila Details Box */}
-        <div style={{ padding: '0.5rem' }}>
-          <div style={{ background: 'var(--bg-main)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', marginBottom: '1.25rem' }}>
-            <div class="flex justify-between items-center" style={{ marginBottom: '0.75rem' }}>
-              <span class="badge badge-primary">
-                <i class={`fa-solid ${current.icon}`}></i> {current.type}
+        <div style={{ padding: '0.25rem' }}>
+          <div style={{ background: 'var(--bg-main)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', marginBottom: '1rem' }}>
+            <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.75rem' }}>
+              <span className="badge badge-primary">
+                <i className={`fa-solid ${current.icon}`}></i> {current.type}
               </span>
-              <span class="badge badge-blood"><i class="fa-solid fa-circle" style={{ fontSize: '0.5rem', marginRight: '0.3rem' }}></i> সক্রিয় কেন্দ্র</span>
+              <span className="badge badge-blood"><i className="fa-solid fa-circle" style={{ fontSize: '0.5rem', marginRight: '0.3rem' }}></i> সক্রিয় কেন্দ্র</span>
             </div>
 
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem' }}>
@@ -282,16 +274,16 @@ export default function JashoreMap() {
             </p>
 
             {/* Real-time Upazila Stats Ribbon */}
-            <div class="grid grid-cols-3 gap-2">
-              <div style={{ background: 'var(--bg-card)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
+            <div className="grid grid-cols-3 gap-2">
+              <div style={{ background: 'var(--bg-card)', padding: '0.85rem 0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
                 <div style={{ color: 'var(--blood-red)', fontWeight: 800, fontSize: '1.3rem' }}>{current.donors}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>রক্তদাতা</div>
               </div>
-              <div style={{ background: 'var(--bg-card)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '0.85rem 0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
                 <div style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '1.3rem' }}>{current.activities}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>প্রকল্প সম্পন্ন</div>
               </div>
-              <div style={{ background: 'var(--bg-card)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '0.85rem 0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
                 <div style={{ color: 'var(--secondary)', fontWeight: 800, fontSize: '1.3rem' }}>{current.volunteers}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>স্বেচ্ছাসেবক</div>
               </div>
@@ -299,7 +291,7 @@ export default function JashoreMap() {
           </div>
 
           <div style={{ background: 'var(--primary-light)', padding: '1rem 1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <i class="fa-solid fa-circle-info" style={{ color: 'var(--primary-dark)', fontSize: '1.25rem' }}></i>
+            <i className="fa-solid fa-circle-info" style={{ color: 'var(--primary-dark)', fontSize: '1.25rem' }}></i>
             <div style={{ fontSize: '0.85rem', color: 'var(--primary-dark)', lineHeight: '1.4' }}>
               <strong>জরুরি প্রয়োজনে যোগাযোগ:</strong> {current.name}-এ রক্তের প্রয়োজন হলে হটলাইন <code>01711-123456</code> অথবা ওয়েবসাইটের <strong>"রক্তের প্রয়োজন?"</strong> বাটনে ক্লিক করুন।
             </div>

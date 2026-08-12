@@ -287,6 +287,7 @@ input, select, textarea {
   -webkit-backdrop-filter: var(--backdrop-blur);
   border-bottom: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
 .nav-container {
@@ -294,6 +295,9 @@ input, select, textarea {
   align-items: center;
   justify-content: space-between;
   height: 70px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
 }
 
 .brand-logo {
@@ -363,33 +367,164 @@ input, select, textarea {
   background: var(--primary-light);
 }
 
+/* Header Action Buttons Container */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.desktop-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-actions {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .mobile-toggle {
   display: none;
-  font-size: 1.4rem;
+  background: transparent;
+  border: none;
+  font-size: 1.35rem;
   color: var(--text-main);
   cursor: pointer;
+  padding: 0.3rem;
+  line-height: 1;
+}
+
+.mobile-drawer-header {
+  display: none;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.nav-drawer-actions {
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.drawer-btn {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* Mobile Drawer Backdrop Overlay */
+.nav-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.nav-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 @media (max-width: 1080px) {
-  .mobile-toggle { display: block; }
+  .desktop-actions {
+    display: none;
+  }
+  
+  .mobile-actions {
+    display: flex;
+  }
+  
+  .mobile-toggle {
+    display: block;
+  }
+  
   .nav-menu {
     position: fixed;
-    top: 70px;
+    top: 0;
     left: -100%;
-    width: 80%;
-    max-width: 300px;
-    height: calc(100vh - 70px);
+    width: 82%;
+    max-width: 320px;
+    height: 100vh;
     background: var(--bg-card);
     flex-direction: column;
     align-items: flex-start;
-    padding: 2rem 1.5rem;
-    box-shadow: var(--shadow-md);
-    transition: var(--transition-normal);
+    padding: 1.5rem;
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+    overflow-y: auto;
   }
+  
   .nav-menu.open {
     left: 0;
   }
+  
+  .nav-menu li {
+    width: 100%;
+  }
+  
+  .nav-link {
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    font-size: 0.95rem;
+  }
+  
+  .mobile-drawer-header {
+    display: flex;
+  }
+  
+  .nav-drawer-actions {
+    display: flex;
+  }
 }
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 0.85rem;
+  }
+  .brand-logo {
+    gap: 0.4rem;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.05rem;
+  }
+  .brand-text h1 {
+    font-size: 0.98rem;
+  }
+  .brand-subtext {
+    display: none;
+  }
+}
+
 
 /* Hero Section */
 .hero {
@@ -455,6 +590,30 @@ input, select, textarea {
   .hero-actions { justify-content: center; }
 }
 
+@media (max-width: 768px) {
+  .hero {
+    padding: 2.5rem 0 2rem;
+  }
+  .hero-title {
+    font-size: 1.85rem;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+  }
+  .hero-description {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .hero-actions .btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+  }
+}
+
 .main-hero-img-card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -469,6 +628,12 @@ input, select, textarea {
   height: 380px;
   object-fit: cover;
   display: block;
+}
+
+@media (max-width: 640px) {
+  .main-hero-img-card img {
+    height: 240px;
+  }
 }
 
 .hero-floating-badge {
@@ -486,12 +651,28 @@ input, select, textarea {
   justify-content: space-between;
 }
 
+@media (max-width: 480px) {
+  .hero-floating-badge {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.85rem;
+  }
+}
+
 /* Stats Ribbon */
 .stats-section {
   padding: 2.5rem 0;
   background: var(--bg-card);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+  .stats-section {
+    padding: 1.5rem 0;
+  }
 }
 
 .stat-item {
@@ -514,10 +695,28 @@ input, select, textarea {
   color: var(--text-muted);
 }
 
+@media (max-width: 768px) {
+  .stat-number {
+    font-size: 1.85rem;
+  }
+  .stat-label {
+    font-size: 0.85rem;
+  }
+  .stat-item {
+    padding: 0.6rem 0.3rem;
+  }
+}
+
 /* Section Header */
 .section-header {
   text-align: center;
   margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    margin-bottom: 2rem;
+  }
 }
 
 .section-subtitle {
@@ -533,6 +732,12 @@ input, select, textarea {
   font-size: 2.15rem;
   font-weight: 700;
   color: var(--text-main);
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.5rem;
+  }
 }
 
 /* Activity Cards (Full Responsive Aspect Ratio & Click Hover) */
@@ -720,6 +925,20 @@ input, select, textarea {
   gap: 1rem;
 }
 
+@media (max-width: 640px) {
+  .request-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .request-card > div {
+    width: 100%;
+  }
+  .request-card .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 .blood-badge-large {
   width: 60px;
   height: 60px;
@@ -731,6 +950,7 @@ input, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 /* Admin Dashboard Styles (Fixed Padding & Responsive Sidebar) */

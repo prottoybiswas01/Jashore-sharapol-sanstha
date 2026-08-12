@@ -11,14 +11,14 @@ export default function Home({ onNavigate, onOpenModal }) {
   };
 
   return (
-    <section class="page-section">
+    <section className="page-section">
       {/* Top Ticker Notice */}
-      <div class="top-bar">
-        <div class="container">
-          <div class="ticker-wrap">
-            <span class="ticker-title"><i class="fa-solid fa-bullhorn"></i> জরুরি বিজ্ঞপ্তি</span>
-            <div class="ticker-viewport">
-              <div class="ticker-text">
+      <div className="top-bar">
+        <div className="container">
+          <div className="ticker-wrap">
+            <span className="ticker-title"><i className="fa-solid fa-bullhorn"></i> জরুরি বিজ্ঞপ্তি</span>
+            <div className="ticker-viewport">
+              <div className="ticker-text">
                 {settings.topTickerNotice}
               </div>
             </div>
@@ -27,43 +27,43 @@ export default function Home({ onNavigate, onOpenModal }) {
       </div>
 
       {/* Hero Banner */}
-      <div class="hero">
-        <div class="container hero-grid">
+      <div className="hero">
+        <div className="container hero-grid">
           <div>
-            <div class="hero-badge">
-              <i class="fa-solid fa-location-dot"></i> {settings.heroBadgeText}
+            <div className="hero-badge">
+              <i className="fa-solid fa-location-dot"></i> {settings.heroBadgeText}
             </div>
-            <h1 class="hero-title">
+            <h1 className="hero-title">
               {settings.heroTitleText}
             </h1>
-            <p class="hero-description">
+            <p className="hero-description">
               {settings.heroDescription}
             </p>
-            <div class="hero-actions">
-              <button class="btn btn-primary" onClick={() => onNavigate('blood')}>
-                <i class="fa-solid fa-magnifying-glass-location"></i> রক্তদাতা খুঁজুন
+            <div className="hero-actions">
+              <button className="btn btn-primary" onClick={() => onNavigate('blood')}>
+                <i className="fa-solid fa-magnifying-glass-location"></i> রক্তদাতা খুঁজুন
               </button>
-              <button class="btn btn-blood" onClick={() => onOpenModal('donor-register')}>
-                <i class="fa-solid fa-heart-pulse"></i> রক্তদাতা হন
+              <button className="btn btn-blood" onClick={() => onOpenModal('donor-register')}>
+                <i className="fa-solid fa-heart-pulse"></i> রক্তদাতা হন
               </button>
-              <button class="btn btn-outline" onClick={() => onNavigate('donate')}>
-                <i class="fa-solid fa-hand-holding-heart"></i> অনুদান দিন
+              <button className="btn btn-outline" onClick={() => onNavigate('donate')}>
+                <i className="fa-solid fa-hand-holding-heart"></i> অনুদান দিন
               </button>
             </div>
           </div>
 
-          <div class="hero-card-preview">
-            <div class="main-hero-img-card">
+          <div className="hero-card-preview">
+            <div className="main-hero-img-card">
               <img src={settings.heroImageUrl} alt="যশোর শারাপোল সংস্থা" />
-              <div class="hero-floating-badge">
-                <div class="flex items-center gap-2">
-                  <i class="fa-solid fa-award" style={{ color: 'var(--accent-gold)', fontSize: '1.5rem' }}></i>
+              <div className="hero-floating-badge">
+                <div className="flex items-center gap-2">
+                  <i className="fa-solid fa-award" style={{ color: 'var(--accent-gold)', fontSize: '1.4rem' }}></i>
                   <div>
-                    <strong style={{ display: 'block' }}>নিবন্ধিত সেবামূলক সংস্থা</strong>
-                    <small>যশোর, বাংলাদেশ</small>
+                    <strong style={{ display: 'block', fontSize: '0.95rem' }}>নিবন্ধিত সেবামূলক সংস্থা</strong>
+                    <small style={{ fontSize: '0.75rem' }}>যশোর, বাংলাদেশ</small>
                   </div>
                 </div>
-                <span class="badge badge-primary">সক্রিয়</span>
+                <span className="badge badge-primary">সক্রিয়</span>
               </div>
             </div>
           </div>
@@ -71,35 +71,39 @@ export default function Home({ onNavigate, onOpenModal }) {
       </div>
 
       {/* Real-time Dynamic Statistics Ribbon */}
-      <div class="stats-section">
-        <div class="container grid grid-cols-4">
-          <div class="stat-item">
-            <div class="stat-number">{committee.length}</div>
-            <div class="stat-label">সক্রিয় সদস্য ও কর্মকর্তা</div>
+      <div className="stats-section">
+        <div className="container grid grid-cols-4">
+          <div className="stat-item">
+            <div className="stat-number">{committee.length}</div>
+            <div className="stat-label">সক্রিয় সদস্য ও কর্মকর্তা</div>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">{donors.length}</div>
-            <div class="stat-label">নিবন্ধিত রক্তদাতা</div>
+          <div className="stat-item">
+            <div className="stat-number">{donors.length}</div>
+            <div className="stat-label">নিবন্ধিত রক্তদাতা</div>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">{activities.length}</div>
-            <div class="stat-label">সম্পন্নকৃত সেবা প্রকল্প</div>
+          <div className="stat-item">
+            <div className="stat-number">{activities.length}</div>
+            <div className="stat-label">সম্পন্নকৃত সেবা প্রকল্প</div>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">{activities.length * 150}</div>
-            <div class="stat-label">উপকৃত সামাজিক পরিবার</div>
+          <div className="stat-item">
+            <div className="stat-number">{activities.length * 150}</div>
+            <div className="stat-label">উপকৃত সামাজিক পরিবার</div>
           </div>
         </div>
       </div>
 
       {/* Emergency Blood Requests Preview */}
-      <div class="container" style={{ padding: '4rem 1.5rem 2rem' }}>
-        <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+      <div className="container" style={{ padding: '3rem 1.25rem 2rem' }}>
+        <div className="flex justify-between items-center flex-wrap gap-2" style={{ marginBottom: '1.5rem' }}>
           <div>
-            <h2 class="section-title" style={{ fontSize: '1.6rem' }}><i class="fa-solid fa-truck-medical" style={{ color: 'var(--blood-red)' }}></i> জরুরি রক্তের আবেদন</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>জরুরি মুহূর্তে রোগীদের রক্তদানে এগিয়ে আসুন</p>
+            <h2 className="section-title" style={{ fontSize: '1.5rem' }}>
+              <i className="fa-solid fa-truck-medical" style={{ color: 'var(--blood-red)' }}></i> জরুরি রক্তের আবেদন
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>জরুরি মুহূর্তে রোগীদের রক্তদানে এগিয়ে আসুন</p>
           </div>
-          <button class="btn btn-outline btn-sm" onClick={() => onNavigate('blood')}>সবগুলো দেখুন <i class="fa-solid fa-arrow-right"></i></button>
+          <button className="btn btn-outline btn-sm" onClick={() => onNavigate('blood')}>
+            সবগুলো দেখুন <i className="fa-solid fa-arrow-right"></i>
+          </button>
         </div>
 
         {bloodRequests.length === 0 ? (
@@ -108,20 +112,20 @@ export default function Home({ onNavigate, onOpenModal }) {
           </div>
         ) : (
           bloodRequests.slice(0, 2).map(r => (
-            <div class="request-card" key={r.id || r._id}>
-              <div class="flex items-center gap-3">
-                <div class="blood-badge-large">{r.bloodGroup}</div>
+            <div className="request-card" key={r.id || r._id}>
+              <div className="flex items-center gap-3">
+                <div className="blood-badge-large">{r.bloodGroup}</div>
                 <div>
-                  <h4 style={{ fontSize: '1.15rem', marginBottom: '0.2rem' }}>{r.patientName} ({r.bagsNeeded || 1} ব্যাগ)</h4>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                    <i class="fa-solid fa-hospital" style={{ color: 'var(--blood-red)' }}></i> {r.hospital}
+                  <h4 style={{ fontSize: '1.1rem', marginBottom: '0.2rem' }}>{r.patientName} ({r.bagsNeeded || 1} ব্যাগ)</h4>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    <i className="fa-solid fa-hospital" style={{ color: 'var(--blood-red)' }}></i> {r.hospital}
                   </p>
-                  <small style={{ color: 'var(--text-muted)' }}>{r.details}</small>
+                  <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '0.15rem' }}>{r.details}</small>
                 </div>
               </div>
-              <div class="flex items-center gap-2">
-                <a href={`tel:${r.contact}`} class="btn btn-blood btn-sm">
-                  <i class="fa-solid fa-phone-volume"></i> {r.contact}
+              <div className="flex items-center gap-2">
+                <a href={`tel:${r.contact}`} className="btn btn-blood btn-sm">
+                  <i className="fa-solid fa-phone-volume"></i> {r.contact}
                 </a>
               </div>
             </div>
@@ -130,33 +134,33 @@ export default function Home({ onNavigate, onOpenModal }) {
       </div>
 
       {/* Recent Activities Highlights (Click Card Opens Full Details & Video Popup) */}
-      <div class="container" style={{ padding: '2rem 1.5rem 4rem' }}>
-        <div class="section-header">
-          <div class="section-subtitle">আমাদের কাজ</div>
-          <h2 class="section-title">সাম্প্রতিক সামাজিক কার্যক্রম</h2>
+      <div className="container" style={{ padding: '2rem 1.25rem 3rem' }}>
+        <div className="section-header">
+          <div className="section-subtitle">আমাদের কাজ</div>
+          <h2 className="section-title">সাম্প্রতিক সামাজিক কার্যক্রম</h2>
         </div>
         {activities.length === 0 ? (
           <div style={{ background: 'var(--bg-card)', padding: '3rem 2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
-            <i class="fa-solid fa-folder-open" style={{ fontSize: '2.5rem', color: 'var(--primary)', marginBottom: '1rem', display: 'block' }}></i>
+            <i className="fa-solid fa-folder-open" style={{ fontSize: '2.5rem', color: 'var(--primary)', marginBottom: '1rem', display: 'block' }}></i>
             বর্তমানে কোনো সামাজিক কাজের পোস্ট নেই। এডমিন প্যানেল থেকে ছবি ও ভিডিও লিংক সরাসরি আপলোড করে প্রথম পোস্ট প্রকাশ করুন।
           </div>
         ) : (
-          <div class="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {activities.slice(0, 3).map(act => (
-              <div class="activity-card" key={act.id || act._id} onClick={() => handleActivityClick(act)}>
-                <div class="activity-img-wrap">
-                  <img src={act.image} alt={act.title} class="activity-img" />
+              <div className="activity-card" key={act.id || act._id} onClick={() => handleActivityClick(act)}>
+                <div className="activity-img-wrap">
+                  <img src={act.image} alt={act.title} className="activity-img" />
                 </div>
-                <div class="activity-body">
-                  <div class="activity-date">
-                    <i class="fa-regular fa-calendar-days"></i> {act.date} &bull; <i class="fa-solid fa-location-dot"></i> {act.location}
+                <div className="activity-body">
+                  <div className="activity-date">
+                    <i className="fa-regular fa-calendar-days"></i> {act.date} &bull; <i className="fa-solid fa-location-dot"></i> {act.location}
                   </div>
-                  <h3 class="activity-title">{act.title}</h3>
-                  <p class="activity-desc">{act.description}</p>
-                  <div class="flex justify-between items-center" style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '1px dashed var(--border-color)' }}>
-                    <span class="badge badge-primary">{act.category}</span>
+                  <h3 className="activity-title">{act.title}</h3>
+                  <p className="activity-desc">{act.description}</p>
+                  <div className="flex justify-between items-center" style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '1px dashed var(--border-color)' }}>
+                    <span className="badge badge-primary">{act.category}</span>
                     <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary-dark)' }}>
-                      <i class="fa-solid fa-heart" style={{ color: 'var(--blood-red)' }}></i> {act.likes || 0}
+                      <i className="fa-solid fa-heart" style={{ color: 'var(--blood-red)' }}></i> {act.likes || 0}
                     </span>
                   </div>
                 </div>
@@ -165,16 +169,17 @@ export default function Home({ onNavigate, onOpenModal }) {
           </div>
         )}
         {activities.length > 0 && (
-          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-            <button class="btn btn-primary" onClick={() => onNavigate('activities')}>সকল কার্যক্রম ও ফটো গ্যালারি <i class="fa-solid fa-images"></i></button>
+          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <button className="btn btn-primary" onClick={() => onNavigate('activities')}>সকল কার্যক্রম ও ফটো গ্যালারি <i className="fa-solid fa-images"></i></button>
           </div>
         )}
       </div>
 
       {/* Interactive Map Section */}
-      <div class="container">
+      <div className="container">
         <JashoreMap />
       </div>
     </section>
   );
 }
+

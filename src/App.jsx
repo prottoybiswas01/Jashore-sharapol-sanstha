@@ -86,9 +86,9 @@ function MainApp() {
     <div className="app-layout">
       {/* Toast Notification Container */}
       {toastMessage && (
-        <div class="toast-container">
-          <div class="toast">
-            <i class="fa-solid fa-circle-check" style={{ color: '#10b981' }}></i>
+        <div className="toast-container">
+          <div className="toast">
+            <i className="fa-solid fa-circle-check" style={{ color: '#10b981' }}></i>
             <span>{toastMessage.message}</span>
           </div>
         </div>

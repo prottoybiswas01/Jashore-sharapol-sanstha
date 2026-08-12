@@ -13,46 +13,48 @@ export default function BloodService({ onOpenModal }) {
   });
 
   return (
-    <section class="page-section" style={{ padding: '4rem 0' }}>
-      <div class="container">
-        <div class="blood-hero text-center" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
-          <h2 style={{ fontSize: '2.25rem', fontWeight: 800, marginBottom: '0.75rem' }}><i class="fa-solid fa-droplet" style={{ color: '#fca5a5' }}></i> রক্তদান সেবা যশোর</h2>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9, maxWidth: '650px', margin: '0 auto 1.5rem' }}>
+    <section className="page-section" style={{ padding: '3rem 0' }}>
+      <div className="container">
+        <div className="blood-hero text-center" style={{ textAlign: 'center', padding: '2.5rem 1.25rem' }}>
+          <h2 style={{ fontSize: '1.85rem', fontWeight: 800, marginBottom: '0.75rem' }}>
+            <i className="fa-solid fa-droplet" style={{ color: '#fca5a5' }}></i> রক্তদান সেবা যশোর
+          </h2>
+          <p style={{ fontSize: '1rem', opacity: 0.9, maxWidth: '650px', margin: '0 auto 1.5rem', lineHeight: '1.6' }}>
             জরুরি রক্তের প্রয়োজনে যশোরের স্বেচ্ছাসেবী রক্তদাতাদের খুঁজে নিন অথবা রক্তদাতা হিসেবে রক্তদানে আত্মনিয়োগ করুন।
           </p>
-          <div class="flex justify-center gap-2 flex-wrap">
-            <button class="btn btn-primary" onClick={() => onOpenModal('blood-request')}>
-              <i class="fa-solid fa-circle-exclamation"></i> জরুরি রক্তের আবেদন পোস্ট করুন
+          <div className="flex justify-center gap-2 flex-wrap">
+            <button className="btn btn-primary" onClick={() => onOpenModal('blood-request')}>
+              <i className="fa-solid fa-circle-exclamation"></i> জরুরি রক্তের আবেদন পোস্ট করুন
             </button>
-            <button class="btn btn-outline" style={{ color: 'white', borderColor: 'white' }} onClick={() => onOpenModal('donor-register')}>
-              <i class="fa-solid fa-user-plus"></i> রক্তদাতা হিসেবে নাম নথিভুক্ত করুন
+            <button className="btn btn-outline" style={{ color: 'white', borderColor: 'white' }} onClick={() => onOpenModal('donor-register')}>
+              <i className="fa-solid fa-user-plus"></i> রক্তদাতা হিসেবে নাম নথিভুক্ত করুন
             </button>
           </div>
         </div>
 
         {/* Live Requests */}
-        <div style={{ marginBottom: '3.5rem' }}>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '1.25rem', color: 'var(--blood-red)' }}>
-            <i class="fa-solid fa-triangle-exclamation"></i> সাম্প্রতিক রক্তের আবেদনসমূহ
+        <div style={{ marginBottom: '3rem' }}>
+          <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1.25rem', color: 'var(--blood-red)' }}>
+            <i className="fa-solid fa-triangle-exclamation"></i> সাম্প্রতিক রক্তের আবেদনসমূহ
           </h3>
           {bloodRequests.length === 0 ? (
             <p style={{ color: 'var(--text-muted)' }}>বর্তমানে কোনো জরুরি রক্ত আবেদন নেই।</p>
           ) : (
             bloodRequests.map(r => (
-              <div class="request-card" key={r.id}>
-                <div class="flex items-center gap-3">
-                  <div class="blood-badge-large">{r.bloodGroup}</div>
+              <div className="request-card" key={r.id}>
+                <div className="flex items-center gap-3">
+                  <div className="blood-badge-large">{r.bloodGroup}</div>
                   <div>
-                    <h4 style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>{r.patientName} &bull; {r.bagsNeeded || 1} ব্যাগ রক্ত</h4>
-                    <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>
-                      <i class="fa-solid fa-hospital" style={{ color: 'var(--blood-red)' }}></i> {r.hospital} &bull; <i class="fa-regular fa-clock"></i> {r.dateNeeded || 'জরুরি'}
+                    <h4 style={{ fontSize: '1.15rem', marginBottom: '0.25rem' }}>{r.patientName} &bull; {r.bagsNeeded || 1} ব্যাগ রক্ত</h4>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                      <i className="fa-solid fa-hospital" style={{ color: 'var(--blood-red)' }}></i> {r.hospital} &bull; <i className="fa-regular fa-clock"></i> {r.dateNeeded || 'জরুরি'}
                     </p>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>{r.details}</p>
                   </div>
                 </div>
-                <div class="flex items-center gap-2">
-                  <a href={`tel:${r.contact}`} class="btn btn-blood">
-                    <i class="fa-solid fa-phone-volume"></i> কল দিন: {r.contact}
+                <div className="flex items-center gap-2">
+                  <a href={`tel:${r.contact}`} className="btn btn-blood">
+                    <i className="fa-solid fa-phone-volume"></i> কল দিন: {r.contact}
                   </a>
                 </div>
               </div>
@@ -61,12 +63,12 @@ export default function BloodService({ onOpenModal }) {
         </div>
 
         {/* Filter Box */}
-        <div class="blood-filter-box">
-          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1rem' }}><i class="fa-solid fa-filter" style={{ color: 'var(--primary)' }}></i> রক্তদাতা অনুসন্ধান ফিল্টার</h3>
-          <div class="grid grid-cols-3 gap-2">
-            <div class="form-group">
-              <label class="form-label">রক্তের গ্রুপ নির্বাচন করুন</label>
-              <select class="form-control" value={filterGroup} onChange={e => setFilterGroup(e.target.value)}>
+        <div className="blood-filter-box">
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1rem' }}><i className="fa-solid fa-filter" style={{ color: 'var(--primary)' }}></i> রক্তদাতা অনুসন্ধান ফিল্টার</h3>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="form-group">
+              <label className="form-label">রক্তের গ্রুপ নির্বাচন করুন</label>
+              <select className="form-control" value={filterGroup} onChange={e => setFilterGroup(e.target.value)}>
                 <option value="ALL">সকল গ্রুপের রক্তদাতা</option>
                 <option value="A+">A+</option><option value="A-">A-</option>
                 <option value="B+">B+</option><option value="B-">B-</option>
@@ -74,9 +76,9 @@ export default function BloodService({ onOpenModal }) {
                 <option value="O+">O+</option><option value="O-">O-</option>
               </select>
             </div>
-            <div class="form-group">
-              <label class="form-label">যশোরের উপজেলা নির্বাচন করুন</label>
-              <select class="form-control" value={filterUpazila} onChange={e => setFilterUpazila(e.target.value)}>
+            <div className="form-group">
+              <label className="form-label">যশোরের উপজেলা নির্বাচন করুন</label>
+              <select className="form-control" value={filterUpazila} onChange={e => setFilterUpazila(e.target.value)}>
                 <option value="ALL">সকল উপজেলা</option>
                 <option value="যশোর সদর">যশোর সদর</option>
                 <option value="অভয়নগর">অভয়নগর</option>
@@ -88,9 +90,9 @@ export default function BloodService({ onOpenModal }) {
                 <option value="শার্শা">শার্শা</option>
               </select>
             </div>
-            <div class="form-group" style={{ justifyContent: 'flex-end' }}>
-              <button class="btn btn-secondary" onClick={() => { setFilterGroup('ALL'); setFilterUpazila('ALL'); }}>
-                <i class="fa-solid fa-rotate-left"></i> ফিল্টার রিসেট
+            <div className="form-group" style={{ justifyContent: 'flex-end' }}>
+              <button className="btn btn-secondary" onClick={() => { setFilterGroup('ALL'); setFilterUpazila('ALL'); }}>
+                <i className="fa-solid fa-rotate-left"></i> ফিল্টার রিসেট
               </button>
             </div>
           </div>
@@ -98,27 +100,27 @@ export default function BloodService({ onOpenModal }) {
 
         {/* Donors List Directory */}
         <div>
-          <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem' }}>
             নিবন্ধিত রক্তদাতাদের তালিকা ({filteredDonors.length} জন পাওয়া গেছে)
           </h3>
-          <div class="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {filteredDonors.length === 0 ? (
               <div style={{ gridColumn: '1/-1', padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>দুঃখিত, নির্ধারিত ফিল্টারে কোনো রক্তদাতা পাওয়া যায়নি।</div>
             ) : (
               filteredDonors.map(d => (
                 <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} key={d.id}>
                   <div>
-                    <div class="flex justify-between items-center" style={{ marginBottom: '0.75rem' }}>
-                      <span class="badge badge-blood" style={{ fontSize: '1rem', padding: '0.3rem 0.8rem' }}>{d.bloodGroup}</span>
-                      <span class="badge badge-primary"><i class="fa-solid fa-location-dot"></i> {d.upazila}</span>
+                    <div className="flex justify-between items-center" style={{ marginBottom: '0.75rem' }}>
+                      <span className="badge badge-blood" style={{ fontSize: '1rem', padding: '0.3rem 0.8rem' }}>{d.bloodGroup}</span>
+                      <span className="badge badge-primary"><i className="fa-solid fa-location-dot"></i> {d.upazila}</span>
                     </div>
                     <h4 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.3rem' }}>{d.name}</h4>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
                       সর্বশেষ রক্তদান: {d.lastDonation || 'তথ্য নেই'}
                     </p>
                   </div>
-                  <a href={`tel:${d.phone}`} class="btn btn-outline btn-sm" style={{ width: '100%' }}>
-                    <i class="fa-solid fa-phone"></i> {d.phone}
+                  <a href={`tel:${d.phone}`} className="btn btn-outline btn-sm" style={{ width: '100%' }}>
+                    <i className="fa-solid fa-phone"></i> {d.phone}
                   </a>
                 </div>
               ))
@@ -129,3 +131,4 @@ export default function BloodService({ onOpenModal }) {
     </section>
   );
 }
+
