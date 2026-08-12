@@ -37,10 +37,7 @@
 - **Security**: JWT (JSON Web Tokens), `bcryptjs` Password Hashing, RBAC Middleware, Security Headers & Input Sanitization
 - **Deployment**: Vercel Ready (`vercel.json` with Rewrites)
 
----
-|
 
----
 
 ## 🚀 লোকাল ইনস্টলেশন ও রান করার উপায় (Local Setup)
 
@@ -64,8 +61,7 @@ npm run server   # Node Express API (http://localhost:5000)
 প্রজেক্টটিতে `vercel.json` কনফিগারেশন সরাসরি সেট করা আছে। 
 Vercel এ ইম্পোর্ট করে Environment Variables সেকশনে নিচের কি-গুলো যোগ করুন:
 
-- `MONGODB_URI`: আপনার MongoDB Atlas Connection URI String
-- `JWT_SECRET`: আপনার কাস্টম সিক্রেট কি
+
 
 ---
 

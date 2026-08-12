@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Header({ currentSection, onNavigate, onOpenModal }) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('jashore_theme') || 'light');
 
@@ -60,11 +60,6 @@ export default function Header({ currentSection, onNavigate, onOpenModal }) {
           <li>
             <a class={`nav-link ${currentSection === 'donate' ? 'active' : ''}`} onClick={() => handleNavClick('donate')}>
               <i class="fa-solid fa-hand-holding-dollar"></i> অনুদান
-            </a>
-          </li>
-          <li>
-            <a class={`nav-link ${currentSection === 'admin' ? 'active' : ''}`} onClick={() => handleNavClick('admin')}>
-              <i class="fa-solid fa-user-shield"></i> {user ? `ড্যাশবোর্ড (${user.name})` : 'এডমিন'}
             </a>
           </li>
         </ul>
