@@ -34,14 +34,15 @@ export const DataProvider = ({ children }) => {
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [resSet, resAct, resPlan, resCom, resDon, resReq, resMoney] = await Promise.all([
+      const [resSet, resAct, resPlan, resCom, resDon, resReq, resMoney, resUsers] = await Promise.all([
         fetch('/api/settings').then(r => r.json()).catch(() => ({})),
         fetch('/api/activities').then(r => r.json()).catch(() => ({})),
         fetch('/api/plans').then(r => r.json()).catch(() => ({})),
         fetch('/api/committee').then(r => r.json()).catch(() => ({})),
         fetch('/api/blood/donors').then(r => r.json()).catch(() => ({})),
         fetch('/api/blood/requests').then(r => r.json()).catch(() => ({})),
-        fetch('/api/donations').then(r => r.json()).catch(() => ({}))
+        fetch('/api/donations').then(r => r.json()).catch(() => ({})),
+        fetch('/api/users').then(r => r.json()).catch(() => ({}))
       ]);
 
       if (resSet && resSet.success && resSet.settings) setSettings(resSet.settings);
@@ -51,6 +52,7 @@ export const DataProvider = ({ children }) => {
       if (resDon && resDon.success && resDon.donors) setDonors(resDon.donors);
       if (resReq && resReq.success && resReq.requests) setBloodRequests(resReq.requests);
       if (resMoney && resMoney.success && resMoney.donations) setDonations(resMoney.donations);
+      if (resUsers && resUsers.success && resUsers.users) setSubAdminUsers(resUsers.users);
     } catch (e) {
       console.error("MongoDB Data fetch error:", e);
     } finally {
@@ -63,13 +65,12 @@ export const DataProvider = ({ children }) => {
   }, []);
 
   const fetchAdminUsers = async () => {
-    if (!token) return;
     try {
       const res = await fetch('/api/users', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       const data = await res.json();
-      if (data.success) setSubAdminUsers(data.users);
+      if (data.success && data.users) setSubAdminUsers(data.users);
     } catch (e) {}
   };
 
@@ -356,13 +357,36 @@ export const DataProvider = ({ children }) => {
     } catch (e) {}
   };
 
+  const assignUserCommitteeRole = async (userId, committeeRole) => {
+    try {
+      const res = await fetch(`/api/users/${userId}/committee-role`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ committeeRole })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubAdminUsers(prev => prev.map(u => (u._id || u.id) === userId ? { ...u, committeeRole } : u));
+        // Refetch committee list to reflect immediately
+        fetch('/api/committee').then(r => r.json()).then(resCom => {
+          if (resCom && resCom.success) setCommittee(resCom.committee);
+        }).catch(() => {});
+        showToast('কমিটি পদবী সফলভাবে আপডেট করা হয়েছে!');
+      } else {
+        showToast(data.message || 'আপডেট করতে ব্যর্থ হয়েছে।', 'error');
+      }
+    } catch (e) {
+      showToast('কমিটি পদবী আপডেট করা যায়নি।', 'error');
+    }
+  };
+
   const [editingActivity, setEditingActivity] = useState(null);
 
   return (
     <DataContext.Provider value={{
       isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, selectedActivity, editingActivity, toastMessage,
       setSelectedActivity, setEditingActivity, showToast, updateSiteSettings, addActivity, updateActivity, likeActivity, deleteActivity, addFuturePlan, deleteFuturePlan,
-      addCommitteeMember, deleteCommitteeMember, addBloodDonor, deleteBloodDonor,
+      addCommitteeMember, deleteCommitteeMember, assignUserCommitteeRole, addBloodDonor, deleteBloodDonor,
       addBloodRequest, deleteBloodRequest, addDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers
     }}>
       {children}

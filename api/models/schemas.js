@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   phone: { type: String },
   role: { type: String, default: 'GENERAL_MEMBER' }, // SUPER_ADMIN, MEDIA_ADMIN, CONTENT_ADMIN, BLOOD_ADMIN, GENERAL_MEMBER
+  committeeRole: { type: String, default: '' }, // e.g. 'সভাপতি', 'সহ-সভাপতি', etc.
   permissions: [{ type: String }]
 }, { timestamps: true });
 

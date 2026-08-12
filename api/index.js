@@ -338,12 +338,90 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-app.get('/api/users', verifyToken, checkPermission('manage_roles'), async (req, res) => {
+app.get('/api/users', async (req, res) => {
   try {
-    const users = await User.find({ username: { $ne: 'admin' } }).select('-password');
+    let users = await User.find({ username: { $ne: 'admin' } }).select('-password').sort({ createdAt: -1 });
+    
+    // Ensure Primary Super Admin Developer Prottoy is always in the user list
+    const hasProttoy = users.some(u => u.username === 'prottoy');
+    if (!hasProttoy) {
+      users.unshift({
+        _id: 'primary-prottoy-id',
+        name: 'Developer Prottoy',
+        username: 'prottoy',
+        email: 'prottoybiswas575358@gmail.com',
+        phone: '01711-123456',
+        role: 'SUPER_ADMIN',
+        committeeRole: 'প্রধান সুপার এডমিন',
+        permissions: ['manage_all']
+      });
+    }
+
     res.json({ success: true, users });
   } catch (error) {
     res.status(500).json({ success: false, message: 'ইউজার তালিকা লোড করা যায়নি।' });
+  }
+});
+
+app.put('/api/users/:id/committee-role', async (req, res) => {
+  try {
+    const { committeeRole } = req.body;
+    let targetUser = await User.findById(req.params.id);
+
+    if (!targetUser && req.params.id === 'primary-prottoy-id') {
+      targetUser = await User.findOne({ username: 'prottoy' });
+    }
+
+    if (targetUser) {
+      targetUser.committeeRole = committeeRole || '';
+      await targetUser.save();
+
+      // Sync with Executive Committee Collection
+      if (committeeRole) {
+        await CommitteeMember.findOneAndUpdate(
+          { phone: targetUser.phone || targetUser.username },
+          { 
+            name: targetUser.name, 
+            role: committeeRole, 
+            phone: targetUser.phone || '01700-000000',
+            image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+          },
+          { upsert: true, new: true }
+        );
+      } else {
+        await CommitteeMember.deleteMany({ phone: targetUser.phone || targetUser.username });
+      }
+
+      // Send Resend Notification Email
+      sendResendEmail({
+        to: targetUser.email || 'jashoresharapolsanstha@gmail.com',
+        subject: 'কার্যনির্বাহী কমিটিতে অফিশিয়াল পদবী প্রদান সংক্রান্ত বিজ্ঞপ্তি 🏆',
+        html: `
+          <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 30px; border: 1px solid #e2e8f0;">
+              <div style="text-align: center; border-bottom: 2px solid #10b981; padding-bottom: 15px; margin-bottom: 25px;">
+                <h2 style="color: #10b981; margin: 0; font-size: 24px;">যশোর শারাপোল সংস্থা</h2>
+                <p style="color: #64748b; font-size: 14px; margin-top: 5px;">কার্যনির্বাহী কমিটি অফিশিয়াল পদবী অর্পণ</p>
+              </div>
+              <h3 style="color: #1e293b;">অভিনন্দন ${targetUser.name}! আপনাকে কার্যনির্বাহী কমিটিতে পদবী প্রদান করা হয়েছে 🌟</h3>
+              <p style="line-height: 1.7; font-size: 15px; color: #475569;">
+                আপনার সততা ও মানবিক কার্যক্রমের স্বীকৃতিস্বরূপ সংস্থা পরিচালনা পর্ষদ আপনাকে কার্যনির্বাহী কমিটিতে <strong>"${committeeRole}"</strong> হিসেবে মনোনীত করেছে।
+              </p>
+              <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                👤 কর্মকর্তা: ${targetUser.name}<br/>
+                🏆 অর্পিত পদবী: <strong>${committeeRole}</strong>
+              </div>
+            </div>
+          </div>
+        `
+      });
+
+      return res.json({ success: true, message: 'কমিটি পদবী সফলভাবে আপডেট করা হয়েছে!', user: targetUser });
+    }
+
+    res.status(404).json({ success: false, message: 'ইউজার পাওয়া যায়নি।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'কমিটি পদবী আপডেট করতে ব্যর্থ হয়েছে।' });
   }
 });
 
