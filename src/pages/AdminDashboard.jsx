@@ -10,8 +10,8 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
     deleteSubAdminUser, fetchAdminUsers, showToast, setEditingActivity
   } = useData();
 
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('prottoy');
+  const [password, setPassword] = useState('Prottoy57@');
   const [activeAdminTab, setActiveAdminTab] = useState('overview');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -79,22 +79,6 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
               <i class="fa-solid fa-right-to-bracket"></i> প্রবেশ করুন
             </button>
           </form>
-
-          {/* Quick Demo Role Logins */}
-          <div style={{ marginTop: '1.5rem', textAlign: 'left' }}>
-            <p style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-muted)' }}>কুইক ডেমো লগইন (রোলস টেস্ট করুন):</p>
-            <div class="flex gap-1 flex-wrap">
-              <button class="btn btn-outline btn-sm" onClick={() => { setUsername('admin'); setPassword('admin123'); }}>
-                সুপার এডমিন
-              </button>
-              <button class="btn btn-outline btn-sm" onClick={() => { setUsername('bloodadmin'); setPassword('blood123'); }}>
-                রক্তদান ম্যানেজার
-              </button>
-              <button class="btn btn-outline btn-sm" onClick={() => { setUsername('mediaadmin'); setPassword('media123'); }}>
-                মিডিয়া এডমিন
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     );

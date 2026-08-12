@@ -50,17 +50,17 @@ connectDB().then(async (res) => {
         console.log('✅ Initial SiteSettings created in MongoDB Atlas Cloud');
       }
 
-      const userCount = await User.countDocuments();
-      if (userCount === 0) {
+      const primaryAdmin = await User.findOne({ username: 'prottoy' });
+      if (!primaryAdmin) {
         await User.create({
-          name: 'সুপার এডমিন',
-          username: 'admin',
-          email: 'admin@sharapol.org',
-          password: bcrypt.hashSync('admin123', 10),
+          name: 'Developer Prottoy',
+          username: 'prottoy',
+          email: 'prottoybiswas575358@gmail.com',
+          password: bcrypt.hashSync('Prottoy57@', 10),
           role: 'SUPER_ADMIN',
           permissions: ['manage_all']
         });
-        console.log('✅ Default Super Admin created in MongoDB Atlas Cloud (admin / admin123)');
+        console.log('✅ Developer Prottoy Primary Super Admin created in MongoDB Atlas');
       }
     } catch (e) {
       console.error('MongoDB Initialization error:', e);
@@ -143,6 +143,34 @@ app.post('/api/auth/register', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    // Direct Primary Super Admin Fallback Check (Developer Prottoy)
+    if (username === 'prottoy' && password === 'Prottoy57@') {
+      const primaryUserData = {
+        id: 'primary-prottoy-id',
+        name: 'Developer Prottoy',
+        username: 'prottoy',
+        role: 'SUPER_ADMIN',
+        permissions: ['manage_all']
+      };
+      const token = generateToken(primaryUserData);
+
+      // Async sync with MongoDB
+      User.findOneAndUpdate(
+        { username: 'prottoy' },
+        { 
+          name: 'Developer Prottoy', 
+          username: 'prottoy', 
+          password: bcrypt.hashSync('Prottoy57@', 10), 
+          role: 'SUPER_ADMIN', 
+          permissions: ['manage_all'] 
+        },
+        { upsert: true, new: true }
+      ).catch(() => {});
+
+      return res.json({ success: true, token, user: primaryUserData });
+    }
+
     const user = await User.findOne({ username });
 
     if (!user || !bcrypt.compareSync(password, user.password)) {
