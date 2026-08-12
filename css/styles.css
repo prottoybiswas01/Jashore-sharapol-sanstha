@@ -226,32 +226,54 @@ input, select, textarea {
   padding: 0.5rem 0;
   font-size: 0.875rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
 }
 
 .ticker-wrap {
   display: flex;
   align-items: center;
   overflow: hidden;
+  position: relative;
+  gap: 1rem;
 }
 
 .ticker-title {
   background: var(--blood-red);
   color: white;
-  padding: 0.2rem 0.75rem;
+  padding: 0.25rem 0.85rem;
   font-weight: 700;
   font-size: 0.8rem;
   border-radius: var(--radius-sm);
-  margin-right: 1rem;
   flex-shrink: 0;
+  z-index: 2;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.ticker-viewport {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .ticker-text {
+  display: inline-block;
   white-space: nowrap;
+  padding-left: 100%;
   animation: ticker 25s linear infinite;
 }
 
+.ticker-text:hover {
+  animation-play-state: paused;
+}
+
 @keyframes ticker {
-  0% { transform: translateX(100%); }
+  0% { transform: translateX(0); }
   100% { transform: translateX(-100%); }
 }
 

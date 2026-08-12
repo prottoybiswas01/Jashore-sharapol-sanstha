@@ -16,8 +16,10 @@ export default function Home({ onNavigate, onOpenModal }) {
         <div class="container">
           <div class="ticker-wrap">
             <span class="ticker-title"><i class="fa-solid fa-bullhorn"></i> জরুরি বিজ্ঞপ্তি</span>
-            <div class="ticker-text">
-              {settings.topTickerNotice}
+            <div class="ticker-viewport">
+              <div class="ticker-text">
+                {settings.topTickerNotice}
+              </div>
             </div>
           </div>
         </div>
