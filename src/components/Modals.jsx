@@ -1,7 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { compressImageFile } from '../utils/imageCompressor';
+
+// Exported Helper for Formatted Section Text Rendering (Headings, Subtitles, Lists, Bold Text, Dividers)
+export function renderFormattedContent(text) {
+  if (!text) return null;
+
+  const lines = text.split('\n');
+  const elements = [];
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      elements.push(<div key={`sp-${index}`} style={{ height: '0.5rem' }} />);
+      return;
+    }
+
+    // Main Heading / Section Title (## Title or # Title)
+    if (trimmed.startsWith('## ') || trimmed.startsWith('# ')) {
+      const headingText = trimmed.replace(/^#+\s*/, '');
+      elements.push(
+        <div key={`h-${index}`} style={{
+          marginTop: index > 0 ? '1.25rem' : '0.4rem',
+          marginBottom: '0.6rem',
+          paddingBottom: '0.35rem',
+          borderBottom: '2px solid var(--primary-light)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          <i class="fa-solid fa-bookmark" style={{ color: 'var(--primary)', fontSize: '0.9rem' }}></i>
+          <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--primary-dark)', margin: 0 }}>
+            {headingText}
+          </h4>
+        </div>
+      );
+      return;
+    }
+
+    // Sub-heading (### Subheading)
+    if (trimmed.startsWith('### ')) {
+      const subText = trimmed.replace(/^###\s*/, '');
+      elements.push(
+        <h5 key={`sh-${index}`} style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--secondary)', marginTop: '0.85rem', marginBottom: '0.4rem' }}>
+          {subText}
+        </h5>
+      );
+      return;
+    }
+
+    // Horizontal Divider Line (--- or ***)
+    if (trimmed === '---' || trimmed === '***' || trimmed === '___') {
+      elements.push(
+        <hr key={`hr-${index}`} style={{ border: 0, borderTop: '1px dashed var(--border-color)', margin: '1rem 0' }} />
+      );
+      return;
+    }
+
+    // Bullet List Item (* Item or - Item or • Item)
+    if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
+      const bulletText = trimmed.replace(/^[*•-]\s*/, '');
+      const parts = parseInlineFormatting(bulletText);
+
+      elements.push(
+        <div key={`b-${index}`} style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.5rem',
+          marginBottom: '0.4rem',
+          paddingLeft: '0.4rem'
+        }}>
+          <span style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '0.9rem', marginTop: '0.15rem' }}>&bull;</span>
+          <span style={{ fontSize: '0.96rem', color: 'var(--text-main)', lineHeight: '1.6' }}>
+            {parts}
+          </span>
+        </div>
+      );
+      return;
+    }
+
+    // Standard Paragraph
+    const parts = parseInlineFormatting(trimmed);
+    elements.push(
+      <p key={`p-${index}`} style={{ fontSize: '0.96rem', color: 'var(--text-main)', lineHeight: '1.65', marginBottom: '0.5rem' }}>
+        {parts}
+      </p>
+    );
+  });
+
+  return elements;
+}
+
+function parseInlineFormatting(text) {
+  if (!text || !text.includes('**')) return text;
+  const parts = text.split('**');
+  return parts.map((part, i) => {
+    if (i % 2 === 1) {
+      return <strong key={i} style={{ color: 'var(--secondary)', fontWeight: 700 }}>{part}</strong>;
+    }
+    return part;
+  });
+}
 
 export default function Modals({ activeModal, onClose }) {
   const { 
@@ -136,48 +236,65 @@ export default function Modals({ activeModal, onClose }) {
     setMemName(''); setMemRole(''); setMemPhone(''); setMemImg('');
   };
 
-  // 6. Admin Add Activity Form (With Compressed Photo & Video Support)
+  // Format insertion helper for rich sections
+  const insertFormat = (type, setter, currentValue) => {
+    let snippet = '';
+    if (type === 'heading') snippet = '\n## নতুন সেকশন শিরোনাম\n';
+    if (type === 'bullet') snippet = '\n* **আইটেম নাম:** তথ্য বিবরণ\n';
+    if (type === 'divider') snippet = '\n---\n';
+    setter(currentValue ? `${currentValue}${snippet}` : snippet.trim());
+  };
+
+  // 6. Admin Add Activity Form (With Subtitle, Total Expense & Rich Formatting Support)
   const [actTitle, setActTitle] = useState('');
+  const [actSub, setActSub] = useState('');
   const [actCat, setActCat] = useState('স্বাস্থ্য সেবা');
   const [actDate, setActDate] = useState('');
   const [actLoc, setActLoc] = useState('যশোর');
   const [actImg, setActImg] = useState('');
   const [actVideo, setActVideo] = useState('');
   const [actDesc, setActDesc] = useState('');
+  const [actExpense, setActExpense] = useState('');
 
   const handleActSubmit = (e) => {
     e.preventDefault();
     addActivity({ 
-      title: actTitle, 
+      title: actTitle,
+      subtitle: actSub,
       category: actCat, 
       date: actDate, 
       location: actLoc, 
       image: actImg || 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80', 
       videoUrl: actVideo,
-      description: actDesc 
+      description: actDesc,
+      expense: parseInt(actExpense) || 0
     });
     onClose();
-    setActTitle(''); setActDate(''); setActDesc(''); setActImg(''); setActVideo('');
+    setActTitle(''); setActSub(''); setActDate(''); setActDesc(''); setActImg(''); setActVideo(''); setActExpense('');
   };
 
   // 6.b Admin Edit Activity Form
   const [editActTitle, setEditActTitle] = useState('');
+  const [editActSub, setEditActSub] = useState('');
   const [editActCat, setEditActCat] = useState('');
   const [editActDate, setEditActDate] = useState('');
   const [editActLoc, setEditActLoc] = useState('');
   const [editActImg, setEditActImg] = useState('');
   const [editActVideo, setEditActVideo] = useState('');
   const [editActDesc, setEditActDesc] = useState('');
+  const [editActExpense, setEditActExpense] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (editingActivity) {
       setEditActTitle(editingActivity.title || '');
+      setEditActSub(editingActivity.subtitle || '');
       setEditActCat(editingActivity.category || 'স্বাস্থ্য সেবা');
       setEditActDate(editingActivity.date || '');
       setEditActLoc(editingActivity.location || 'যশোর');
       setEditActImg(editingActivity.image || '');
       setEditActVideo(editingActivity.videoUrl || '');
       setEditActDesc(editingActivity.description || '');
+      setEditActExpense(editingActivity.expense ? String(editingActivity.expense) : '');
     }
   }, [editingActivity]);
 
@@ -186,12 +303,14 @@ export default function Modals({ activeModal, onClose }) {
     if (!editingActivity) return;
     updateActivity(editingActivity._id || editingActivity.id, {
       title: editActTitle,
+      subtitle: editActSub,
       category: editActCat,
       date: editActDate,
       location: editActLoc,
       image: editActImg,
       videoUrl: editActVideo,
-      description: editActDesc
+      description: editActDesc,
+      expense: parseInt(editActExpense) || 0
     });
     setEditingActivity(null);
     onClose();
@@ -243,9 +362,16 @@ export default function Modals({ activeModal, onClose }) {
       {/* Activity Details Popup Modal */}
       {activeModal === 'view-activity' && selectedActivity && (
         <div class="modal-overlay open">
-          <div class="modal-card" style={{ maxWidth: '750px' }}>
+          <div class="modal-card" style={{ maxWidth: '780px' }}>
             <div class="modal-header">
-              <h3 class="modal-title">{selectedActivity.title}</h3>
+              <div>
+                <h3 class="modal-title" style={{ fontSize: '1.4rem' }}>{selectedActivity.title}</h3>
+                {selectedActivity.subtitle && (
+                  <p style={{ color: 'var(--primary-dark)', fontSize: '0.95rem', fontWeight: 600, marginTop: '0.25rem' }}>
+                    <i class="fa-solid fa-feather-pointed" style={{ color: 'var(--accent-gold)', marginRight: '0.3rem' }}></i> {selectedActivity.subtitle}
+                  </p>
+                )}
+              </div>
               <span class="modal-close" onClick={() => { setSelectedActivity(null); onClose(); }}>&times;</span>
             </div>
             <div class="modal-body">
@@ -254,13 +380,13 @@ export default function Modals({ activeModal, onClose }) {
                 <img 
                   src={selectedActivity.image} 
                   alt={selectedActivity.title} 
-                  style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }} 
+                  style={{ width: '100%', maxHeight: '380px', objectFit: 'cover', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', boxShadow: 'var(--shadow-sm)' }} 
                 />
               )}
 
               {/* YouTube Video Player Embed (if provided) */}
               {selectedActivity.videoUrl && getEmbedVideoUrl(selectedActivity.videoUrl) && (
-                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
+                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', boxShadow: 'var(--shadow-sm)' }}>
                   <iframe 
                     src={getEmbedVideoUrl(selectedActivity.videoUrl)} 
                     title="Activity Video"
@@ -270,16 +396,23 @@ export default function Modals({ activeModal, onClose }) {
                 </div>
               )}
 
-              <div class="flex items-center gap-3" style={{ marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+              <div class="flex items-center gap-2 flex-wrap" style={{ marginBottom: '1.25rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                 <span><i class="fa-regular fa-calendar-days"></i> {selectedActivity.date}</span>
                 <span>&bull;</span>
                 <span><i class="fa-solid fa-location-dot"></i> {selectedActivity.location}</span>
                 <span class="badge badge-primary">{selectedActivity.category}</span>
+                {selectedActivity.expense > 0 && (
+                  <span class="badge" style={{ background: '#fef3c7', color: '#b45309', fontWeight: 700 }}>
+                    <i class="fa-solid fa-coins" style={{ marginRight: '0.3rem' }}></i> 
+                    মোট ব্যয়: ৳ {parseInt(selectedActivity.expense).toLocaleString()}
+                  </span>
+                )}
               </div>
 
-              <p style={{ fontSize: '1.05rem', color: 'var(--text-main)', lineHeight: '1.8', marginBottom: '1.5rem' }}>
-                {selectedActivity.description}
-              </p>
+              {/* Formatted Description Container */}
+              <div style={{ background: 'var(--bg-main)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
+                {renderFormattedContent(selectedActivity.description)}
+              </div>
 
               <div class="flex justify-between items-center" style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
                 <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{selectedActivity.impact}</span>
@@ -483,25 +616,44 @@ export default function Modals({ activeModal, onClose }) {
       {/* Admin Add Activity Modal with Compressed Photo & YouTube Video Input */}
       {activeModal === 'add-activity' && (
         <div class="modal-overlay open">
-          <div class="modal-card">
+          <div class="modal-card" style={{ maxWidth: '720px' }}>
             <div class="modal-header">
               <h3 class="modal-title"><i class="fa-solid fa-plus" style={{ color: 'var(--primary)' }}></i> নতুন কাজের রেকর্ড যোগ করুন</h3>
               <span class="modal-close" onClick={onClose}>&times;</span>
             </div>
             <div class="modal-body">
               <form onSubmit={handleActSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">শিরোনাম *</label>
-                  <input type="text" class="form-control" value={actTitle} onChange={e => setActTitle(e.target.value)} placeholder="কাজের নাম" required />
+                <div class="grid grid-cols-2 gap-2" style={{ marginBottom: '1rem' }}>
+                  <div class="form-group">
+                    <label class="form-label">প্রধান শিরোনাম (Main Title) *</label>
+                    <input type="text" class="form-control" value={actTitle} onChange={e => setActTitle(e.target.value)} placeholder="যেমন: বিনামূল্যে রক্তদান ক্যাম্প" required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">উপ-শিরোনাম / সংক্ষিপ্ত হাইলাইট (Subtitle)</label>
+                    <input type="text" class="form-control" value={actSub} onChange={e => setActSub(e.target.value)} placeholder="যেমন: চাঁচড়া মোড় সেবা কেন্দ্র" />
+                  </div>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ক্যাটাগরি</label>
-                  <input type="text" class="form-control" value={actCat} onChange={e => setActCat(e.target.value)} placeholder="স্বাস্থ্য সেবা / ত্রাণ" />
+
+                <div class="grid grid-cols-3 gap-2" style={{ marginBottom: '1rem' }}>
+                  <div class="form-group">
+                    <label class="form-label">ক্যাটাগরি</label>
+                    <input type="text" class="form-control" value={actCat} onChange={e => setActCat(e.target.value)} placeholder="স্বাস্থ্য সেবা / ত্রাণ" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">তারিখ *</label>
+                    <input type="date" class="form-control" value={actDate} onChange={e => setActDate(e.target.value)} required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">মোট খরচ (টাকা ৳)</label>
+                    <input type="number" class="form-control" value={actExpense} onChange={e => setActExpense(e.target.value)} placeholder="যেমন: ২৫০০০" />
+                  </div>
                 </div>
+
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">তারিখ *</label>
-                  <input type="date" class="form-control" value={actDate} onChange={e => setActDate(e.target.value)} required />
+                  <label class="form-label">কাজের স্থান</label>
+                  <input type="text" class="form-control" value={actLoc} onChange={e => setActLoc(e.target.value)} placeholder="যেমন: যশোর সদর" />
                 </div>
+
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">কাজের ছবি আপলোড (Auto Compressed) *</label>
                   <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setActImg)} required />
@@ -512,14 +664,39 @@ export default function Modals({ activeModal, onClose }) {
                     </div>
                   )}
                 </div>
+
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">ইউটিউব ভিডিও লিংক (Optional Video URL)</label>
                   <input type="url" class="form-control" value={actVideo} onChange={e => setActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
                 </div>
+
                 <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">বিবরণ</label>
-                  <textarea class="form-control" rows="3" value={actDesc} onChange={e => setActDesc(e.target.value)} required></textarea>
+                  <div class="flex justify-between items-center" style={{ marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <label class="form-label" style={{ marginBottom: 0 }}>বিবরণ (ডিটেইলস ও সেকশন) *</label>
+                    <div class="flex gap-1">
+                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('heading', setActDesc, actDesc)}>
+                        + সেকশন টাইটেল
+                      </button>
+                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('bullet', setActDesc, actDesc)}>
+                        + বুলেট পয়েন্ট
+                      </button>
+                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('divider', setActDesc, actDesc)}>
+                        + বিভাজক
+                      </button>
+                    </div>
+                  </div>
+                  <textarea class="form-control" rows="4" value={actDesc} onChange={e => setActDesc(e.target.value)} placeholder="## সেকশন টাইটেল&#10;* **পয়েন্ট নাম:** বিস্তারিত বিবরণ..." required></textarea>
+
+                  {actDesc && (
+                    <div style={{ marginTop: '0.75rem', padding: '1rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
+                      <small style={{ color: 'var(--primary)', fontWeight: 700, display: 'block', marginBottom: '0.4rem' }}>
+                        <i class="fa-solid fa-eye"></i> লাইভ ফরম্যাটিং প্রিভিউ (Section Preview):
+                      </small>
+                      {renderFormattedContent(actDesc)}
+                    </div>
+                  )}
                 </div>
+
                 <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>রেকর্ড প্রকাশ ও মঙ্গোডিবিতে সেভ করুন</button>
               </form>
             </div>
@@ -530,29 +707,44 @@ export default function Modals({ activeModal, onClose }) {
       {/* Admin Edit Activity Modal */}
       {activeModal === 'edit-activity' && editingActivity && (
         <div class="modal-overlay open">
-          <div class="modal-card">
+          <div class="modal-card" style={{ maxWidth: '720px' }}>
             <div class="modal-header">
               <h3 class="modal-title"><i class="fa-solid fa-pen-to-square" style={{ color: 'var(--primary)' }}></i> কাজের রেকর্ড সম্পাদনা করুন</h3>
               <span class="modal-close" onClick={() => { setEditingActivity(null); onClose(); }}>&times;</span>
             </div>
             <div class="modal-body">
               <form onSubmit={handleEditActSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">শিরোনাম *</label>
-                  <input type="text" class="form-control" value={editActTitle} onChange={e => setEditActTitle(e.target.value)} required />
+                <div class="grid grid-cols-2 gap-2" style={{ marginBottom: '1rem' }}>
+                  <div class="form-group">
+                    <label class="form-label">প্রধান শিরোনাম (Main Title) *</label>
+                    <input type="text" class="form-control" value={editActTitle} onChange={e => setEditActTitle(e.target.value)} required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">উপ-শিরোনাম / সংক্ষিপ্ত হাইলাইট (Subtitle)</label>
+                    <input type="text" class="form-control" value={editActSub} onChange={e => setEditActSub(e.target.value)} placeholder="উপ-শিরোনাম লিখুন" />
+                  </div>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ক্যাটাগরি</label>
-                  <input type="text" class="form-control" value={editActCat} onChange={e => setEditActCat(e.target.value)} />
+
+                <div class="grid grid-cols-3 gap-2" style={{ marginBottom: '1rem' }}>
+                  <div class="form-group">
+                    <label class="form-label">ক্যাটাগরি</label>
+                    <input type="text" class="form-control" value={editActCat} onChange={e => setEditActCat(e.target.value)} />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">তারিখ *</label>
+                    <input type="date" class="form-control" value={editActDate} onChange={e => setEditActDate(e.target.value)} required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">মোট খরচ (টাকা ৳)</label>
+                    <input type="number" class="form-control" value={editActExpense} onChange={e => setEditActExpense(e.target.value)} placeholder="যেমন: ২৫০০০" />
+                  </div>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">তারিখ *</label>
-                  <input type="date" class="form-control" value={editActDate} onChange={e => setEditActDate(e.target.value)} required />
-                </div>
+
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">কাজের স্থান</label>
                   <input type="text" class="form-control" value={editActLoc} onChange={e => setEditActLoc(e.target.value)} />
                 </div>
+
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">ছবি পরিবর্তন করুন (Auto Compressed Upload)</label>
                   <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setEditActImg)} />
@@ -563,14 +755,39 @@ export default function Modals({ activeModal, onClose }) {
                     </div>
                   )}
                 </div>
+
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
                   <label class="form-label">ইউটিউব ভিডিও লিংক (YouTube Video URL)</label>
                   <input type="url" class="form-control" value={editActVideo} onChange={e => setEditActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
                 </div>
+
                 <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">বিবরণ</label>
-                  <textarea class="form-control" rows="4" value={editActDesc} onChange={e => setEditActDesc(e.target.value)} required></textarea>
+                  <div class="flex justify-between items-center" style={{ marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <label class="form-label" style={{ marginBottom: 0 }}>বিবরণ (ডিটেইলস ও সেকশন) *</label>
+                    <div class="flex gap-1">
+                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('heading', setEditActDesc, editActDesc)}>
+                        + সেকশন টাইটেল
+                      </button>
+                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('bullet', setEditActDesc, editActDesc)}>
+                        + বুলেট পয়েন্ট
+                      </button>
+                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('divider', setEditActDesc, editActDesc)}>
+                        + বিভাজক
+                      </button>
+                    </div>
+                  </div>
+                  <textarea class="form-control" rows="5" value={editActDesc} onChange={e => setEditActDesc(e.target.value)} required></textarea>
+
+                  {editActDesc && (
+                    <div style={{ marginTop: '0.75rem', padding: '1rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
+                      <small style={{ color: 'var(--primary)', fontWeight: 700, display: 'block', marginBottom: '0.4rem' }}>
+                        <i class="fa-solid fa-eye"></i> লাইভ ফরম্যাটিং প্রিভিউ (Section Preview):
+                      </small>
+                      {renderFormattedContent(editActDesc)}
+                    </div>
+                  )}
                 </div>
+
                 <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>আপডেট পরিবর্তনসমূহ সেভ করুন</button>
               </form>
             </div>

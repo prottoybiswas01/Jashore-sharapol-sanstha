@@ -32,9 +32,10 @@ const roleSchema = new mongoose.Schema({
   permissions: [{ type: String }]
 });
 
-// 4. Activity Schema (Supports YouTube Video & Likes)
+// 4. Activity Schema (Supports YouTube Video, Subtitle, Expense & Likes)
 const activitySchema = new mongoose.Schema({
   title: { type: String, required: true },
+  subtitle: { type: String }, // Optional Subtitle / Short Summary
   category: { type: String, default: 'সামাজিক সেবা' },
   date: { type: String, required: true },
   location: { type: String, default: 'যশোর' },
@@ -42,6 +43,7 @@ const activitySchema = new mongoose.Schema({
   videoUrl: { type: String }, // Optional YouTube Embed URL
   description: { type: String, required: true },
   impact: { type: String, default: 'উপকৃত পরিবার' },
+  expense: { type: Number, default: 0 }, // Total Cost / Expense Spent in Taka (৳)
   likes: { type: Number, default: 0 }
 }, { timestamps: true });
 

@@ -276,10 +276,10 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   <thead>
                     <tr>
                       <th>ছবি</th>
-                      <th>শিরোনাম</th>
+                      <th>শিরোনাম ও উপ-শিরোনাম</th>
                       <th>ক্যাটাগরি</th>
                       <th>তারিখ</th>
-                      <th>স্থান</th>
+                      <th>মোট খরচ</th>
                       <th>অ্যাকশন</th>
                     </tr>
                   </thead>
@@ -287,10 +287,19 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                     {activities.map(a => (
                       <tr key={a.id || a._id}>
                         <td><img src={a.image} style={{ width: '50px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} alt={a.title} /></td>
-                        <td><strong>{a.title}</strong></td>
+                        <td>
+                          <strong>{a.title}</strong>
+                          {a.subtitle && <small style={{ display: 'block', color: 'var(--text-muted)' }}>{a.subtitle}</small>}
+                        </td>
                         <td>{a.category}</td>
                         <td>{a.date}</td>
-                        <td>{a.location}</td>
+                        <td>
+                          {a.expense > 0 ? (
+                            <strong style={{ color: '#b45309' }}>৳ {parseInt(a.expense).toLocaleString()}</strong>
+                          ) : (
+                            <span style={{ color: 'var(--text-muted)' }}>-</span>
+                          )}
+                        </td>
                         <td>
                           <div class="flex items-center gap-1">
                             <button class="btn btn-outline btn-sm" onClick={() => { setEditingActivity(a); onOpenModal('edit-activity'); }} style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }} title="সম্পাদনা করুন">

@@ -52,9 +52,19 @@ export default function Activities({ onOpenModal }) {
                       <i class="fa-regular fa-calendar-days"></i> {act.date} &bull; <i class="fa-solid fa-location-dot"></i> {act.location}
                     </div>
                     <h3 class="activity-title">{act.title}</h3>
-                    <p class="activity-desc">{act.description}</p>
-                    <div class="flex justify-between items-center" style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '1px dashed var(--border-color)' }}>
+                    {act.subtitle && (
+                      <p style={{ color: 'var(--primary-dark)', fontSize: '0.85rem', fontWeight: 600, marginTop: '-0.4rem', marginBottom: '0.4rem' }}>
+                        <i class="fa-solid fa-feather-pointed" style={{ color: 'var(--accent-gold)', marginRight: '0.3rem' }}></i> {act.subtitle}
+                      </p>
+                    )}
+                    <p class="activity-desc">{act.description ? act.description.replace(/#+\s*/g, '').replace(/[*•-]\s*/g, '') : ''}</p>
+                    <div class="flex justify-between items-center flex-wrap gap-1" style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '1px dashed var(--border-color)' }}>
                       <span class="badge badge-primary">{act.category}</span>
+                      {act.expense > 0 && (
+                        <span class="badge" style={{ background: '#fef3c7', color: '#b45309', fontWeight: 700, fontSize: '0.75rem' }}>
+                          <i class="fa-solid fa-coins"></i> ৳ {parseInt(act.expense).toLocaleString()}
+                        </span>
+                      )}
                       <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary-dark)' }}>
                         <i class="fa-solid fa-heart" style={{ color: 'var(--blood-red)' }}></i> {act.likes || 0}
                       </span>
