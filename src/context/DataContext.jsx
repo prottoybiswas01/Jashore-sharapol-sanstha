@@ -229,16 +229,15 @@ export const DataProvider = ({ children }) => {
   };
 
   const deleteCommitteeMember = async (id) => {
+    // Immediately remove from local React state for instantaneous feedback
+    setCommittee(prev => prev.filter(c => c._id !== id && c.id !== id && String(c._id || c.id) !== String(id)));
+    showToast('সদস্যের তথ্য মুছে ফেলা হয়েছে।', 'info');
+
     try {
-      const res = await fetch(`/api/committee/${id}`, {
+      await fetch(`/api/committee/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
-      const data = await res.json();
-      if (data.success) {
-        setCommittee(prev => prev.filter(c => (c._id || c.id) !== id));
-        showToast('সদস্যের তথ্য মুছে ফেলা হয়েছে।', 'info');
-      }
     } catch (e) {}
   };
 

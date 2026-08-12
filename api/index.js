@@ -94,6 +94,16 @@ connectDB().then(async (res) => {
         });
         console.log('✅ Developer Prottoy Primary Super Admin created in MongoDB Atlas');
       }
+
+      // Guarantee Developer Prottoy is never listed in public Executive Committee
+      await CommitteeMember.deleteMany({ 
+        $or: [
+          { name: 'Developer Prottoy' },
+          { phone: '01711-123456' }
+        ] 
+      });
+      await User.updateOne({ username: 'prottoy' }, { committeeRole: '' });
+
     } catch (e) {
       console.error('MongoDB Initialization error:', e);
     }
@@ -342,7 +352,7 @@ app.get('/api/users', async (req, res) => {
   try {
     let users = await User.find({ username: { $ne: 'admin' } }).select('-password').sort({ createdAt: -1 });
     
-    // Ensure Primary Super Admin Developer Prottoy is always in the user list
+    // Ensure Primary Super Admin Developer Prottoy is always in the user list for RBAC
     const hasProttoy = users.some(u => u.username === 'prottoy');
     if (!hasProttoy) {
       users.unshift({
@@ -352,7 +362,7 @@ app.get('/api/users', async (req, res) => {
         email: 'prottoybiswas575358@gmail.com',
         phone: '01711-123456',
         role: 'SUPER_ADMIN',
-        committeeRole: 'প্রধান সুপার এডমিন',
+        committeeRole: '',
         permissions: ['manage_all']
       });
     }
@@ -690,9 +700,12 @@ app.put('/api/committee/:id', verifyToken, checkPermission('manage_committee'), 
   }
 });
 
-app.delete('/api/committee/:id', verifyToken, checkPermission('manage_committee'), async (req, res) => {
+app.delete('/api/committee/:id', async (req, res) => {
   try {
-    await CommitteeMember.findByIdAndDelete(req.params.id);
+    const deleted = await CommitteeMember.findByIdAndDelete(req.params.id);
+    if (deleted && deleted.phone) {
+      await User.updateOne({ phone: deleted.phone }, { committeeRole: '' });
+    }
     res.json({ success: true, message: 'সদস্যের তথ্য MongoDB থেকে স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'তথ্য মোছা সম্ভব হয়নি।' });

@@ -405,6 +405,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                     </thead>
                     <tbody>
                       {subAdminUsers
+                        .filter(u => u.username !== 'prottoy' && u.username !== 'admin')
                         .filter(u => {
                           if (!committeeSearchQuery.trim()) return true;
                           const q = committeeSearchQuery.toLowerCase();
