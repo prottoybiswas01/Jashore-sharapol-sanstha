@@ -22,7 +22,7 @@ export default function BloodService({ onOpenModal }) {
           <p style={{ fontSize: '1rem', opacity: 0.9, maxWidth: '650px', margin: '0 auto 1.5rem', lineHeight: '1.6' }}>
             জরুরি রক্তের প্রয়োজনে যশোরের স্বেচ্ছাসেবী রক্তদাতাদের খুঁজে নিন অথবা রক্তদাতা হিসেবে রক্তদানে আত্মনিয়োগ করুন।
           </p>
-          <div className="flex justify-center gap-2 flex-wrap">
+          <div className="flex justify-center gap-2 flex-wrap hero-btn-group">
             <button className="btn btn-primary" onClick={() => onOpenModal('blood-request')}>
               <i className="fa-solid fa-circle-exclamation"></i> জরুরি রক্তের আবেদন পোস্ট করুন
             </button>

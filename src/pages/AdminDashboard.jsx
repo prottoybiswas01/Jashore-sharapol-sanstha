@@ -689,23 +689,25 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                         return (
                           <tr key={u._id || u.id} style={u.username === 'prottoy' ? { background: 'rgba(16, 185, 129, 0.06)' } : {}}>
                             <td>
-                              <strong>{u.name}</strong>
+                              <strong style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>{u.name}</strong>
                               {u.username === 'prottoy' && (
-                                <span className="badge badge-primary" style={{ marginLeft: '0.4rem', fontSize: '0.7rem' }}>
-                                  <i className="fa-solid fa-crown" style={{ color: 'var(--accent-gold)' }}></i> প্রধান নির্দেশক ও সুপার এডমিন
-                                </span>
+                                <div style={{ marginTop: '0.2rem' }}>
+                                  <span className="badge badge-primary" style={{ fontSize: '0.72rem', whiteSpace: 'nowrap' }}>
+                                    <i className="fa-solid fa-crown" style={{ color: 'var(--accent-gold)' }}></i> প্রধান নির্দেশক ও সুপার এডমিন
+                                  </span>
+                                </div>
                               )}
                             </td>
                             <td>
-                              <code>{u.username}</code>
-                              {u.email && <small style={{ display: 'block', color: 'var(--text-muted)' }}>{u.email}</small>}
+                              <code style={{ whiteSpace: 'nowrap' }}>{u.username}</code>
+                              {u.email && <small style={{ display: 'block', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{u.email}</small>}
                             </td>
-                            <td><span className="badge badge-gold">{u.role}</span></td>
+                            <td><span className="badge badge-gold" style={{ whiteSpace: 'nowrap' }}>{u.role}</span></td>
                             <td>
                               {!isPrimary ? (
                                 <select 
                                   className="form-control" 
-                                  style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
+                                  style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem', minWidth: '190px' }}
                                   value={u.role}
                                   onChange={(e) => handlePromoteRole(u._id || u.id, e.target.value)}
                                 >
@@ -716,7 +718,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                                   <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
                                 </select>
                               ) : (
-                                <small style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem' }}>
+                                <small style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem', whiteSpace: 'nowrap', display: 'inline-block' }}>
                                   <i className="fa-solid fa-shield-halved" style={{ color: 'var(--accent-gold)', marginRight: '0.2rem' }}></i> 
                                   প্রধান সুপার এডমিন
                                 </small>
