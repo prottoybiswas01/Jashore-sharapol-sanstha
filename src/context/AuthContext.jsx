@@ -105,8 +105,17 @@ export const AuthProvider = ({ children }) => {
     return userPerms.includes(permissionKey) || userPerms.includes('manage_all');
   };
 
+  const updateUserImage = (newImage) => {
+    setUser(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev, image: newImage };
+      localStorage.setItem('sharapol_user', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, hasPermission }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, hasPermission, updateUserImage }}>
       {children}
     </AuthContext.Provider>
   );

@@ -3,7 +3,7 @@ import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import { connectDB } from './config/db.js';
 import {
-  User, Role, SiteSettings, Activity, FuturePlan, CommitteeMember, BloodDonor, BloodRequest, Donation
+  User, Role, SiteSettings, Activity, FuturePlan, CommitteeMember, BloodDonor, BloodRequest, Donation, MemberIdea
 } from './models/schemas.js';
 import { generateToken, verifyToken, checkPermission, sanitizeInput } from './middleware/auth.js';
 
@@ -797,6 +797,81 @@ app.delete('/api/donations/:id', verifyToken, checkPermission('manage_all'), asy
     res.json({ success: true, message: 'অনুদানের হিসাব স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'মুছে ফেলা সম্ভব হয়নি।' });
+  }
+});
+
+// ----------------------------------------------------
+// Member Ideas & Proposals Routes
+// ----------------------------------------------------
+app.get('/api/ideas', async (req, res) => {
+  try {
+    const ideas = await MemberIdea.find().sort({ createdAt: -1 });
+    res.json({ success: true, ideas });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'আইডিয়া লোড করা সম্ভব হয়নি।' });
+  }
+});
+
+app.post('/api/ideas', verifyToken, async (req, res) => {
+  try {
+    const { title, details } = req.body;
+    if (!title || !details) {
+      return res.status(400).json({ success: false, message: 'শিরোনাম ও বিবরণ প্রদান করুন।' });
+    }
+    const user = await User.findById(req.user.id);
+    const newIdea = await MemberIdea.create({
+      userId: req.user.id,
+      username: req.user.username || 'member',
+      memberName: user ? user.name : (req.user.name || 'সদস্য'),
+      memberPhoto: user ? user.image : '',
+      committeeRole: user ? user.committeeRole : '',
+      title,
+      details,
+      status: 'বিবেচনাধীন'
+    });
+    res.json({ success: true, message: 'আপনার আইডিয়াটি নির্বাহী নেতৃত্বের কাছে প্রেরিত হয়েছে! 🎉', idea: newIdea });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'আইডিয়া সেভ করতে সমস্যা হয়েছে।' });
+  }
+});
+
+app.put('/api/ideas/:id/status', verifyToken, checkPermission('manage_committee'), async (req, res) => {
+  try {
+    const { status, adminFeedback } = req.body;
+    const idea = await MemberIdea.findById(req.params.id);
+    if (!idea) return res.status(404).json({ success: false, message: 'আইডিয়া পাওয়া যায়নি।' });
+
+    idea.status = status || idea.status;
+    if (adminFeedback !== undefined) idea.adminFeedback = adminFeedback;
+    await idea.save();
+
+    res.json({ success: true, message: 'আইডিয়ার স্ট্যাটাস সফলভাবে আপডেট করা হয়েছে!', idea });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'স্ট্যাটাস আপডেট ব্যর্থ হয়েছে।' });
+  }
+});
+
+// Update Profile Image endpoint
+app.put('/api/users/profile-image', verifyToken, async (req, res) => {
+  try {
+    const { image } = req.body;
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: 'ইউজার পাওয়া যায়নি।' });
+
+    user.image = image || '';
+    await user.save();
+
+    // Also sync committee member image if assigned
+    if (user.committeeRole) {
+      await CommitteeMember.findOneAndUpdate(
+        { phone: user.phone || user.username },
+        { image: image || '' }
+      );
+    }
+
+    res.json({ success: true, message: 'প্রোফাইল ছবি সফলভাবে আপডেট করা হয়েছে!', user: { id: user._id, name: user.name, username: user.username, role: user.role, image: user.image } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'ছবি আপডেট ব্যর্থ হয়েছে।' });
   }
 });
 

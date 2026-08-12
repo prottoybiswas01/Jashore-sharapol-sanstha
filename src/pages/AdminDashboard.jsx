@@ -6,9 +6,9 @@ import { EXECUTIVE_DESIGNATIONS } from '../constants/committeeRoles';
 export default function AdminDashboard({ onOpenModal, onNavigate }) {
   const { user, login, logout, hasPermission, token } = useAuth();
   const { 
-    settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers,
+    settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, ideas,
     deleteActivity, deleteFuturePlan, deleteCommitteeMember, assignUserCommitteeRole, deleteBloodDonor, deleteBloodRequest,
-    deleteSubAdminUser, fetchAdminUsers, showToast, setEditingActivity
+    deleteSubAdminUser, fetchAdminUsers, showToast, setEditingActivity, updateIdeaStatus
   } = useData();
 
   const [username, setUsername] = useState('');
@@ -141,6 +141,12 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
           {hasPermission('manage_committee') && (
             <div className={`admin-menu-item ${activeAdminTab === 'committee' ? 'active' : ''}`} onClick={() => handleTabClick('committee')}>
               <i className="fa-solid fa-users-gear"></i> পদবী ও সদস্যবৃন্দ
+            </div>
+          )}
+
+          {hasPermission('manage_committee') && (
+            <div className={`admin-menu-item ${activeAdminTab === 'member-ideas' ? 'active' : ''}`} onClick={() => handleTabClick('member-ideas')}>
+              <i className="fa-solid fa-lightbulb"></i> মেম্বারদের প্রেরিত আইডিয়া ({ideas.length})
             </div>
           )}
 
@@ -735,6 +741,83 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                 </div>
               );
             })()}
+          </div>
+        {/* 9. MEMBER IDEAS & PROPOSALS REVIEW TAB (FOR PRESIDENT & EXECUTIVE COMMITTEE) */}
+        {activeAdminTab === 'member-ideas' && (
+          <div>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <h2>মেম্বারদের প্রেরিত আইডিয়া ও প্রস্তাবনা রিভিউ (Member Ideas)</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                  সংগঠনের সাধারণ সদস্য ও রক্তদাতাদের পাঠানো নতুন প্রস্তাবনা পর্যবেক্ষণ ও অনুমোদন করুন
+                </p>
+              </div>
+            </div>
+
+            {ideas.length === 0 ? (
+              <div style={{ background: 'var(--bg-card)', padding: '3rem 1.5rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
+                <i className="fa-solid fa-lightbulb" style={{ fontSize: '2.5rem', color: 'var(--primary-light)', marginBottom: '1rem', display: 'block' }}></i>
+                বর্তমানে কোনো সদস্যের আইডিয়া জমা নেই।
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>সদস্য বিবরণ</th>
+                      <th>আইডিয়ার শিরোনাম</th>
+                      <th>বিস্তারিত বিবরণ</th>
+                      <th>বর্তমান স্ট্যাটাস</th>
+                      <th>অনুমোদন ও ফিডব্যাক একশন</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ideas.map(idea => (
+                      <tr key={idea._id || idea.id}>
+                        <td>
+                          <div className="flex items-center gap-2" style={{ whiteSpace: 'nowrap' }}>
+                            <img 
+                              src={idea.memberPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} 
+                              style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} 
+                              alt={idea.memberName} 
+                            />
+                            <div>
+                              <strong>{idea.memberName}</strong>
+                              <small style={{ display: 'block', color: 'var(--text-muted)' }}>@{idea.username}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td><strong style={{ color: 'var(--primary-dark)' }}>{idea.title}</strong></td>
+                        <td style={{ minWidth: '220px', fontSize: '0.85rem' }}>{idea.details}</td>
+                        <td>
+                          <span className={`badge ${idea.status === 'অনুমোদিত ও গ্রহণযোগ্য' ? 'badge-primary' : 'badge-gold'}`} style={{ whiteSpace: 'nowrap' }}>
+                            {idea.status}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="flex flex-col gap-1" style={{ minWidth: '180px' }}>
+                            <button 
+                              className="btn btn-primary btn-sm" 
+                              style={{ fontSize: '0.78rem', padding: '0.25rem 0.6rem' }}
+                              onClick={() => updateIdeaStatus(idea._id || idea.id, 'অনুমোদিত ও গ্রহণযোগ্য', 'সভাপতি ও পরিচালনা পর্ষদ কর্তৃক অনুমোদিত হয়েছে।')}
+                            >
+                              <i className="fa-solid fa-check"></i> অনুমোদন করুন
+                            </button>
+                            <button 
+                              className="btn btn-outline btn-sm" 
+                              style={{ fontSize: '0.78rem', padding: '0.25rem 0.6rem', borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}
+                              onClick={() => updateIdeaStatus(idea._id || idea.id, 'বিবেচনাধীন', 'পর্যবেক্ষণে রয়েছে।')}
+                            >
+                              পেন্ডিং রাখুন
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 

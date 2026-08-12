@@ -95,9 +95,14 @@ export default function Header({ currentSection, onNavigate, onOpenModal }) {
                   <i className="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন / লগইন
                 </button>
               ) : (
-                <button className="btn btn-secondary btn-sm drawer-btn" onClick={() => handleNavClick('admin')}>
-                  <i className="fa-solid fa-user-check"></i> {user.name} (প্যানেল)
-                </button>
+                <>
+                  <button className="btn btn-primary btn-sm drawer-btn" onClick={() => handleNavClick('profile')}>
+                    <i className="fa-solid fa-circle-user"></i> মাই প্রোফাইল ({user.name})
+                  </button>
+                  <button className="btn btn-secondary btn-sm drawer-btn" onClick={() => handleNavClick('admin')}>
+                    <i className="fa-solid fa-user-check"></i> এডমিন প্যানেল
+                  </button>
+                </>
               )}
 
               <button className="btn btn-blood btn-sm drawer-btn" onClick={() => { onOpenModal('blood-request'); setIsMobileMenuOpen(false); }}>
@@ -117,12 +122,17 @@ export default function Header({ currentSection, onNavigate, onOpenModal }) {
             <div className="desktop-actions flex items-center gap-2">
               {!user ? (
                 <button className="btn btn-outline btn-sm" onClick={() => onOpenModal('public-register')}>
-                  <i className="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন
+                  <i className="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন / লগইন
                 </button>
               ) : (
-                <button className="btn btn-secondary btn-sm" onClick={() => handleNavClick('admin')}>
-                  <i className="fa-solid fa-user-check"></i> {user.name}
-                </button>
+                <>
+                  <button className="btn btn-outline btn-sm" onClick={() => handleNavClick('profile')}>
+                    <i className="fa-solid fa-circle-user"></i> প্রোফাইল
+                  </button>
+                  <button className="btn btn-secondary btn-sm" onClick={() => handleNavClick('admin')}>
+                    <i className="fa-solid fa-user-check"></i> {user.name}
+                  </button>
+                </>
               )}
 
               <button className="btn btn-blood btn-sm" onClick={() => onOpenModal('blood-request')}>

@@ -114,11 +114,11 @@ export default function Modals({ activeModal, onClose }) {
   const { register } = useAuth();
 
   // Helper for ultra-fast, high-efficiency client-side image compression
-  const handleCompressedImageUpload = async (e, setImageState) => {
+  const handleCompressedImageUpload = async (e, setImageState, maxDim = 800, quality = 0.75) => {
     const file = e.target.files[0];
     if (file) {
       try {
-        const compressedBase64 = await compressImageFile(file, 900, 900, 0.75);
+        const compressedBase64 = await compressImageFile(file, maxDim, maxDim, quality);
         setImageState(compressedBase64);
       } catch (err) {
         alert('ছবি প্রসেসিং করতে সমস্যা হয়েছে।');
@@ -456,11 +456,11 @@ export default function Modals({ activeModal, onClose }) {
                 </div>
                 <div className="form-group" style={{ marginBottom: '1rem' }}>
                   <label className="form-label">আপনার এক কপি ছবি আপলোড করুন (Profile Photo)</label>
-                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setPubImg)} />
+                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setPubImg, 180, 0.5)} />
                   {pubImg && (
                     <div style={{ marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <img src={pubImg} alt="Profile Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)' }} />
-                      <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি কমপ্রেসড ও সেভ হয়েছে!</small>
+                      <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি আল্ট্রা-কমপ্রেসড (৩-৫ KB) ও সেভ হয়েছে!</small>
                     </div>
                   )}
                 </div>

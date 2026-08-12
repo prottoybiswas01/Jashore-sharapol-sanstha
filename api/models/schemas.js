@@ -98,6 +98,19 @@ const donationSchema = new mongoose.Schema({
   status: { type: String, default: 'অনুমোদিত' }
 }, { timestamps: true });
 
+// 10. Member Idea & Proposal Schema
+const memberIdeaSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  username: { type: String, required: true },
+  memberName: { type: String, required: true },
+  memberPhoto: { type: String },
+  committeeRole: { type: String, default: '' },
+  title: { type: String, required: true },
+  details: { type: String, required: true },
+  status: { type: String, default: 'বিবেচনাধীন' }, // 'বিবেচনাধীন', 'অনুমোদিত ও গ্রহণযোগ্য', 'সংরক্ষিত/বাতিল'
+  adminFeedback: { type: String, default: '' }
+}, { timestamps: true });
+
 export const SiteSettings = mongoose.models.SiteSettings || mongoose.model('SiteSettings', siteSettingsSchema);
 export const User = mongoose.models.User || mongoose.model('User', userSchema);
 export const Role = mongoose.models.Role || mongoose.model('Role', roleSchema);
@@ -107,3 +120,4 @@ export const CommitteeMember = mongoose.models.CommitteeMember || mongoose.model
 export const BloodDonor = mongoose.models.BloodDonor || mongoose.model('BloodDonor', bloodDonorSchema);
 export const BloodRequest = mongoose.models.BloodRequest || mongoose.model('BloodRequest', bloodRequestSchema);
 export const Donation = mongoose.models.Donation || mongoose.model('Donation', donationSchema);
+export const MemberIdea = mongoose.models.MemberIdea || mongoose.model('MemberIdea', memberIdeaSchema);

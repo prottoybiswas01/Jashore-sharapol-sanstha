@@ -27,6 +27,7 @@ export const DataProvider = ({ children }) => {
   const [bloodRequests, setBloodRequests] = useState([]);
   const [donations, setDonations] = useState([]);
   const [subAdminUsers, setSubAdminUsers] = useState([]);
+  const [ideas, setIdeas] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -53,6 +54,11 @@ export const DataProvider = ({ children }) => {
       if (resReq && resReq.success && resReq.requests) setBloodRequests(resReq.requests);
       if (resMoney && resMoney.success && resMoney.donations) setDonations(resMoney.donations);
       if (resUsers && resUsers.success && resUsers.users) setSubAdminUsers(resUsers.users);
+      
+      // Fetch Member Ideas
+      fetch('/api/ideas').then(r => r.json()).then(rIdeas => {
+        if (rIdeas && rIdeas.success) setIdeas(rIdeas.ideas);
+      }).catch(() => {});
     } catch (e) {
       console.error("MongoDB Data fetch error:", e);
     } finally {
@@ -379,14 +385,56 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const submitMemberIdea = async (ideaData) => {
+    try {
+      const res = await fetch('/api/ideas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(ideaData)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIdeas(prev => [data.idea, ...prev]);
+        showToast('আপনার আইডিয়াটি সফলভাবে জমা দেওয়া হয়েছে!');
+        return { success: true, message: data.message };
+      } else {
+        showToast(data.message || 'আইডিয়া সেভ করতে সমস্যা হয়েছে।', 'error');
+        return { success: false, message: data.message };
+      }
+    } catch (e) {
+      showToast('আইডিয়া জমা দিতে ব্যর্থ হয়েছে।', 'error');
+      return { success: false, message: 'নেটওয়ার্ক সমস্যা।' };
+    }
+  };
+
+  const updateIdeaStatus = async (ideaId, status, adminFeedback) => {
+    try {
+      const res = await fetch(`/api/ideas/${ideaId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ status, adminFeedback })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIdeas(prev => prev.map(i => (i._id === ideaId || i.id === ideaId) ? data.idea : i));
+        showToast('আইডিয়ার স্ট্যাটাস আপডেট করা হয়েছে!');
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (e) {
+      showToast('স্ট্যাটাস আপডেট ব্যর্থ হয়েছে।', 'error');
+    }
+  };
+
   const [editingActivity, setEditingActivity] = useState(null);
 
   return (
     <DataContext.Provider value={{
-      isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, selectedActivity, editingActivity, toastMessage,
+      isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, ideas, selectedActivity, editingActivity, toastMessage,
       setSelectedActivity, setEditingActivity, showToast, updateSiteSettings, addActivity, updateActivity, likeActivity, deleteActivity, addFuturePlan, deleteFuturePlan,
       addCommitteeMember, deleteCommitteeMember, assignUserCommitteeRole, addBloodDonor, deleteBloodDonor,
-      addBloodRequest, deleteBloodRequest, addDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers
+      addBloodRequest, deleteBloodRequest, addDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers,
+      submitMemberIdea, updateIdeaStatus
     }}>
       {children}
     </DataContext.Provider>

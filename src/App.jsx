@@ -12,6 +12,7 @@ import Committee from './pages/Committee';
 import BloodService from './pages/BloodService';
 import Donate from './pages/Donate';
 import AdminDashboard from './pages/AdminDashboard';
+import UserProfile from './pages/UserProfile';
 
 function MainApp() {
   const [currentSection, setCurrentSection] = useState('home');
@@ -112,6 +113,7 @@ function MainApp() {
         {currentSection === 'committee' && <Committee />}
         {currentSection === 'blood' && <BloodService onOpenModal={handleOpenModal} />}
         {currentSection === 'donate' && <Donate />}
+        {currentSection === 'profile' && <UserProfile onNavigate={handleNavigate} />}
         {currentSection === 'admin' && <AdminDashboard onOpenModal={handleOpenModal} onNavigate={handleNavigate} />}
       </main>
 
