@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Header({ currentSection, onNavigate, onOpenModal }) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('jashore_theme') || 'light');
 
@@ -64,16 +64,26 @@ export default function Header({ currentSection, onNavigate, onOpenModal }) {
           </li>
           <li>
             <a class={`nav-link ${currentSection === 'admin' ? 'active' : ''}`} onClick={() => handleNavClick('admin')}>
-              <i class="fa-solid fa-user-shield"></i> {user ? `এডমিন (${user.name})` : 'এডমিন'}
+              <i class="fa-solid fa-user-shield"></i> {user ? `ড্যাশবোর্ড (${user.name})` : 'এডমিন'}
             </a>
           </li>
         </ul>
 
         <div class="flex items-center gap-2">
+          {!user ? (
+            <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('public-register')}>
+              <i class="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন
+            </button>
+          ) : (
+            <button class="btn btn-secondary btn-sm" onClick={() => handleNavClick('admin')}>
+              <i class="fa-solid fa-user-check"></i> {user.name}
+            </button>
+          )}
+
           <button class="btn btn-blood btn-sm" onClick={() => onOpenModal('blood-request')}>
             <i class="fa-solid fa-circle-plus"></i> রক্তের প্রয়োজন?
           </button>
-          <button class="btn btn-outline btn-sm" onClick={toggleTheme}>
+          <button class="btn btn-outline btn-sm" onClick={toggleTheme} title="থিম পরিবর্তন">
             {theme === 'dark' ? <i class="fa-solid fa-sun" style={{ color: '#f59e0b' }}></i> : <i class="fa-solid fa-moon"></i>}
           </button>
           <button class="mobile-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>

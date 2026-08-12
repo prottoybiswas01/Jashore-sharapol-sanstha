@@ -3,11 +3,11 @@ import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 
 export default function AdminDashboard({ onOpenModal }) {
-  const { user, login, logout, hasPermission } = useAuth();
+  const { user, login, logout, hasPermission, token } = useAuth();
   const { 
     settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers,
     deleteActivity, deleteFuturePlan, deleteCommitteeMember, deleteBloodDonor, deleteBloodRequest,
-    deleteSubAdminUser, fetchAdminUsers
+    deleteSubAdminUser, fetchAdminUsers, showToast
   } = useData();
 
   const [username, setUsername] = useState('admin');
@@ -25,6 +25,28 @@ export default function AdminDashboard({ onOpenModal }) {
     const res = await login(username, password);
     if (!res.success) {
       alert(res.message);
+    }
+  };
+
+  const handlePromoteRole = async (userId, newRole) => {
+    try {
+      const res = await fetch(`/api/users/${userId}/role`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ role: newRole })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message);
+        fetchAdminUsers();
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (e) {
+      showToast('রোল আপডেট করতে ব্যর্থ হয়েছে।', 'error');
     }
   };
 
@@ -224,14 +246,14 @@ export default function AdminDashboard({ onOpenModal }) {
                   </thead>
                   <tbody>
                     {activities.map(a => (
-                      <tr key={a.id}>
+                      <tr key={a.id || a._id}>
                         <td><img src={a.image} style={{ width: '50px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} alt={a.title} /></td>
                         <td><strong>{a.title}</strong></td>
                         <td>{a.category}</td>
                         <td>{a.date}</td>
                         <td>{a.location}</td>
                         <td>
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteActivity(a.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteActivity(a._id || a.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
                             <i class="fa-solid fa-trash"></i>
                           </button>
                         </td>
@@ -269,13 +291,13 @@ export default function AdminDashboard({ onOpenModal }) {
                   </thead>
                   <tbody>
                     {plans.map(p => (
-                      <tr key={p.id}>
+                      <tr key={p.id || p._id}>
                         <td><strong>{p.title}</strong></td>
                         <td>{p.category}</td>
                         <td>{p.targetDate || '-'}</td>
                         <td><span class="badge badge-gold">{p.status || 'চলমান'}</span></td>
                         <td>
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteFuturePlan(p.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteFuturePlan(p._id || p.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
                             <i class="fa-solid fa-trash"></i>
                           </button>
                         </td>
@@ -313,13 +335,13 @@ export default function AdminDashboard({ onOpenModal }) {
                   </thead>
                   <tbody>
                     {committee.map(c => (
-                      <tr key={c.id}>
+                      <tr key={c.id || c._id}>
                         <td><img src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} /></td>
                         <td><strong>{c.name}</strong></td>
                         <td><span class="badge badge-primary">{c.role}</span></td>
                         <td>{c.phone}</td>
                         <td>
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c._id || c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
                             <i class="fa-solid fa-trash"></i>
                           </button>
                         </td>
@@ -355,13 +377,13 @@ export default function AdminDashboard({ onOpenModal }) {
                     <tr><td colSpan="5" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>কোনো আবেদন নেই।</td></tr>
                   ) : (
                     bloodRequests.map(r => (
-                      <tr key={r.id}>
+                      <tr key={r.id || r._id}>
                         <td><strong>{r.patientName}</strong></td>
                         <td><span class="badge badge-blood">{r.bloodGroup}</span></td>
                         <td>{r.hospital}</td>
                         <td>{r.contact}</td>
                         <td>
-                          <button class="btn btn-primary btn-sm" onClick={() => deleteBloodRequest(r.id)}>
+                          <button class="btn btn-primary btn-sm" onClick={() => deleteBloodRequest(r._id || r.id)}>
                             <i class="fa-solid fa-check"></i> সম্পন্ন নিশ্চিত
                           </button>
                         </td>
@@ -389,13 +411,13 @@ export default function AdminDashboard({ onOpenModal }) {
                     <tr><td colSpan="5" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>কোনো রক্তদাতা নিবন্ধিত নেই।</td></tr>
                   ) : (
                     donors.map(d => (
-                      <tr key={d.id}>
+                      <tr key={d.id || d._id}>
                         <td><strong>{d.name}</strong></td>
                         <td><span class="badge badge-blood">{d.bloodGroup}</span></td>
                         <td>{d.upazila}</td>
                         <td>{d.phone}</td>
                         <td>
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteBloodDonor(d.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteBloodDonor(d._id || d.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
                             <i class="fa-solid fa-trash"></i>
                           </button>
                         </td>
@@ -408,7 +430,7 @@ export default function AdminDashboard({ onOpenModal }) {
           </div>
         )}
 
-        {/* 7. FINANCIAL DONATIONS LEDGER & REAL-TIME SUMMARY */}
+        {/* 7. FINANCIAL DONATIONS LEDGER */}
         {activeAdminTab === 'donations' && hasPermission('manage_all') && (
           <div>
             <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
@@ -436,7 +458,7 @@ export default function AdminDashboard({ onOpenModal }) {
                     <tr><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>বর্তমানে কোনো অনুদান রেকর্ড জমা নেই।</td></tr>
                   ) : (
                     donations.map(d => (
-                      <tr key={d.id}>
+                      <tr key={d.id || d._id}>
                         <td><strong>{d.donorName}</strong></td>
                         <td style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
                         <td><span class="badge badge-info">{d.method}</span></td>
@@ -456,7 +478,7 @@ export default function AdminDashboard({ onOpenModal }) {
         {activeAdminTab === 'rbac' && hasPermission('manage_roles') && (
           <div>
             <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
-              <h2>রোলস ও এডমিন সাব-অ্যাকাউন্ট (RBAC Management)</h2>
+              <h2>রেজিস্ট্রার্ড ইউজার ও এডমিন রোলস (RBAC Management)</h2>
               <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-sub-user')}><i class="fa-solid fa-user-plus"></i> নতুন এডমিন অ্যাকাউন্ট তৈরি</button>
             </div>
 
@@ -464,22 +486,41 @@ export default function AdminDashboard({ onOpenModal }) {
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>এডমিনের নাম</th>
+                    <th>নাম</th>
                     <th>ইউজারনাম</th>
-                    <th>অর্পিত রোল (Assigned Role)</th>
+                    <th>বর্তমান রোল (Assigned Role)</th>
+                    <th>রোল প্রমোট / পরিবর্তন করুন</th>
                     <th>অ্যাকশন</th>
                   </tr>
                 </thead>
                 <tbody>
                   {subAdminUsers.map(u => (
-                    <tr key={u.id}>
+                    <tr key={u._id || u.id}>
                       <td><strong>{u.name}</strong></td>
                       <td><code>{u.username}</code></td>
                       <td><span class="badge badge-gold">{u.role}</span></td>
                       <td>
+                        {u.username !== 'admin' ? (
+                          <select 
+                            class="form-control" 
+                            style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
+                            value={u.role}
+                            onChange={(e) => handlePromoteRole(u._id || u.id, e.target.value)}
+                          >
+                            <option value="GENERAL_MEMBER">সাধারণ মেম্বার (General Member)</option>
+                            <option value="BLOOD_ADMIN">রক্তদান ম্যানেজার (Blood Manager)</option>
+                            <option value="MEDIA_ADMIN">মিডিয়া এডমিন (Media Admin)</option>
+                            <option value="CONTENT_ADMIN">পোস্ট সম্পাদক (Content Admin)</option>
+                            <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
+                          </select>
+                        ) : (
+                          <small style={{ color: 'var(--primary)', fontWeight: 600 }}>প্রধান সুপার এডমিন</small>
+                        )}
+                      </td>
+                      <td>
                         {u.username !== 'admin' && (
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                            <i class="fa-solid fa-trash"></i> মুছে ফেলুন
+                          <button class="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u._id || u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                            <i class="fa-solid fa-trash"></i>
                           </button>
                         )}
                       </td>

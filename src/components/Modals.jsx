@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
+import { compressImageFile } from '../utils/imageCompressor';
 
-export default function Modals({ activeModal, onClose, onShowToast }) {
+export default function Modals({ activeModal, onClose }) {
   const { 
     settings, updateSiteSettings, addActivity, addFuturePlan, 
     addCommitteeMember, addBloodDonor, addBloodRequest, addDonation, createSubAdminUser 
   } = useData();
 
-  // Helper to convert selected image file to Base64 data string for MongoDB storage
-  const handleImageFileChange = (e, setImageState) => {
+  const { register } = useAuth();
+
+  // Helper for ultra-fast, high-efficiency client-side image compression
+  const handleCompressedImageUpload = async (e, setImageState) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('ছবি নির্বাচন ৫ মেগাবাইটের মধ্যে হতে হবে।');
-        return;
+      try {
+        const compressedBase64 = await compressImageFile(file, 900, 900, 0.75);
+        setImageState(compressedBase64);
+      } catch (err) {
+        alert('ছবি প্রসেসিং করতে সমস্যা হয়েছে।');
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageState(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -41,7 +42,34 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     onClose();
   };
 
-  // 2. Blood Request Form
+  // 2. Public User Registration Form
+  const [pubName, setPubName] = useState('');
+  const [pubUsername, setPubUsername] = useState('');
+  const [pubPass, setPubPass] = useState('');
+  const [pubPhone, setPubPhone] = useState('');
+  const [pubBlood, setPubBlood] = useState('O+');
+  const [pubUpazila, setPubUpazila] = useState('যশোর সদর');
+
+  const handlePublicRegister = async (e) => {
+    e.preventDefault();
+    const res = await register({
+      name: pubName,
+      username: pubUsername,
+      password: pubPass,
+      phone: pubPhone,
+      bloodGroup: pubBlood,
+      upazila: pubUpazila
+    });
+    if (res.success) {
+      alert(res.message);
+      onClose();
+      setPubName(''); setPubUsername(''); setPubPass(''); setPubPhone('');
+    } else {
+      alert(res.message);
+    }
+  };
+
+  // 3. Blood Request Form
   const [reqPatient, setReqPatient] = useState('');
   const [reqGroup, setReqGroup] = useState('O+');
   const [reqHospital, setReqHospital] = useState('');
@@ -55,7 +83,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setReqPatient(''); setReqHospital(''); setReqPhone(''); setReqDetails('');
   };
 
-  // 3. Blood Donor Register Form
+  // 4. Blood Donor Register Form
   const [regName, setRegName] = useState('');
   const [regGroup, setRegGroup] = useState('A+');
   const [regUpazila, setRegUpazila] = useState('যশোর সদর');
@@ -69,7 +97,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setRegName(''); setRegPhone(''); setRegDate('');
   };
 
-  // 4. Admin Add Member Form (With Direct Photo File Upload)
+  // 5. Admin Add Member Form (With Compressed Photo Upload)
   const [memName, setMemName] = useState('');
   const [memRole, setMemRole] = useState('');
   const [memPhone, setMemPhone] = useState('');
@@ -87,7 +115,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setMemName(''); setMemRole(''); setMemPhone(''); setMemImg('');
   };
 
-  // 5. Admin Add Activity Form (With Direct Photo File Upload)
+  // 6. Admin Add Activity Form (With Compressed Photo Upload)
   const [actTitle, setActTitle] = useState('');
   const [actCat, setActCat] = useState('স্বাস্থ্য সেবা');
   const [actDate, setActDate] = useState('');
@@ -109,7 +137,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setActTitle(''); setActDate(''); setActDesc(''); setActImg('');
   };
 
-  // 6. Admin Add Future Plan Form
+  // 7. Admin Add Future Plan Form
   const [planTitle, setPlanTitle] = useState('');
   const [planCat, setPlanCat] = useState('শিক্ষা');
   const [planDate, setPlanDate] = useState('');
@@ -122,7 +150,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setPlanTitle(''); setPlanDate(''); setPlanDesc('');
   };
 
-  // 7. Admin Add Donation Manual Form
+  // 8. Admin Add Donation Form
   const [donName, setDonName] = useState('');
   const [donAmount, setDonAmount] = useState('');
   const [donMethod, setDonMethod] = useState('bKash');
@@ -135,7 +163,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
     setDonName(''); setDonAmount(''); setDonTrx('');
   };
 
-  // 8. Admin Add Sub-User (RBAC) Form
+  // 9. Admin Add Sub-User (RBAC) Form
   const [subName, setSubName] = useState('');
   const [subUsername, setSubUsername] = useState('');
   const [subPass, setSubPass] = useState('');
@@ -152,6 +180,61 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
 
   return (
     <>
+      {/* Public Member & Donor Registration Modal */}
+      {activeModal === 'public-register' && (
+        <div class="modal-overlay open">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3 class="modal-title"><i class="fa-solid fa-user-plus" style={{ color: 'var(--primary)' }}></i> সদস্য ও রক্তদাতা নিবন্ধন</h3>
+              <span class="modal-close" onClick={onClose}>&times;</span>
+            </div>
+            <div class="modal-body">
+              <form onSubmit={handlePublicRegister}>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">আপনার পূর্ণ নাম *</label>
+                  <input type="text" class="form-control" value={pubName} onChange={e => setPubName(e.target.value)} required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">ব্যবহারকারী নাম (Username) *</label>
+                  <input type="text" class="form-control" value={pubUsername} onChange={e => setPubUsername(e.target.value)} placeholder="যেমন: karim123" required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">পাসওয়ার্ড *</label>
+                  <input type="password" class="form-control" value={pubPass} onChange={e => setPubPass(e.target.value)} required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">মোবাইল নম্বর *</label>
+                  <input type="tel" class="form-control" value={pubPhone} onChange={e => setPubPhone(e.target.value)} required />
+                </div>
+                <div class="form-group" style={{ marginBottom: '1rem' }}>
+                  <label class="form-label">রক্তের গ্রুপ *</label>
+                  <select class="form-control" value={pubBlood} onChange={e => setPubBlood(e.target.value)}>
+                    <option value="A+">A+</option><option value="A-">A-</option>
+                    <option value="B+">B+</option><option value="B-">B-</option>
+                    <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                    <option value="O+">O+</option><option value="O-">O-</option>
+                  </select>
+                </div>
+                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label class="form-label">উপজেলা *</label>
+                  <select class="form-control" value={pubUpazila} onChange={e => setPubUpazila(e.target.value)}>
+                    <option value="যশোর সদর">যশোর সদর</option>
+                    <option value="অভয়নগর">অভয়নগর</option>
+                    <option value="বাঘারপাড়া">বাঘারপাড়া</option>
+                    <option value="চৌগাছা">চৌগাছা</option>
+                    <option value="ঝিকরগাছা">ঝিকরগাছা</option>
+                    <option value="কেশবপুর">কেশবপুর</option>
+                    <option value="মণিরামপুর">মণিরামপুর</option>
+                    <option value="শার্শা">শার্শা</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>অ্যাকাউন্ট তৈরি করুন</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Dynamic Site Settings Editor Modal */}
       {activeModal === 'edit-site-settings' && (
         <div class="modal-overlay open">
@@ -175,8 +258,8 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
                   <textarea class="form-control" rows="3" value={siteForm.heroDescription} onChange={e => setSiteForm({ ...siteForm, heroDescription: e.target.value })} required></textarea>
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">হিরো ব্যানার ছবি আপলোড (Hero Photo Upload)</label>
-                  <input type="file" accept="image/*" class="form-control" onChange={e => handleImageFileChange(e, (b64) => setSiteForm({ ...siteForm, heroImageUrl: b64 }))} />
+                  <label class="form-label">হিরো ব্যানার ছবি আপলোড (High Speed Compression)</label>
+                  <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, (b64) => setSiteForm({ ...siteForm, heroImageUrl: b64 }))} />
                   {siteForm.heroImageUrl && (
                     <img src={siteForm.heroImageUrl} style={{ width: '100px', height: '60px', objectFit: 'cover', marginTop: '0.5rem', borderRadius: '4px' }} alt="Hero preview" />
                   )}
@@ -285,7 +368,7 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
         </div>
       )}
 
-      {/* Admin Add Activity Modal with Direct Image File Upload */}
+      {/* Admin Add Activity Modal with Auto Image Compressor */}
       {activeModal === 'add-activity' && (
         <div class="modal-overlay open">
           <div class="modal-card">
@@ -308,11 +391,11 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
                   <input type="date" class="form-control" value={actDate} onChange={e => setActDate(e.target.value)} required />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">কাজের ছবি সরাসরি ডিভাইস থেকে আপলোড করুন *</label>
-                  <input type="file" accept="image/*" class="form-control" onChange={e => handleImageFileChange(e, setActImg)} required />
+                  <label class="form-label">কাজের ছবি আপলোড করুন (Auto Compressed to WebP/JPEG) *</label>
+                  <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setActImg)} required />
                   {actImg && (
                     <div style={{ marginTop: '0.5rem' }}>
-                      <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি লোড হয়েছে:</small>
+                      <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি কমপ্রেসড ও লোড হয়েছে:</small>
                       <img src={actImg} style={{ width: '100px', height: '60px', objectFit: 'cover', display: 'block', borderRadius: '4px', marginTop: '0.2rem' }} alt="Preview" />
                     </div>
                   )}
@@ -351,8 +434,8 @@ export default function Modals({ activeModal, onClose, onShowToast }) {
                   <input type="tel" class="form-control" value={memPhone} onChange={e => setMemPhone(e.target.value)} />
                 </div>
                 <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">সদস্যের ছবি সরাসরি আপলোড করুন (Direct Photo Upload)</label>
-                  <input type="file" accept="image/*" class="form-control" onChange={e => handleImageFileChange(e, setMemImg)} />
+                  <label class="form-label">সদস্যের ছবি আপলোড করুন (Auto Compressed)</label>
+                  <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setMemImg)} />
                   {memImg && (
                     <img src={memImg} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginTop: '0.5rem', display: 'block' }} alt="Member Preview" />
                   )}

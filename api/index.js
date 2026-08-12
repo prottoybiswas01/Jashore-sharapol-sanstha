@@ -16,7 +16,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '15mb' }));
 app.use(sanitizeInput);
 
 // Security Headers Middleware
@@ -81,8 +81,68 @@ app.get('/api/health', (req, res) => {
 });
 
 // ----------------------------------------------------
-// Auth & RBAC Routes (Direct MongoDB Queries)
+// Public & Admin Auth Routes
 // ----------------------------------------------------
+
+// Public User Registration (Auto Register as Blood Donor / Member)
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { name, username, password, email, phone, bloodGroup, upazila } = req.body;
+    if (!name || !username || !password || !phone) {
+      return res.status(400).json({ success: false, message: 'প্রয়োজনীয় ফিল্ডসমূহ পূরণ করুন।' });
+    }
+
+    const existing = await User.findOne({ username });
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'এই ইউজারনামটি ইতোমধ্যে ব্যবহ্রত হচ্ছে।' });
+    }
+
+    const newUser = await User.create({
+      name,
+      username,
+      email: email || `${username}@sharapol.org`,
+      password: bcrypt.hashSync(password, 10),
+      phone,
+      role: 'GENERAL_MEMBER',
+      permissions: []
+    });
+
+    // Auto Register in Blood Donor Directory if blood group provided
+    if (bloodGroup && upazila) {
+      await BloodDonor.create({
+        name,
+        bloodGroup,
+        upazila,
+        phone,
+        lastDonation: 'সম্প্রতি',
+        available: true
+      });
+    }
+
+    const token = generateToken({
+      id: newUser._id,
+      username: newUser.username,
+      name: newUser.name,
+      role: newUser.role,
+      permissions: []
+    });
+
+    res.json({
+      success: true,
+      message: 'রেজিস্ট্রেশন সফল হয়েছে! আপনি রক্তদাতা হিসেবে যুক্ত হয়েছেন।',
+      token,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        username: newUser.username,
+        role: newUser.role,
+        permissions: []
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'রেজিস্ট্রেশন করতে ব্যর্থ হয়েছে।' });
+  }
+});
 
 // Admin Login Route
 app.post('/api/auth/login', async (req, res) => {
@@ -125,6 +185,28 @@ app.get('/api/users', verifyToken, checkPermission('manage_roles'), async (req, 
     res.json({ success: true, users });
   } catch (error) {
     res.status(500).json({ success: false, message: 'ইউজার তালিকা লোড করা যায়নি।' });
+  }
+});
+
+// Update User Role & Permissions (Super Admin Promotion)
+app.put('/api/users/:id/role', verifyToken, checkPermission('manage_roles'), async (req, res) => {
+  try {
+    const { role } = req.body;
+    let perms = ['manage_blood'];
+    if (role === 'MEDIA_ADMIN') perms = ['manage_media'];
+    if (role === 'CONTENT_ADMIN') perms = ['manage_content'];
+    if (role === 'SUPER_ADMIN') perms = ['manage_all'];
+    if (role === 'GENERAL_MEMBER') perms = [];
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id, 
+      { role, permissions: perms }, 
+      { new: true }
+    ).select('-password');
+
+    res.json({ success: true, message: 'ইউজারের রোল সফলভাবে পরিবর্তন করা হয়েছে।', user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'রোল পরিবর্তন ব্যর্থ হয়েছে।' });
   }
 });
 
@@ -172,7 +254,7 @@ app.delete('/api/users/:id', verifyToken, checkPermission('manage_roles'), async
 });
 
 // ----------------------------------------------------
-// Site Content CMS Routes (Direct MongoDB Queries)
+// Site Content CMS Routes
 // ----------------------------------------------------
 app.get('/api/settings', async (req, res) => {
   try {
@@ -206,7 +288,7 @@ app.put('/api/settings', verifyToken, checkPermission('manage_site'), async (req
 });
 
 // ----------------------------------------------------
-// Activities Routes (Direct MongoDB Queries)
+// Activities Routes
 // ----------------------------------------------------
 app.get('/api/activities', async (req, res) => {
   try {
@@ -236,7 +318,7 @@ app.delete('/api/activities/:id', verifyToken, checkPermission('manage_media'), 
 });
 
 // ----------------------------------------------------
-// Plans Routes (Direct MongoDB Queries)
+// Plans Routes
 // ----------------------------------------------------
 app.get('/api/plans', async (req, res) => {
   try {
@@ -266,7 +348,7 @@ app.delete('/api/plans/:id', verifyToken, checkPermission('manage_content'), asy
 });
 
 // ----------------------------------------------------
-// Committee Routes (Direct MongoDB Queries)
+// Committee Routes
 // ----------------------------------------------------
 app.get('/api/committee', async (req, res) => {
   try {
@@ -296,7 +378,7 @@ app.delete('/api/committee/:id', verifyToken, checkPermission('manage_committee'
 });
 
 // ----------------------------------------------------
-// Blood Service Routes (Direct MongoDB Queries)
+// Blood Service Routes
 // ----------------------------------------------------
 app.get('/api/blood/donors', async (req, res) => {
   try {
@@ -353,7 +435,7 @@ app.delete('/api/blood/requests/:id', verifyToken, checkPermission('manage_blood
 });
 
 // ----------------------------------------------------
-// Donations Routes (Direct MongoDB Queries)
+// Donations Routes
 // ----------------------------------------------------
 app.get('/api/donations', async (req, res) => {
   try {
