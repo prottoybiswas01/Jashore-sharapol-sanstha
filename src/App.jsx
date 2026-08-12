@@ -16,7 +16,7 @@ import AdminDashboard from './pages/AdminDashboard';
 function MainApp() {
   const [currentSection, setCurrentSection] = useState('home');
   const [activeModal, setActiveModal] = useState(null);
-  const { toastMessage } = useData();
+  const { isLoading, toastMessage } = useData();
 
   // Check URL pathname for /admin or #admin on load
   useEffect(() => {
@@ -47,6 +47,40 @@ function MainApp() {
   const handleCloseModal = () => {
     setActiveModal(null);
   };
+
+  // Full Screen Glassmorphic Loading Screen while MongoDB Data Fetches
+  if (isLoading) {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: 'var(--bg-main)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999
+      }}>
+        <div style={{
+          width: '60px',
+          height: '60px',
+          border: '5px solid var(--primary-light)',
+          borderTopColor: 'var(--primary)',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        <style>{`
+          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        `}</style>
+        <h3 style={{ marginTop: '1.5rem', color: 'var(--primary-dark)', fontSize: '1.2rem', fontWeight: 700 }}>
+          যশোর শারাপোল সংস্থা
+        </h3>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.3rem' }}>
+          মঙ্গোডিবি ক্লাউড ডেটাবেজ থেকে তথ্য লোড হচ্ছে...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="app-layout">

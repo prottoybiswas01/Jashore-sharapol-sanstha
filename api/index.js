@@ -27,234 +27,359 @@ app.use((req, res, next) => {
   next();
 });
 
-// Clean Production Database Memory Store (Ready for Real-time Live Launch)
-let memoryStore = {
-  settings: {
-    topTickerNotice: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম | রক্তের জন্য যোগাযোগ করুন: 01711-123456',
-    heroBadgeText: 'যশোর জেলা কেন্দ্রিক সামাজিক সংগঠন',
-    heroTitleText: 'এক সাথে গড়ি উন্নত ও মানবিক যশোর',
-    heroDescription: 'যশোর শারাপোল সংস্থা একটি সেবামূলক সামাজিক সংগঠন। রক্তদান, শীতার্ত মানুষের পাশে দাঁড়ানো, শিক্ষা সহায়তা ও এলাকার সার্বিক উন্নয়নে আমরা নিবেদিত।',
-    heroImageUrl: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80',
-    aboutTitle: 'যশোর শারাপোল সংস্থা সম্পর্কে',
-    aboutDescription: "'যশোর শারাপোল সংস্থা' যশোর জেলার একটি সেবামুখী ও অরাজনৈতিক সামাজিক কল্যাণমূলক সংস্থা। এলাকার মানুষের পাশে দাঁড়ানো, জরুরি রক্তদানে তাৎক্ষণিক সহায়তা প্রদান, সুবিধাবঞ্চিত শিশুদের শিক্ষা সহায়তা এবং পরিবেশ রক্ষায় উদ্যোগ নেওয়া আমাদের মূল অঙ্গীকার।",
-    contactPhone: '01711-123456',
-    contactEmail: 'info@jashoresharapol.org',
-    contactAddress: 'কেন্দ্রীয় কার্যালয়: চাঁচড়া মোড়, যশোর সদর, যশোর।'
-  },
-  roles: [
-    { key: 'SUPER_ADMIN', name: 'সুপার এডমিন (Super Admin)', permissions: ['manage_all', 'manage_site', 'manage_media', 'manage_content', 'manage_blood', 'manage_committee', 'manage_roles'] },
-    { key: 'MEDIA_ADMIN', name: 'ছবি ও গ্যালারি সম্পাদক (Media Admin)', permissions: ['manage_media'] },
-    { key: 'CONTENT_ADMIN', name: 'সংবাদ ও পোস্ট সম্পাদক (Content Admin)', permissions: ['manage_content'] },
-    { key: 'BLOOD_ADMIN', name: 'রক্তদান ব্যবস্থাপক (Blood Manager)', permissions: ['manage_blood'] }
-  ],
-  users: [
-    {
-      id: 'usr-1',
-      name: 'সুপার এডমিন',
-      username: 'admin',
-      email: 'admin@sharapol.org',
-      passwordHash: bcrypt.hashSync('admin123', 10),
-      role: 'SUPER_ADMIN',
-      permissions: ['manage_all']
-    }
-  ],
-  activities: [],
-  plans: [],
-  committee: [],
-  bloodDonors: [],
-  bloodRequests: [],
-  donations: []
-};
+// Connect to MongoDB Atlas Cloud & Ensure Primary Database Documents Exist
+let isConnectedToMongo = false;
+connectDB().then(async (res) => { 
+  isConnectedToMongo = res;
+  if (res) {
+    try {
+      // Ensure initial SiteSettings document exists in MongoDB Atlas if empty
+      const settingsCount = await SiteSettings.countDocuments();
+      if (settingsCount === 0) {
+        await SiteSettings.create({
+          topTickerNotice: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম | রক্তের জন্য যোগাযোগ করুন: 01711-123456',
+          heroBadgeText: 'যশোর জেলা কেন্দ্রিক সামাজিক সংগঠন',
+          heroTitleText: 'এক সাথে গড়ি উন্নত ও মানবিক যশোর',
+          heroDescription: 'যশোর শারাপোল সংস্থা একটি সেবামূলক সামাজিক সংগঠন। রক্তদান, শীতার্ত মানুষের পাশে দাঁড়ানো, শিক্ষা সহায়তা ও এলাকার সার্বিক উন্নয়নে আমরা নিবেদিত।',
+          heroImageUrl: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80',
+          aboutTitle: 'যশোর শারাপোল সংস্থা সম্পর্কে',
+          aboutDescription: "'যশোর শারাপোল সংস্থা' যশোর জেলার একটি সেবামুখী ও অরাজনৈতিক সামাজিক কল্যাণমূলক সংস্থা। এলাকার মানুষের পাশে দাঁড়ানো, জরুরি রক্তদানে তাৎক্ষণিক সহায়তা প্রদান, সুবিধাবঞ্চিত শিশুদের শিক্ষা সহায়তা এবং পরিবেশ রক্ষায় উদ্যোগ নেওয়া আমাদের মূল অঙ্গীকার।",
+          contactPhone: '01711-123456',
+          contactEmail: 'info@jashoresharapol.org',
+          contactAddress: 'কেন্দ্রীয় কার্যালয়: চাঁচড়া মোড়, যশোর সদর, যশোর।'
+        });
+        console.log('✅ Initial SiteSettings created in MongoDB Atlas Cloud');
+      }
 
-// Connect Database on Startup
-let isMongo = false;
-connectDB().then(res => { isMongo = res; });
+      // Ensure Super Admin exists in MongoDB Atlas if empty
+      const userCount = await User.countDocuments();
+      if (userCount === 0) {
+        await User.create({
+          name: 'সুপার এডমিন',
+          username: 'admin',
+          email: 'admin@sharapol.org',
+          password: bcrypt.hashSync('admin123', 10),
+          role: 'SUPER_ADMIN',
+          permissions: ['manage_all']
+        });
+        console.log('✅ Default Super Admin created in MongoDB Atlas Cloud (admin / admin123)');
+      }
+    } catch (e) {
+      console.error('MongoDB Initialization error:', e);
+    }
+  }
+});
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
     success: true, 
     security: 'HIGH_SECURITY_VERIFIED',
-    message: 'Jashore Sharapol Sanstha MERN API Server Active.', 
-    database: isMongo ? 'MongoDB Atlas Cloud' : 'Clean Production Memory Engine' 
+    message: 'Jashore Sharapol Sanstha MERN API Active.', 
+    database: isConnectedToMongo ? 'MongoDB Atlas Cloud' : 'Connecting to MongoDB...' 
   });
 });
 
-// Admin Secure Login Route
+// ----------------------------------------------------
+// Auth & RBAC Routes (Direct MongoDB Queries)
+// ----------------------------------------------------
+
+// Admin Login Route
 app.post('/api/auth/login', async (req, res) => {
-  const { username, password } = req.body;
-  
-  let user = memoryStore.users.find(u => u.username === username);
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
 
-  if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
-    return res.status(400).json({ success: false, message: 'সুরক্ষা সংকেত: ইউজারনাম অথবা পাসওয়ার্ড অকার্যকর।' });
-  }
-
-  const roleObj = memoryStore.roles.find(r => r.key === user.role) || { permissions: user.permissions || [] };
-
-  const token = generateToken({
-    id: user.id,
-    username: user.username,
-    name: user.name,
-    role: user.role,
-    permissions: roleObj.permissions
-  });
-
-  res.json({
-    success: true,
-    token,
-    user: {
-      id: user.id,
-      name: user.name,
-      username: user.username,
-      role: user.role,
-      permissions: roleObj.permissions
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return res.status(400).json({ success: false, message: 'সুরক্ষা সংকেত: ইউজারনাম অথবা পাসওয়ার্ড অকার্যকর।' });
     }
-  });
-});
 
-// Get Roles (Admin)
-app.get('/api/roles', verifyToken, checkPermission('manage_roles'), (req, res) => {
-  res.json({ success: true, roles: memoryStore.roles });
-});
+    const token = generateToken({
+      id: user._id,
+      username: user.username,
+      name: user.name,
+      role: user.role,
+      permissions: user.permissions || ['manage_all']
+    });
 
-// Get Users (Super Admin Only)
-app.get('/api/users', verifyToken, checkPermission('manage_roles'), (req, res) => {
-  res.json({ 
-    success: true, 
-    users: memoryStore.users.map(u => ({ id: u.id, name: u.name, username: u.username, role: u.role, email: u.email })) 
-  });
-});
-
-// Create Sub-Admin Account (RBAC)
-app.post('/api/users', verifyToken, checkPermission('manage_roles'), (req, res) => {
-  const { name, username, password, email, role } = req.body;
-  if (!name || !username || !password || !role) {
-    return res.status(400).json({ success: false, message: 'প্রয়োজনীয় ফিল্ডসমূহ সঠিকমত পূরণ করুন।' });
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        role: user.role,
+        permissions: user.permissions || ['manage_all']
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'ডেটাবেজ সংযোগে সমস্যা হয়েছে।' });
   }
+});
 
-  const newUser = {
-    id: 'usr-' + Date.now(),
-    name,
-    username,
-    email: email || `${username}@sharapol.org`,
-    passwordHash: bcrypt.hashSync(password, 10),
-    role
-  };
+// Get All Users (Super Admin Only)
+app.get('/api/users', verifyToken, checkPermission('manage_roles'), async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json({ success: true, users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'ইউজার তালিকা লোড করা যায়নি।' });
+  }
+});
 
-  memoryStore.users.push(newUser);
-  res.json({ success: true, message: 'নতুন এডমিন সাব-অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।', user: newUser });
+// Create Sub-Admin User (RBAC)
+app.post('/api/users', verifyToken, checkPermission('manage_roles'), async (req, res) => {
+  try {
+    const { name, username, password, email, role } = req.body;
+    if (!name || !username || !password || !role) {
+      return res.status(400).json({ success: false, message: 'প্রয়োজনীয় ফিল্ডসমূহ পূরণ করুন।' });
+    }
+
+    const existing = await User.findOne({ username });
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'এই ইউজারনামটি ইতোমধ্যে ব্যবহ্রত হচ্ছে।' });
+    }
+
+    let perms = ['manage_blood'];
+    if (role === 'MEDIA_ADMIN') perms = ['manage_media'];
+    if (role === 'CONTENT_ADMIN') perms = ['manage_content'];
+    if (role === 'SUPER_ADMIN') perms = ['manage_all'];
+
+    const newUser = await User.create({
+      name,
+      username,
+      email: email || `${username}@sharapol.org`,
+      password: bcrypt.hashSync(password, 10),
+      role,
+      permissions: perms
+    });
+
+    res.json({ success: true, message: 'নতুন এডমিন অ্যাকাউন্ট MongoDB-তে সংরক্ষণ করা হয়েছে।', user: newUser });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'অ্যাাকাউন্ট তৈরি করতে ব্যর্থ হয়েছে।' });
+  }
 });
 
 // Delete Sub-Admin Account
-app.delete('/api/users/:id', verifyToken, checkPermission('manage_roles'), (req, res) => {
-  memoryStore.users = memoryStore.users.filter(u => u.id !== req.params.id);
-  res.json({ success: true, message: 'এডমিন অ্যাকাউন্ট স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
+app.delete('/api/users/:id', verifyToken, checkPermission('manage_roles'), async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'এডমিন অ্যাকাউন্ট MongoDB থেকে মুছে ফেলা হয়েছে।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'মুছে ফেলতে ব্যর্থ হয়েছে।' });
+  }
 });
 
-// Site Content CMS Routes
-app.get('/api/settings', (req, res) => {
-  res.json({ success: true, settings: memoryStore.settings });
+// ----------------------------------------------------
+// Site Content CMS Routes (Direct MongoDB Queries)
+// ----------------------------------------------------
+app.get('/api/settings', async (req, res) => {
+  try {
+    let settings = await SiteSettings.findOne();
+    if (!settings) {
+      settings = await SiteSettings.create({
+        topTickerNotice: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম | রক্তের জন্য যোগাযোগ করুন: 01711-123456',
+        heroTitleText: 'এক সাথে গড়ি উন্নত ও মানবিক যশোর',
+        heroDescription: 'যশোর শারাপোল সংস্থা একটি সেবামূলক সামাজিক সংগঠন।'
+      });
+    }
+    res.json({ success: true, settings });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'সাইট সেটিংস লোড করা যায়নি।' });
+  }
 });
 
-app.put('/api/settings', verifyToken, checkPermission('manage_site'), (req, res) => {
-  memoryStore.settings = { ...memoryStore.settings, ...req.body };
-  res.json({ success: true, message: 'ওয়েবসাইটের কনটেন্ট সফলভাবে আপডেট হয়েছে!', settings: memoryStore.settings });
+app.put('/api/settings', verifyToken, checkPermission('manage_site'), async (req, res) => {
+  try {
+    let settings = await SiteSettings.findOne();
+    if (!settings) {
+      settings = new SiteSettings(req.body);
+    } else {
+      Object.assign(settings, req.body);
+    }
+    await settings.save();
+    res.json({ success: true, message: 'ওয়েবসাইটের কনটেন্ট সফলভাবে MongoDB-তে আপডেট হয়েছে!', settings });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'সেটিংস আপডেট ব্যর্থ হয়েছে।' });
+  }
 });
 
-// Activities Routes
-app.get('/api/activities', (req, res) => {
-  res.json({ success: true, activities: memoryStore.activities });
+// ----------------------------------------------------
+// Activities Routes (Direct MongoDB Queries)
+// ----------------------------------------------------
+app.get('/api/activities', async (req, res) => {
+  try {
+    const activities = await Activity.find().sort({ createdAt: -1 });
+    res.json({ success: true, activities });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'কাজের রেকর্ড লোড করা যায়নি।' });
+  }
 });
 
-app.post('/api/activities', verifyToken, checkPermission('manage_media'), (req, res) => {
-  const newAct = { id: 'act-' + Date.now(), ...req.body };
-  memoryStore.activities.unshift(newAct);
-  res.json({ success: true, message: 'নতুন কাজের রেকর্ড যোগ করা হয়েছে!', activity: newAct });
+app.post('/api/activities', verifyToken, checkPermission('manage_media'), async (req, res) => {
+  try {
+    const newAct = await Activity.create(req.body);
+    res.json({ success: true, message: 'নতুন কাজের রেকর্ড MongoDB-তে সেভ করা হয়েছে!', activity: newAct });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'রেকর্ড যোগ করা যায়নি।' });
+  }
 });
 
-app.delete('/api/activities/:id', verifyToken, checkPermission('manage_media'), (req, res) => {
-  memoryStore.activities = memoryStore.activities.filter(a => a.id !== req.params.id);
-  res.json({ success: true, message: 'রেকর্ডটি মুছে ফেলা হয়েছে।' });
+app.delete('/api/activities/:id', verifyToken, checkPermission('manage_media'), async (req, res) => {
+  try {
+    await Activity.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'রেকর্ডটি MongoDB থেকে মুছে ফেলা হয়েছে।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'রেকর্ডটি মোছা সম্ভব হয়নি।' });
+  }
 });
 
-// Plans Routes
-app.get('/api/plans', (req, res) => {
-  res.json({ success: true, plans: memoryStore.plans });
+// ----------------------------------------------------
+// Plans Routes (Direct MongoDB Queries)
+// ----------------------------------------------------
+app.get('/api/plans', async (req, res) => {
+  try {
+    const plans = await FuturePlan.find().sort({ createdAt: -1 });
+    res.json({ success: true, plans });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'পরিকল্পনা লোড করা যায়নি।' });
+  }
 });
 
-app.post('/api/plans', verifyToken, checkPermission('manage_content'), (req, res) => {
-  const newPlan = { id: 'plan-' + Date.now(), ...req.body };
-  memoryStore.plans.unshift(newPlan);
-  res.json({ success: true, message: 'ভবিষ্যৎ পরিকল্পনা যোগ হয়েছে!', plan: newPlan });
+app.post('/api/plans', verifyToken, checkPermission('manage_content'), async (req, res) => {
+  try {
+    const newPlan = await FuturePlan.create(req.body);
+    res.json({ success: true, message: 'ভবিষ্যৎ পরিকল্পনা MongoDB-তে সেভ হয়েছে!', plan: newPlan });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'পরিকল্পনা সেভ করা সম্ভব হয়নি।' });
+  }
 });
 
-app.delete('/api/plans/:id', verifyToken, checkPermission('manage_content'), (req, res) => {
-  memoryStore.plans = memoryStore.plans.filter(p => p.id !== req.params.id);
-  res.json({ success: true, message: 'পরিকল্পনাটি মুছে ফেলা হয়েছে।' });
+app.delete('/api/plans/:id', verifyToken, checkPermission('manage_content'), async (req, res) => {
+  try {
+    await FuturePlan.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'পরিকল্পনাটি MongoDB থেকে মুছে ফেলা হয়েছে।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'মুছে ফেলা সম্ভব হয়নি।' });
+  }
 });
 
-// Committee Routes
-app.get('/api/committee', (req, res) => {
-  res.json({ success: true, committee: memoryStore.committee });
+// ----------------------------------------------------
+// Committee Routes (Direct MongoDB Queries)
+// ----------------------------------------------------
+app.get('/api/committee', async (req, res) => {
+  try {
+    const committee = await CommitteeMember.find().sort({ createdAt: 1 });
+    res.json({ success: true, committee });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'কমিটি লোড করা যায়নি।' });
+  }
 });
 
-app.post('/api/committee', verifyToken, checkPermission('manage_committee'), (req, res) => {
-  const newMember = { id: 'com-' + Date.now(), ...req.body };
-  memoryStore.committee.push(newMember);
-  res.json({ success: true, message: 'নতুন কমিটি পদবী ও সদস্য যুক্ত হয়েছে!', member: newMember });
+app.post('/api/committee', verifyToken, checkPermission('manage_committee'), async (req, res) => {
+  try {
+    const newMember = await CommitteeMember.create(req.body);
+    res.json({ success: true, message: 'নতুন কমিটি পদবী MongoDB-তে সেভ হয়েছে!', member: newMember });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'সদস্য যোগ করা যায়নি।' });
+  }
 });
 
-app.delete('/api/committee/:id', verifyToken, checkPermission('manage_committee'), (req, res) => {
-  memoryStore.committee = memoryStore.committee.filter(c => c.id !== req.params.id);
-  res.json({ success: true, message: 'সদস্যের তথ্য মুছে ফেলা হয়েছে।' });
+app.delete('/api/committee/:id', verifyToken, checkPermission('manage_committee'), async (req, res) => {
+  try {
+    await CommitteeMember.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'সদস্যের তথ্য MongoDB থেকে মুছে ফেলা হয়েছে।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'তথ্য মোছা সম্ভব হয়নি।' });
+  }
 });
 
-// Blood Service Routes
-app.get('/api/blood/donors', (req, res) => {
-  res.json({ success: true, donors: memoryStore.bloodDonors });
+// ----------------------------------------------------
+// Blood Service Routes (Direct MongoDB Queries)
+// ----------------------------------------------------
+app.get('/api/blood/donors', async (req, res) => {
+  try {
+    const donors = await BloodDonor.find().sort({ createdAt: -1 });
+    res.json({ success: true, donors });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'রক্তদাতাদের তালিকা লোড করা যায়নি।' });
+  }
 });
 
-app.post('/api/blood/donors', (req, res) => {
-  const newDonor = { id: 'donor-' + Date.now(), ...req.body };
-  memoryStore.bloodDonors.unshift(newDonor);
-  res.json({ success: true, message: 'রক্তদাতা হিসেবে সফলভাবে নিবন্ধিত হয়েছেন!', donor: newDonor });
+app.post('/api/blood/donors', async (req, res) => {
+  try {
+    const newDonor = await BloodDonor.create(req.body);
+    res.json({ success: true, message: 'রক্তদাতা হিসেবে MongoDB-তে তথ্য সেভ হয়েছে!', donor: newDonor });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'রক্তদাতা যোগ করা সম্ভব হয়নি।' });
+  }
 });
 
-app.delete('/api/blood/donors/:id', verifyToken, checkPermission('manage_blood'), (req, res) => {
-  memoryStore.bloodDonors = memoryStore.bloodDonors.filter(d => d.id !== req.params.id);
-  res.json({ success: true, message: 'রক্তদাতার নাম তালিকা থেকে সরিয়ে নেওয়া হয়েছে।' });
+app.delete('/api/blood/donors/:id', verifyToken, checkPermission('manage_blood'), async (req, res) => {
+  try {
+    await BloodDonor.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'রক্তদাতার নাম MongoDB থেকে মুছে ফেলা হয়েছে।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'সরানো সম্ভব হয়নি।' });
+  }
 });
 
-app.get('/api/blood/requests', (req, res) => {
-  res.json({ success: true, requests: memoryStore.bloodRequests });
+app.get('/api/blood/requests', async (req, res) => {
+  try {
+    const requests = await BloodRequest.find().sort({ createdAt: -1 });
+    res.json({ success: true, requests });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'রক্তের আবেদনসমূহ লোড করা যায়নি।' });
+  }
 });
 
-app.post('/api/blood/requests', (req, res) => {
-  const newReq = { id: 'req-' + Date.now(), ...req.body };
-  memoryStore.bloodRequests.unshift(newReq);
-  res.json({ success: true, message: 'জরুরি রক্তের আবেদন প্রকাশিত হয়েছে!', request: newReq });
+app.post('/api/blood/requests', async (req, res) => {
+  try {
+    const newReq = await BloodRequest.create(req.body);
+    res.json({ success: true, message: 'জরুরি রক্তের আবেদন MongoDB-তে সেভ হয়েছে!', request: newReq });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'আবেদন সেভ করা যায়নি।' });
+  }
 });
 
-app.delete('/api/blood/requests/:id', verifyToken, checkPermission('manage_blood'), (req, res) => {
-  memoryStore.bloodRequests = memoryStore.bloodRequests.filter(r => r.id !== req.params.id);
-  res.json({ success: true, message: 'রক্তের আবেদন সম্পন্ন হিসেবে চিহ্ণিত করা হয়েছে।' });
+app.delete('/api/blood/requests/:id', verifyToken, checkPermission('manage_blood'), async (req, res) => {
+  try {
+    await BloodRequest.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'রক্তের আবেদনটি সম্পন্ন হিসেবে চিহ্নিত করা হয়েছে।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'প্রসেস করা সম্ভব হয়নি।' });
+  }
 });
 
-// Donations Routes
-app.get('/api/donations', (req, res) => {
-  res.json({ success: true, donations: memoryStore.donations });
+// ----------------------------------------------------
+// Donations Routes (Direct MongoDB Queries)
+// ----------------------------------------------------
+app.get('/api/donations', async (req, res) => {
+  try {
+    const donations = await Donation.find().sort({ createdAt: -1 });
+    res.json({ success: true, donations });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'অনুদানের তথ্য লোড করা যায়নি।' });
+  }
 });
 
-app.post('/api/donations', (req, res) => {
-  const newDonation = { id: 'don-' + Date.now(), ...req.body };
-  memoryStore.donations.unshift(newDonation);
-  res.json({ success: true, message: 'অনুদানের তথ্য ধন্যবাদান্তে গ্রহণ করা হয়েছে!', donation: newDonation });
+app.post('/api/donations', async (req, res) => {
+  try {
+    const newDonation = await Donation.create(req.body);
+    res.json({ success: true, message: 'অনুদানের তথ্য MongoDB-তে সংরক্ষণ করা হয়েছে!', donation: newDonation });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'অনুদানের তথ্য সেভ করা সম্ভব হয়নি।' });
+  }
 });
 
-app.delete('/api/donations/:id', verifyToken, checkPermission('manage_all'), (req, res) => {
-  memoryStore.donations = memoryStore.donations.filter(d => d.id !== req.params.id);
-  res.json({ success: true, message: 'অনুদানের তথ্য মুছে ফেলা হয়েছে।' });
+app.delete('/api/donations/:id', verifyToken, checkPermission('manage_all'), async (req, res) => {
+  try {
+    await Donation.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'অনুদানের হিসাব মুছে ফেলা হয়েছে।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'মুছে ফেলা সম্ভব হয়নি।' });
+  }
 });
 
 export default app;
@@ -262,6 +387,6 @@ export default app;
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
-    console.log(`🚀 Clean Production Express API listening on http://localhost:${PORT}`);
+    console.log(`🚀 Pure MongoDB Express API listening on http://localhost:${PORT}`);
   });
 }
