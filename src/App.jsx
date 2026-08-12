@@ -109,11 +109,13 @@ function MainApp() {
         {currentSection === 'committee' && <Committee />}
         {currentSection === 'blood' && <BloodService onOpenModal={handleOpenModal} />}
         {currentSection === 'donate' && <Donate />}
-        {currentSection === 'admin' && <AdminDashboard onOpenModal={handleOpenModal} />}
+        {currentSection === 'admin' && <AdminDashboard onOpenModal={handleOpenModal} onNavigate={handleNavigate} />}
       </main>
 
-      {/* Footer */}
-      <Footer onNavigate={handleNavigate} onOpenModal={handleOpenModal} />
+      {/* Footer (Hidden in Admin Mode for Full-Screen Dashboard Experience) */}
+      {currentSection !== 'admin' && (
+        <Footer onNavigate={handleNavigate} onOpenModal={handleOpenModal} />
+      )}
 
       {/* Dialog Modals */}
       <Modals activeModal={activeModal} onClose={handleCloseModal} />

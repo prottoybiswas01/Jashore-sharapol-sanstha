@@ -948,3 +948,212 @@ input, select, textarea {
   text-align: center;
   font-size: 0.875rem;
 }
+
+/* ==========================================================================
+   Admin Dashboard & Management Console CSS Design System
+   ========================================================================== */
+
+.admin-layout {
+  display: flex;
+  min-height: calc(100vh - 70px);
+  background-color: var(--bg-main);
+  position: relative;
+}
+
+.admin-sidebar {
+  width: 270px;
+  background-color: var(--secondary);
+  color: #cbd5e1;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 70px;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+/* Custom Sleek Scrollbar for Sidebar */
+.admin-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+.admin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.admin-menu-item {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #94a3b8;
+  transition: var(--transition-fast);
+}
+
+.admin-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+.admin-menu-item.active {
+  background-color: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+}
+
+.admin-menu-item i {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.admin-content {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem;
+  overflow-x: hidden;
+}
+
+.admin-mobile-bar {
+  display: none;
+  padding: 0.85rem 1.25rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Quick Action Grid Responsive System */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.85rem;
+}
+
+.quick-actions-grid .btn {
+  width: 100%;
+  justify-content: flex-start;
+  white-space: normal;
+  text-align: left;
+  padding: 0.65rem 0.9rem;
+  line-height: 1.35;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* Admin Stats Grid */
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* Data Tables Styling */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  background: rgba(15, 23, 42, 0.03);
+  padding: 0.9rem 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .data-table th {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.data-table td {
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background: rgba(5, 150, 105, 0.04);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 992px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-mobile-bar {
+    display: flex;
+  }
+  
+  .admin-layout {
+    flex-direction: column;
+    min-height: auto;
+  }
+  
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 0;
+    overflow: hidden;
+    position: static;
+    padding: 0 1rem;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .admin-sidebar.mobile-open {
+    max-height: 550px;
+    padding: 1.25rem 1rem;
+    overflow-y: auto;
+  }
+  
+  .admin-content {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}

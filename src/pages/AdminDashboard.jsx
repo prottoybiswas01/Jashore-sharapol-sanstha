@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 
-export default function AdminDashboard({ onOpenModal }) {
+export default function AdminDashboard({ onOpenModal, onNavigate }) {
   const { user, login, logout, hasPermission, token } = useAuth();
   const { 
     settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers,
@@ -13,12 +13,18 @@ export default function AdminDashboard({ onOpenModal }) {
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('admin123');
   const [activeAdminTab, setActiveAdminTab] = useState('overview');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (user && hasPermission('manage_roles')) {
       fetchAdminUsers();
     }
   }, [user]);
+
+  const handleTabClick = (tabId) => {
+    setActiveAdminTab(tabId);
+    setIsMobileSidebarOpen(false);
+  };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -97,108 +103,141 @@ export default function AdminDashboard({ onOpenModal }) {
   const totalDonationSum = donations.reduce((sum, d) => sum + (parseInt(d.amount) || 0), 0);
 
   return (
-    <div class="admin-layout">
-      {/* Sidebar Nav */}
-      <aside class="admin-sidebar">
-        <div style={{ paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1rem' }}>
-          <h3 style={{ color: 'white', fontSize: '1.1rem' }}><i class="fa-solid fa-shield-halved" style={{ color: 'var(--primary)' }}></i> এডমিন ড্যাশবোর্ড</h3>
-          <small style={{ color: '#94a3b8' }}>যশোর শারাপোল সংস্থা &bull; <strong>{user.name} ({user.role})</strong></small>
-        </div>
-
-        <div class={`admin-menu-item ${activeAdminTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveAdminTab('overview')}>
-          <i class="fa-solid fa-chart-pie"></i> ওভারভিউ
-        </div>
-
-        {hasPermission('manage_site') && (
-          <div class={`admin-menu-item ${activeAdminTab === 'site-cms' ? 'active' : ''}`} onClick={() => setActiveAdminTab('site-cms')}>
-            <i class="fa-solid fa-pen-to-square"></i> ওয়েবসাইট কনটেন্ট এডিটর
-          </div>
+    <div>
+      {/* Mobile Admin Bar */}
+      <div class="admin-mobile-bar">
+        <button class="btn btn-outline btn-sm" onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}>
+          <i class="fa-solid fa-bars"></i> এডমিন নেভিগেশন
+        </button>
+        {onNavigate && (
+          <button class="btn btn-outline btn-sm" onClick={() => onNavigate('home')}>
+            <i class="fa-solid fa-globe"></i> ওয়েবসাইটে ফেরত যান
+          </button>
         )}
+      </div>
 
-        {hasPermission('manage_media') && (
-          <div class={`admin-menu-item ${activeAdminTab === 'activities' ? 'active' : ''}`} onClick={() => setActiveAdminTab('activities')}>
-            <i class="fa-solid fa-list-check"></i> কাজের রেকর্ড পরিচালনা
+      <div class="admin-layout">
+        {/* Sidebar Nav */}
+        <aside class={`admin-sidebar ${isMobileSidebarOpen ? 'mobile-open' : ''}`}>
+          <div style={{ paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1rem' }}>
+            <h3 style={{ color: 'white', fontSize: '1.15rem', marginBottom: '0.2rem' }}>
+              <i class="fa-solid fa-shield-halved" style={{ color: 'var(--primary)' }}></i> এডমিন প্যানেল
+            </h3>
+            <small style={{ color: '#94a3b8', display: 'block' }}>
+              {user.name} &bull; <strong style={{ color: 'var(--primary-light)' }}>{user.role}</strong>
+            </small>
           </div>
-        )}
 
-        {hasPermission('manage_content') && (
-          <div class={`admin-menu-item ${activeAdminTab === 'plans' ? 'active' : ''}`} onClick={() => setActiveAdminTab('plans')}>
-            <i class="fa-solid fa-lightbulb"></i> ভবিষ্যৎ পরিকল্পনা
+          <div class={`admin-menu-item ${activeAdminTab === 'overview' ? 'active' : ''}`} onClick={() => handleTabClick('overview')}>
+            <i class="fa-solid fa-chart-pie"></i> ওভারভিউ
           </div>
-        )}
 
-        {hasPermission('manage_committee') && (
-          <div class={`admin-menu-item ${activeAdminTab === 'committee' ? 'active' : ''}`} onClick={() => setActiveAdminTab('committee')}>
-            <i class="fa-solid fa-users-gear"></i> পদবী ও সদস্যবৃন্দ
-          </div>
-        )}
-
-        {hasPermission('manage_blood') && (
-          <div class={`admin-menu-item ${activeAdminTab === 'donors' ? 'active' : ''}`} onClick={() => setActiveAdminTab('donors')}>
-            <i class="fa-solid fa-droplet"></i> রক্তদাতা ও আবেদন
-          </div>
-        )}
-
-        {hasPermission('manage_all') && (
-          <div class={`admin-menu-item ${activeAdminTab === 'donations' ? 'active' : ''}`} onClick={() => setActiveAdminTab('donations')}>
-            <i class="fa-solid fa-hand-holding-dollar"></i> অনুদান হিসাব ও ভেরিফিকেশন
-          </div>
-        )}
-
-        {hasPermission('manage_roles') && (
-          <div class={`admin-menu-item ${activeAdminTab === 'rbac' ? 'active' : ''}`} onClick={() => setActiveAdminTab('rbac')}>
-            <i class="fa-solid fa-user-gear"></i> আরবিএসি (RBAC) রোলস ও ইউজার্স
-          </div>
-        )}
-
-        <div class="admin-menu-item" style={{ color: '#f87171', marginTop: '2rem' }} onClick={logout}>
-          <i class="fa-solid fa-right-from-bracket"></i> লগআউট করুন
-        </div>
-      </aside>
-
-      {/* Main Admin Content Area */}
-      <main class="admin-content">
-        
-        {/* 1. OVERVIEW */}
-        {activeAdminTab === 'overview' && (
-          <div>
-            <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
-              <h2>এডমিন ড্যাশবোর্ড ওভারভিউ</h2>
-              <span class="badge badge-primary"><i class="fa-solid fa-circle" style={{ fontSize: '0.5rem', marginRight: '0.3rem' }}></i> আপনার রোল: {user.role}</span>
+          {hasPermission('manage_site') && (
+            <div class={`admin-menu-item ${activeAdminTab === 'site-cms' ? 'active' : ''}`} onClick={() => handleTabClick('site-cms')}>
+              <i class="fa-solid fa-pen-to-square"></i> ওয়েবসাইট কনটেন্ট এডিটর
             </div>
+          )}
 
-            <div class="grid grid-cols-4 gap-2" style={{ marginBottom: '2rem' }}>
-              <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>মোট সম্পন্ন কাজ</div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>{activities.length}</div>
-              </div>
-              <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>নিবন্ধিত রক্তদাতা</div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--blood-red)' }}>{donors.length}</div>
-              </div>
-              <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>কমিটির পদবী সংখ্যা</div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--secondary)' }}>{committee.length}</div>
-              </div>
-              <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>মোট প্রাপ্ত অনুদান</div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b45309' }}>৳ {totalDonationSum.toLocaleString()}</div>
-              </div>
+          {hasPermission('manage_media') && (
+            <div class={`admin-menu-item ${activeAdminTab === 'activities' ? 'active' : ''}`} onClick={() => handleTabClick('activities')}>
+              <i class="fa-solid fa-list-check"></i> কাজের রেকর্ড পরিচালনা
             </div>
+          )}
 
-            <div style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-              <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}><i class="fa-solid fa-bolt" style={{ color: 'var(--accent-gold)' }}></i> অনুমোদিত কুইক অ্যাকশন (RBAC)</h3>
-              <div class="flex gap-2 flex-wrap">
-                {hasPermission('manage_site') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('edit-site-settings')}><i class="fa-solid fa-pen"></i> ওয়েবসাইট কনটেন্ট সম্পাদনা</button>}
-                {hasPermission('manage_media') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন কাজের রেকর্ড যোগ (ছবি আপলোড)</button>}
-                {hasPermission('manage_content') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('add-plan')}><i class="fa-solid fa-lightbulb"></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ</button>}
-                {hasPermission('manage_committee') && <button class="btn btn-secondary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন কমিটি পদবী যোগ</button>}
-                {hasPermission('manage_all') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i class="fa-solid fa-hand-holding-dollar"></i> ম্যানুয়ালি অনুদান হিসাব যোগ</button>}
-                {hasPermission('manage_roles') && <button class="btn btn-blood btn-sm" onClick={() => onOpenModal('add-sub-user')}><i class="fa-solid fa-user-gear"></i> নতুন এডমিন রোল তৈরি</button>}
-              </div>
+          {hasPermission('manage_content') && (
+            <div class={`admin-menu-item ${activeAdminTab === 'plans' ? 'active' : ''}`} onClick={() => handleTabClick('plans')}>
+              <i class="fa-solid fa-lightbulb"></i> ভবিষ্যৎ পরিকল্পনা
             </div>
+          )}
+
+          {hasPermission('manage_committee') && (
+            <div class={`admin-menu-item ${activeAdminTab === 'committee' ? 'active' : ''}`} onClick={() => handleTabClick('committee')}>
+              <i class="fa-solid fa-users-gear"></i> পদবী ও সদস্যবৃন্দ
+            </div>
+          )}
+
+          {hasPermission('manage_blood') && (
+            <div class={`admin-menu-item ${activeAdminTab === 'donors' ? 'active' : ''}`} onClick={() => handleTabClick('donors')}>
+              <i class="fa-solid fa-droplet"></i> রক্তদাতা ও আবেদন
+            </div>
+          )}
+
+          {hasPermission('manage_all') && (
+            <div class={`admin-menu-item ${activeAdminTab === 'donations' ? 'active' : ''}`} onClick={() => handleTabClick('donations')}>
+              <i class="fa-solid fa-hand-holding-dollar"></i> অনুদান হিসাব ও ভেরিফিকেশন
+            </div>
+          )}
+
+          {hasPermission('manage_roles') && (
+            <div class={`admin-menu-item ${activeAdminTab === 'rbac' ? 'active' : ''}`} onClick={() => handleTabClick('rbac')}>
+              <i class="fa-solid fa-user-gear"></i> আরবিএসি (RBAC) রোলস ও ইউজার্স
+            </div>
+          )}
+
+          {onNavigate && (
+            <div class="admin-menu-item" style={{ color: 'var(--primary-light)', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '0.85rem' }} onClick={() => onNavigate('home')}>
+              <i class="fa-solid fa-globe"></i> মূল ওয়েবসাইটে ফেরত যান
+            </div>
+          )}
+
+          <div class="admin-menu-item" style={{ color: '#f87171', marginTop: '0.4rem' }} onClick={logout}>
+            <i class="fa-solid fa-right-from-bracket"></i> লগআউট করুন
           </div>
-        )}
+        </aside>
+
+        {/* Main Admin Content Area */}
+        <main class="admin-content">
+          
+          {/* 1. OVERVIEW */}
+          {activeAdminTab === 'overview' && (
+            <div>
+              <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>এডমিন ড্যাশবোর্ড ওভারভিউ</h2>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>স্বাগতম, {user.name}! প্যানেলের সকল সেকশন পরিচালনা করুন</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  {onNavigate && (
+                    <button class="btn btn-outline btn-sm" onClick={() => onNavigate('home')}>
+                      <i class="fa-solid fa-globe"></i> মূল ওয়েবসাইট
+                    </button>
+                  )}
+                  <span class="badge badge-primary"><i class="fa-solid fa-circle" style={{ fontSize: '0.5rem', marginRight: '0.3rem' }}></i> আপনার রোল: {user.role}</span>
+                </div>
+              </div>
+
+              <div class="admin-stats-grid">
+                <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>মোট সম্পন্ন কাজ</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>{activities.length}</div>
+                </div>
+                <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>নিবন্ধিত রক্তদাতা</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--blood-red)' }}>{donors.length}</div>
+                </div>
+                <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>কমিটির পদবী সংখ্যা</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--secondary)' }}>{committee.length}</div>
+                </div>
+                <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>মোট প্রাপ্ত অনুদান</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b45309' }}>৳ {totalDonationSum.toLocaleString()}</div>
+                </div>
+              </div>
+
+              <div style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}><i class="fa-solid fa-bolt" style={{ color: 'var(--accent-gold)' }}></i> অনুমোদিত কুইক অ্যাকশন (RBAC)</h3>
+                <div class="quick-actions-grid">
+                  {hasPermission('manage_site') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('edit-site-settings')}><i class="fa-solid fa-pen"></i> ওয়েবসাইট কনটেন্ট সম্পাদনা</button>}
+                  {hasPermission('manage_media') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-activity')}><i class="fa-solid fa-plus"></i> নতুন কাজের রেকর্ড যোগ (ছবি আপলোড)</button>}
+                  {hasPermission('manage_content') && <button class="btn btn-outline btn-sm" onClick={() => onOpenModal('add-plan')}><i class="fa-solid fa-lightbulb"></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ</button>}
+                  {hasPermission('manage_committee') && <button class="btn btn-secondary btn-sm" onClick={() => onOpenModal('add-member')}><i class="fa-solid fa-user-plus"></i> নতুন কমিটি পদবী যোগ</button>}
+                  {hasPermission('manage_all') && <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i class="fa-solid fa-hand-holding-dollar"></i> ম্যানুয়ালি অনুদান হিসাব যোগ</button>}
+                  {hasPermission('manage_roles') && <button class="btn btn-blood btn-sm" onClick={() => onOpenModal('add-sub-user')}><i class="fa-solid fa-user-gear"></i> নতুন এডমিন রোল তৈরি</button>}
+                </div>
+              </div>
+            </div>
+          )}
 
         {/* 2. SITE CONTENT EDITOR (CMS) */}
         {activeAdminTab === 'site-cms' && hasPermission('manage_site') && (
@@ -534,5 +573,6 @@ export default function AdminDashboard({ onOpenModal }) {
 
       </main>
     </div>
-  );
+  </div>
+);
 }
