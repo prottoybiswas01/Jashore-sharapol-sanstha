@@ -3,7 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { DataProvider, useData } from './context/DataContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Modals from './components/Modals';
+import Modals from './components/UserModals';
 
 import Home from './pages/Home';
 import About from './pages/About';
