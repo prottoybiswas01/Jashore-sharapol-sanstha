@@ -395,7 +395,7 @@ app.put('/api/users/:id/committee-role', async (req, res) => {
             name: targetUser.name, 
             role: committeeRole, 
             phone: targetUser.phone || '01700-000000',
-            image: targetUser.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+            image: targetUser.image || ''
           },
           { upsert: true, new: true }
         );

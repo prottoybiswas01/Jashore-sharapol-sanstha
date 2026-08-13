@@ -241,7 +241,7 @@ export default function Modals({ activeModal, onClose }) {
       name: memName, 
       role: finalRole, 
       phone: memPhone || '01700-000000', 
-      image: memImg || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80' 
+      image: memImg || '' 
     });
     onClose();
     setMemName(''); setMemRoleSelect('সভাপতি'); setCustomMemRole(''); setMemPhone(''); setMemImg('');

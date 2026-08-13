@@ -486,7 +486,15 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                     <tbody>
                       {committee.map(c => (
                         <tr key={c.id || c._id}>
-                          <td><img src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} /></td>
+                          <td>
+                            {c.image ? (
+                              <img src={c.image} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} />
+                            ) : (
+                              <div className="avatar-placeholder avatar-placeholder-md">
+                                <i className="fa-solid fa-user"></i>
+                              </div>
+                            )}
+                          </td>
                           <td><strong>{c.name}</strong></td>
                           <td><span className="badge badge-primary">{c.role}</span></td>
                           <td>{c.phone}</td>
@@ -776,11 +784,17 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                       <tr key={idea._id || idea.id}>
                         <td>
                           <div className="flex items-center gap-2" style={{ whiteSpace: 'nowrap' }}>
-                            <img 
-                              src={idea.memberPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} 
-                              style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} 
-                              alt={idea.memberName} 
-                            />
+                            {idea.memberPhoto ? (
+                              <img 
+                                src={idea.memberPhoto} 
+                                style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} 
+                                alt={idea.memberName} 
+                              />
+                            ) : (
+                              <div className="avatar-placeholder avatar-placeholder-sm">
+                                <i className="fa-solid fa-user"></i>
+                              </div>
+                            )}
                             <div>
                               <strong>{idea.memberName}</strong>
                               <small style={{ display: 'block', color: 'var(--text-muted)' }}>@{idea.username}</small>

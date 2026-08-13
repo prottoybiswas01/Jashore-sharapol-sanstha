@@ -118,11 +118,17 @@ export default function Committee() {
                 {group.members.map(member => (
                   <div className="committee-card" key={member._id || member.id} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                      <img 
-                        src={member.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} 
-                        alt={member.name} 
-                        className="member-photo" 
-                      />
+                      {member.image ? (
+                        <img 
+                          src={member.image} 
+                          alt={member.name} 
+                          className="member-photo" 
+                        />
+                      ) : (
+                        <div className="avatar-placeholder avatar-placeholder-lg">
+                          <i className="fa-solid fa-user"></i>
+                        </div>
+                      )}
                       <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
                         <span className="badge" style={{
                           fontSize: '0.8rem',

@@ -115,11 +115,17 @@ export default function UserProfile({ onNavigate }) {
         <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)', marginBottom: '2rem' }}>
           <div className="flex items-center gap-4 flex-wrap">
             <div style={{ position: 'relative' }}>
-              <img 
-                src={user.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} 
-                alt={user.name} 
-                style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--primary-light)', boxShadow: 'var(--shadow-sm)' }} 
-              />
+              {user.image ? (
+                <img 
+                  src={user.image} 
+                  alt={user.name} 
+                  style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--primary-light)', boxShadow: 'var(--shadow-sm)' }} 
+                />
+              ) : (
+                <div className="avatar-placeholder" style={{ width: '100px', height: '100px', borderRadius: '50%', border: '4px solid var(--primary-light)', fontSize: '2.5rem' }}>
+                  <i className="fa-solid fa-user"></i>
+                </div>
+              )}
               <label style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--primary)', color: 'white', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }} title="ছবি পরিবর্তন করুন">
                 <i className="fa-solid fa-camera" style={{ fontSize: '0.85rem' }}></i>
                 <input type="file" accept="image/*" onChange={handleProfilePhotoUpload} style={{ display: 'none' }} disabled={isUploadingPhoto} />

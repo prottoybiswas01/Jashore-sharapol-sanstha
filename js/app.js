@@ -267,7 +267,7 @@ class AppController {
     if (grid) {
       grid.innerHTML = committee.map(c => `
         <div class="committee-card">
-          <img src="${c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}" alt="${c.name}" class="member-photo">
+          ${c.image ? `<img src="${c.image}" alt="${c.name}" class="member-photo">` : `<div class="avatar-placeholder avatar-placeholder-lg"><i class="fa-solid fa-user"></i></div>`}
           <span class="badge badge-primary" style="margin-bottom: 0.5rem;">${c.role}</span>
           <h3 class="member-name">${c.name}</h3>
           <div class="member-phone">
@@ -542,7 +542,7 @@ class AppController {
     if (comBody) {
       comBody.innerHTML = committee.map(c => `
         <tr>
-          <td><img src="${c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"></td>
+          <td>${c.image ? `<img src="${c.image}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : `<div class="avatar-placeholder avatar-placeholder-md"><i class="fa-solid fa-user"></i></div>`}</td>
           <td><strong>${c.name}</strong></td>
           <td><span class="badge badge-primary">${c.role}</span></td>
           <td>${c.phone}</td>
