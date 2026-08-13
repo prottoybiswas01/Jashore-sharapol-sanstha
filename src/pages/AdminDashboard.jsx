@@ -516,12 +516,12 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
         {/* 6. DONORS & REQUESTS */}
         {activeAdminTab === 'donors' && hasPermission('manage_blood') && (
           <div>
-            <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
               <h2>রক্তদাতা ও রক্ত আবেদন ম্যানেজমেন্ট</h2>
             </div>
             <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--blood-red)' }}>জরুরি রক্তের আবেদনসমূহ</h3>
-            <div class="table-responsive" style={{ marginBottom: '2rem' }}>
-              <table class="data-table">
+            <div className="table-responsive" style={{ marginBottom: '2rem' }}>
+              <table className="data-table">
                 <thead>
                   <tr>
                     <th>রোগীর নাম</th>
@@ -537,13 +537,13 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   ) : (
                     bloodRequests.map(r => (
                       <tr key={r.id || r._id}>
-                        <td><strong>{r.patientName}</strong></td>
-                        <td><span class="badge badge-blood">{r.bloodGroup}</span></td>
-                        <td>{r.hospital}</td>
-                        <td>{r.contact}</td>
-                        <td>
-                          <button class="btn btn-primary btn-sm" onClick={() => deleteBloodRequest(r._id || r.id)}>
-                            <i class="fa-solid fa-check"></i> সম্পন্ন নিশ্চিত
+                        <td data-label="রোগীর নাম"><strong>{r.patientName}</strong></td>
+                        <td data-label="গ্রুপ"><span className="badge badge-blood">{r.bloodGroup}</span></td>
+                        <td data-label="হাসপাতাল">{r.hospital}</td>
+                        <td data-label="যোগাযোগ">{r.contact}</td>
+                        <td data-label="অ্যাকশন">
+                          <button className="btn btn-primary btn-sm" onClick={() => deleteBloodRequest(r._id || r.id)}>
+                            <i className="fa-solid fa-check"></i> সম্পন্ন নিশ্চিত
                           </button>
                         </td>
                       </tr>
@@ -554,8 +554,8 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
             </div>
 
             <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>নিবন্ধিত রক্তদাতাদের তালিকা</h3>
-            <div class="table-responsive">
-              <table class="data-table">
+            <div className="table-responsive">
+              <table className="data-table">
                 <thead>
                   <tr>
                     <th>নাম</th>
@@ -571,13 +571,13 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   ) : (
                     donors.map(d => (
                       <tr key={d.id || d._id}>
-                        <td><strong>{d.name}</strong></td>
-                        <td><span class="badge badge-blood">{d.bloodGroup}</span></td>
-                        <td>{d.upazila}</td>
-                        <td>{d.phone}</td>
-                        <td>
-                          <button class="btn btn-outline btn-sm" onClick={() => deleteBloodDonor(d._id || d.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
-                            <i class="fa-solid fa-trash"></i>
+                        <td data-label="নাম"><strong>{d.name}</strong></td>
+                        <td data-label="গ্রুপ"><span className="badge badge-blood">{d.bloodGroup}</span></td>
+                        <td data-label="উপজেলা">{d.upazila}</td>
+                        <td data-label="মোবাইল">{d.phone}</td>
+                        <td data-label="অ্যাকশন">
+                          <button className="btn btn-outline btn-sm" onClick={() => deleteBloodDonor(d._id || d.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
+                            <i className="fa-solid fa-trash"></i>
                           </button>
                         </td>
                       </tr>
@@ -592,16 +592,16 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
         {/* 7. FINANCIAL DONATIONS LEDGER */}
         {activeAdminTab === 'donations' && hasPermission('manage_all') && (
           <div>
-            <div class="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
               <div>
                 <h2>অনুদানের হিসাব ও রিয়েল-টাইম রেজিস্টার</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>মোট সর্বমোট সংগৃহীত অনুদান: <strong style={{ color: 'var(--primary)' }}>৳ {totalDonationSum.toLocaleString()}</strong></p>
               </div>
-              <button class="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i class="fa-solid fa-plus"></i> ম্যানুয়ালি অনুদান যোগ</button>
+              <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i className="fa-solid fa-plus"></i> ম্যানুয়ালি অনুদান যোগ</button>
             </div>
 
-            <div class="table-responsive">
-              <table class="data-table">
+            <div className="table-responsive">
+              <table className="data-table">
                 <thead>
                   <tr>
                     <th>দাতা / শুভানুধ্যায়ী</th>
@@ -618,12 +618,12 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   ) : (
                     donations.map(d => (
                       <tr key={d.id || d._id}>
-                        <td><strong>{d.donorName}</strong></td>
-                        <td style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
-                        <td><span class="badge badge-info">{d.method}</span></td>
-                        <td><code>{d.trxId || 'N/A'}</code></td>
-                        <td>{d.date || 'আজ'}</td>
-                        <td><span class="badge badge-primary">{d.status || 'অনুমোদিত'}</span></td>
+                        <td data-label="দাতা"><strong>{d.donorName}</strong></td>
+                        <td data-label="অনুদানের পরিমাণ" style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
+                        <td data-label="পেমেন্ট মাধ্যম"><span className="badge badge-info">{d.method}</span></td>
+                        <td data-label="TrxID"><code>{d.trxId || 'N/A'}</code></td>
+                        <td data-label="তারিখ">{d.date || 'আজ'}</td>
+                        <td data-label="স্ট্যাটাস"><span className="badge badge-primary">{d.status || 'অনুমোদিত'}</span></td>
                       </tr>
                     ))
                   )}
@@ -698,7 +698,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                         const isPrimary = u.username === 'prottoy';
                         return (
                           <tr key={u._id || u.id} style={u.username === 'prottoy' ? { background: 'rgba(16, 185, 129, 0.06)' } : {}}>
-                            <td>
+                            <td data-label="নাম">
                               <strong style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>{u.name}</strong>
                               {u.username === 'prottoy' && (
                                 <div style={{ marginTop: '0.2rem' }}>
@@ -708,12 +708,12 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                                 </div>
                               )}
                             </td>
-                            <td>
+                            <td data-label="ইউজারনাম/ইমেইল">
                               <code style={{ whiteSpace: 'nowrap' }}>{u.username}</code>
                               {u.email && <small style={{ display: 'block', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{u.email}</small>}
                             </td>
-                            <td><span className="badge badge-gold" style={{ whiteSpace: 'nowrap' }}>{u.role}</span></td>
-                            <td>
+                            <td data-label="বর্তমান রোল"><span className="badge badge-gold" style={{ whiteSpace: 'nowrap' }}>{u.role}</span></td>
+                            <td data-label="রোল পরিবর্তন">
                               {!isPrimary ? (
                                 <select 
                                   className="form-control" 
@@ -734,7 +734,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                                 </small>
                               )}
                             </td>
-                            <td>
+                            <td data-label="অ্যাকশন">
                               {!isPrimary && (
                                 <button className="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u._id || u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="মুছে ফেলুন">
                                   <i className="fa-solid fa-trash"></i>
@@ -750,6 +750,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
               );
             })()}
           </div>
+        )}
         {/* 9. MEMBER IDEAS & PROPOSALS REVIEW TAB (FOR PRESIDENT & EXECUTIVE COMMITTEE) */}
         {activeAdminTab === 'member-ideas' && (
           <div>

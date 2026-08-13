@@ -91,9 +91,14 @@ export default function Header({ currentSection, onNavigate, onOpenModal }) {
             <li className="nav-drawer-actions">
               <hr style={{ border: 0, borderTop: '1px solid var(--border-color)', margin: '0.75rem 0' }} />
               {!user ? (
-                <button className="btn btn-outline btn-sm drawer-btn" onClick={() => { onOpenModal('public-register'); setIsMobileMenuOpen(false); }}>
-                  <i className="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন / লগইন
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%' }}>
+                  <button className="btn btn-outline btn-sm drawer-btn" onClick={() => { onOpenModal('public-login'); setIsMobileMenuOpen(false); }}>
+                    <i className="fa-solid fa-right-to-bracket"></i> লগইন করুন
+                  </button>
+                  <button className="btn btn-primary btn-sm drawer-btn" onClick={() => { onOpenModal('public-register'); setIsMobileMenuOpen(false); }}>
+                    <i className="fa-solid fa-user-plus"></i> নতুন রেজিস্ট্রেশন
+                  </button>
+                </div>
               ) : (
                 <>
                   <button className="btn btn-primary btn-sm drawer-btn" onClick={() => handleNavClick('profile')}>
@@ -121,9 +126,14 @@ export default function Header({ currentSection, onNavigate, onOpenModal }) {
             {/* Desktop Actions */}
             <div className="desktop-actions flex items-center gap-2">
               {!user ? (
-                <button className="btn btn-outline btn-sm" onClick={() => onOpenModal('public-register')}>
-                  <i className="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন / লগইন
-                </button>
+                <>
+                  <button className="btn btn-outline btn-sm" onClick={() => onOpenModal('public-login')}>
+                    <i className="fa-solid fa-right-to-bracket"></i> লগইন
+                  </button>
+                  <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('public-register')}>
+                    <i className="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন
+                  </button>
+                </>
               ) : (
                 <>
                   <button className="btn btn-outline btn-sm" onClick={() => handleNavClick('profile')}>

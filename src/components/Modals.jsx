@@ -31,7 +31,7 @@ export function renderFormattedContent(text) {
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          <i class="fa-solid fa-bookmark" style={{ color: 'var(--primary)', fontSize: '0.9rem' }}></i>
+          <i className="fa-solid fa-bookmark" style={{ color: 'var(--primary)', fontSize: '0.9rem' }}></i>
           <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--primary-dark)', margin: 0 }}>
             {headingText}
           </h4>
@@ -111,7 +111,36 @@ export default function Modals({ activeModal, onClose }) {
     selectedActivity, setSelectedActivity, editingActivity, setEditingActivity
   } = useData();
 
-  const { register } = useAuth();
+  const { register, login } = useAuth();
+
+  // Public User Auth Form State (Login / Register Switcher)
+  const [authMode, setAuthMode] = useState('login');
+  const [loginUser, setLoginUser] = useState('');
+  const [loginPass, setLoginPass] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    if (activeModal === 'public-login') {
+      setAuthMode('login');
+      setLoginError('');
+    } else if (activeModal === 'public-register') {
+      setAuthMode('register');
+      setLoginError('');
+    }
+  }, [activeModal]);
+
+  const handlePublicLogin = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    const res = await login(loginUser, loginPass);
+    if (res.success) {
+      onClose();
+      setLoginUser('');
+      setLoginPass('');
+    } else {
+      setLoginError(res.message || 'ইউজারনাম বা পাসওয়ার্ড ভুল হয়েছে।');
+    }
+  };
 
   // Helper for ultra-fast, high-efficiency client-side image compression
   const handleCompressedImageUpload = async (e, setImageState, maxDim = 800, quality = 0.75) => {
@@ -372,20 +401,20 @@ export default function Modals({ activeModal, onClose }) {
     <>
       {/* Activity Details Popup Modal */}
       {activeModal === 'view-activity' && selectedActivity && (
-        <div class="modal-overlay open">
-          <div class="modal-card" style={{ maxWidth: '780px' }}>
-            <div class="modal-header">
+        <div className="modal-overlay open">
+          <div className="modal-card" style={{ maxWidth: '780px' }}>
+            <div className="modal-header">
               <div>
-                <h3 class="modal-title" style={{ fontSize: '1.4rem' }}>{selectedActivity.title}</h3>
+                <h3 className="modal-title" style={{ fontSize: '1.4rem' }}>{selectedActivity.title}</h3>
                 {selectedActivity.subtitle && (
                   <p style={{ color: 'var(--primary-dark)', fontSize: '0.95rem', fontWeight: 600, marginTop: '0.25rem' }}>
-                    <i class="fa-solid fa-feather-pointed" style={{ color: 'var(--accent-gold)', marginRight: '0.3rem' }}></i> {selectedActivity.subtitle}
+                    <i className="fa-solid fa-feather-pointed" style={{ color: 'var(--accent-gold)', marginRight: '0.3rem' }}></i> {selectedActivity.subtitle}
                   </p>
                 )}
               </div>
-              <span class="modal-close" onClick={() => { setSelectedActivity(null); onClose(); }}>&times;</span>
+              <span className="modal-close" onClick={() => { setSelectedActivity(null); onClose(); }}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               {/* Image Preview */}
               {selectedActivity.image && (
                 <img 
@@ -407,14 +436,14 @@ export default function Modals({ activeModal, onClose }) {
                 </div>
               )}
 
-              <div class="flex items-center gap-2 flex-wrap" style={{ marginBottom: '1.25rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                <span><i class="fa-regular fa-calendar-days"></i> {selectedActivity.date}</span>
+              <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: '1.25rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                <span><i className="fa-regular fa-calendar-days"></i> {selectedActivity.date}</span>
                 <span>&bull;</span>
-                <span><i class="fa-solid fa-location-dot"></i> {selectedActivity.location}</span>
-                <span class="badge badge-primary">{selectedActivity.category}</span>
+                <span><i className="fa-solid fa-location-dot"></i> {selectedActivity.location}</span>
+                <span className="badge badge-primary">{selectedActivity.category}</span>
                 {selectedActivity.expense > 0 && (
-                  <span class="badge" style={{ background: '#fef3c7', color: '#b45309', fontWeight: 700 }}>
-                    <i class="fa-solid fa-coins" style={{ marginRight: '0.3rem' }}></i> 
+                  <span className="badge" style={{ background: '#fef3c7', color: '#b45309', fontWeight: 700 }}>
+                    <i className="fa-solid fa-coins" style={{ marginRight: '0.3rem' }}></i> 
                     মোট ব্যয়: ৳ {parseInt(selectedActivity.expense).toLocaleString()}
                   </span>
                 )}
@@ -425,10 +454,10 @@ export default function Modals({ activeModal, onClose }) {
                 {renderFormattedContent(selectedActivity.description)}
               </div>
 
-              <div class="flex justify-between items-center" style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+              <div className="flex justify-between items-center" style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
                 <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{selectedActivity.impact}</span>
-                <button class="btn btn-blood btn-sm" onClick={() => likeActivity(selectedActivity._id || selectedActivity.id)}>
-                  <i class="fa-solid fa-heart"></i> লাইক দিন ({selectedActivity.likes || 0})
+                <button className="btn btn-blood btn-sm" onClick={() => likeActivity(selectedActivity._id || selectedActivity.id)}>
+                  <i className="fa-solid fa-heart"></i> লাইক দিন ({selectedActivity.likes || 0})
                 </button>
               </div>
             </div>
@@ -436,113 +465,168 @@ export default function Modals({ activeModal, onClose }) {
         </div>
       )}
 
-      {/* Public Member & Donor Registration Modal */}
-      {activeModal === 'public-register' && (
-        <div class="modal-overlay open">
-          <div class="modal-card">
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-user-plus" style={{ color: 'var(--primary)' }}></i> সদস্য ও রক্তদাতা নিবন্ধন</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+      {/* Public User Auth Modal (Login & Registration Switcher) */}
+      {(activeModal === 'public-register' || activeModal === 'public-login') && (
+        <div className="modal-overlay open">
+          <div className="modal-card" style={{ maxWidth: '460px' }}>
+            <div className="modal-header" style={{ paddingBottom: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                <button 
+                  type="button" 
+                  className={`btn btn-sm ${authMode === 'login' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1, borderRadius: 'var(--radius-sm)' }}
+                  onClick={() => setAuthMode('login')}
+                >
+                  <i className="fa-solid fa-right-to-bracket"></i> প্রবেশ (Login)
+                </button>
+                <button 
+                  type="button" 
+                  className={`btn btn-sm ${authMode === 'register' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1, borderRadius: 'var(--radius-sm)' }}
+                  onClick={() => setAuthMode('register')}
+                >
+                  <i className="fa-solid fa-user-plus"></i> নিবন্ধন (Register)
+                </button>
+              </div>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
-              <form onSubmit={handlePublicRegister}>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">আপনার পূর্ণ নাম *</label>
-                  <input type="text" className="form-control" value={pubName} onChange={e => setPubName(e.target.value)} placeholder="যেমন: মোঃ সাকিব হাসান" required />
-                </div>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">ব্যবহারকারী নাম (Username) *</label>
-                  <input type="text" className="form-control" value={pubUsername} onChange={e => setPubUsername(e.target.value)} placeholder="যেমন: sakib123" required />
-                </div>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">আপনার এক কপি ছবি আপলোড করুন (Profile Photo)</label>
-                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setPubImg, 180, 0.5)} />
-                  {pubImg && (
-                    <div style={{ marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <img src={pubImg} alt="Profile Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)' }} />
-                      <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি আল্ট্রা-কমপ্রেসড (৩-৫ KB) ও সেভ হয়েছে!</small>
+            <div className="modal-body">
+              {authMode === 'login' ? (
+                <form onSubmit={handlePublicLogin}>
+                  <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary-dark)' }}>অ্যাকাউন্টে প্রবেশ করুন</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>আপনার ইউজারনাম ও পাসওয়ার্ড দিয়ে লগইন করুন</p>
+                  </div>
+
+                  {loginError && (
+                    <div style={{ background: '#fee2e2', color: '#dc2626', padding: '0.65rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', fontSize: '0.85rem', textAlign: 'center', fontWeight: 600 }}>
+                      <i className="fa-solid fa-circle-exclamation" style={{ marginRight: '0.3rem' }}></i> {loginError}
                     </div>
                   )}
-                </div>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">ইমেইল ঠিকানা (Email Address) *</label>
-                  <input type="email" className="form-control" value={pubEmail} onChange={e => setPubEmail(e.target.value)} placeholder="যেমন: user@gmail.com" required />
-                </div>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">পাসওয়ার্ড *</label>
-                  <input type="password" className="form-control" value={pubPass} onChange={e => setPubPass(e.target.value)} required />
-                </div>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">মোবাইল নম্বর *</label>
-                  <input type="tel" className="form-control" value={pubPhone} onChange={e => setPubPhone(e.target.value)} placeholder="যেমন: 01711234567" required />
-                </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">রক্তের গ্রুপ *</label>
-                  <select class="form-control" value={pubBlood} onChange={e => setPubBlood(e.target.value)}>
-                    <option value="A+">A+</option><option value="A-">A-</option>
-                    <option value="B+">B+</option><option value="B-">B-</option>
-                    <option value="AB+">AB+</option><option value="AB-">AB-</option>
-                    <option value="O+">O+</option><option value="O-">O-</option>
-                  </select>
-                </div>
-                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">উপজেলা *</label>
-                  <select class="form-control" value={pubUpazila} onChange={e => setPubUpazila(e.target.value)}>
-                    <option value="যশোর সদর">যশোর সদর</option>
-                    <option value="অভয়নগর">অভয়নগর</option>
-                    <option value="বাঘারপাড়া">বাঘারপাড়া</option>
-                    <option value="চৌগাছা">চৌগাছা</option>
-                    <option value="ঝিকরগাছা">ঝিকরগাছা</option>
-                    <option value="কেশবপুর">কেশবপুর</option>
-                    <option value="মণিরামপুর">মণিরামপুর</option>
-                    <option value="শার্শা">শার্শা</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>অ্যাকাউন্ট তৈরি করুন</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Dynamic Site Settings Editor Modal */}
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">ইউজার নাম (Username) *</label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      value={loginUser} 
+                      onChange={e => setLoginUser(e.target.value)} 
+                      placeholder="যেমন: sakib123" 
+                      required 
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                    <label className="form-label">পাসওয়ার্ড (Password) *</label>
+                    <input 
+                      type="password" 
+                      className="form-control" 
+                      value={loginPass} 
+                      onChange={e => setLoginPass(e.target.value)} 
+                      placeholder="পাসওয়ার্ড লিখুন" 
+                      required 
+                    />
+                  </div>
+
+                  <button type="submit" className="btn btn-primary" style={{ width: '100%', marginBottom: '1rem' }}>
+                    <i className="fa-solid fa-right-to-bracket"></i> লগইন করুন
+                  </button>
+
+                  <div style={{ textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+                    নতুন ইউজার? {' '}
+                    <button type="button" onClick={() => setAuthMode('register')} style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'underline' }}>
+                      এখানে নিবন্ধন করুন
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handlePublicRegister}>
+                  <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary-dark)' }}>সদস্য ও রক্তদাতা নিবন্ধন</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>সংগঠনের সদস্য হয়ে যুক্ত হোন</p>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">আপনার পূর্ণ নাম *</label>
+                    <input type="text" className="form-control" value={pubName} onChange={e => setPubName(e.target.value)} placeholder="যেমন: মোঃ সাকিব হাসান" required />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">ব্যবহারকারী নাম (Username) *</label>
+                    <input type="text" className="form-control" value={pubUsername} onChange={e => setPubUsername(e.target.value)} placeholder="যেমন: sakib123" required />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">আপনার এক কপি ছবি আপলোড করুন (Profile Photo)</label>
+                    <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setPubImg, 180, 0.5)} />
+                    {pubImg && (
+                      <div style={{ marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <img src={pubImg} alt="Profile Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)' }} />
+                        <small style={{ color: 'var(--primary)', fontWeight: 600 }}>ছবি কমপ্রেসড ও সেভ হয়েছে!</small>
+                      </div>
+                    )}
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">ইমেইল ঠিকানা (Email Address) *</label>
+                    <input type="email" className="form-control" value={pubEmail} onChange={e => setPubEmail(e.target.value)} placeholder="যেমন: user@gmail.com" required />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">পাসওয়ার্ড *</label>
+                    <input type="password" className="form-control" value={pubPass} onChange={e => setPubPass(e.target.value)} required />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">মোবাইল নম্বর *</label>
+                    <input type="tel" className="form-control" value={pubPhone} onChange={e => setPubPhone(e.target.value)} placeholder="যেমন: 01711234567" required />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label className="form-label">রক্তের গ্রুপ *</label>
+                    <select className="form-control" value={pubBlood} onChange={e => setPubBlood(e.target.value)}>
+                      <option value="A+">A+</option><option value="A-">A-</option>
+                      <option value="B+">B+</option><option value="B-">B-</option>
+                      <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                      <option value="O+">O+</option><option value="O-">O-</option>
+                    </select>
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                    <label className="form-label">উপজেলা *</label>
+                    <select className="form-control" value={pubUpazila} onChange={e => setPubUpazila(e.target.value)}>
+                      <option value="যশোর সদর">যশোর সদর</option>
+                      <      {/* Dynamic Site Settings Editor Modal */}
       {activeModal === 'edit-site-settings' && (
-        <div class="modal-overlay open">
-          <div class="modal-card">
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-pen-to-square" style={{ color: 'var(--primary)' }}></i> ওয়েবসাইট কনটেন্ট এডিটর</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-pen-to-square" style={{ color: 'var(--primary)' }}></i> ওয়েবসাইট কনটেন্ট এডিটর</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handleSettingsSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">টপ জরুরি নোটিশ (Ticker Notice)</label>
-                  <textarea class="form-control" rows="2" value={siteForm.topTickerNotice} onChange={e => setSiteForm({ ...siteForm, topTickerNotice: e.target.value })} required></textarea>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">টপ জরুরি নোটিশ (Ticker Notice)</label>
+                  <textarea className="form-control" rows="2" value={siteForm.topTickerNotice} onChange={e => setSiteForm({ ...siteForm, topTickerNotice: e.target.value })} required></textarea>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">প্রধান শিরোনাম (Hero Main Title)</label>
-                  <input type="text" class="form-control" value={siteForm.heroTitleText} onChange={e => setSiteForm({ ...siteForm, heroTitleText: e.target.value })} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">প্রধান শিরোনাম (Hero Main Title)</label>
+                  <input type="text" className="form-control" value={siteForm.heroTitleText} onChange={e => setSiteForm({ ...siteForm, heroTitleText: e.target.value })} required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">হোমপেজ বিবরণ (Hero Description)</label>
-                  <textarea class="form-control" rows="3" value={siteForm.heroDescription} onChange={e => setSiteForm({ ...siteForm, heroDescription: e.target.value })} required></textarea>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">হোমপেজ বিবরণ (Hero Description)</label>
+                  <textarea className="form-control" rows="3" value={siteForm.heroDescription} onChange={e => setSiteForm({ ...siteForm, heroDescription: e.target.value })} required></textarea>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">হিরো ব্যানার ছবি আপলোড (High Speed Compression)</label>
-                  <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, (b64) => setSiteForm({ ...siteForm, heroImageUrl: b64 }))} />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">হিরো ব্যানার ছবি আপলোড (High Speed Compression)</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, (b64) => setSiteForm({ ...siteForm, heroImageUrl: b64 }))} />
                   {siteForm.heroImageUrl && (
                     <img src={siteForm.heroImageUrl} style={{ width: '100px', height: '60px', objectFit: 'cover', marginTop: '0.5rem', borderRadius: '4px' }} alt="Hero preview" />
                   )}
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">আমাদের কথা বিবরণ (About Us Text)</label>
-                  <textarea class="form-control" rows="3" value={siteForm.aboutDescription} onChange={e => setSiteForm({ ...siteForm, aboutDescription: e.target.value })} required></textarea>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">আমাদের কথা বিবরণ (About Us Text)</label>
+                  <textarea className="form-control" rows="3" value={siteForm.aboutDescription} onChange={e => setSiteForm({ ...siteForm, aboutDescription: e.target.value })} required></textarea>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">যোগাযোগের ফোন (Helpline)</label>
-                  <input type="text" class="form-control" value={siteForm.contactPhone} onChange={e => setSiteForm({ ...siteForm, contactPhone: e.target.value })} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">যোগাযোগের ফোন (Helpline)</label>
+                  <input type="text" className="form-control" value={siteForm.contactPhone} onChange={e => setSiteForm({ ...siteForm, contactPhone: e.target.value })} required />
                 </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>সেভ ও লাইভ ওয়েবসাইট আপডেট করুন</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>সেভ ও লাইভ ওয়েবসাইট আপডেট করুন</button>
               </form>
             </div>
           </div>
@@ -551,40 +635,40 @@ export default function Modals({ activeModal, onClose }) {
 
       {/* Blood Request Modal */}
       {activeModal === 'blood-request' && (
-        <div class="modal-overlay open">
-          <div class="modal-card">
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-droplet" style={{ color: 'var(--blood-red)' }}></i> জরুরি রক্তের আবেদন</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-droplet" style={{ color: 'var(--blood-red)' }}></i> জরুরি রক্তের আবেদন</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handleReqSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">রোগীর নাম *</label>
-                  <input type="text" class="form-control" value={reqPatient} onChange={e => setReqPatient(e.target.value)} placeholder="রোগীর নাম" required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">রোগীর নাম *</label>
+                  <input type="text" className="form-control" value={reqPatient} onChange={e => setReqPatient(e.target.value)} placeholder="রোগীর নাম" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">রক্তের গ্রুপ *</label>
-                  <select class="form-control" value={reqGroup} onChange={e => setReqGroup(e.target.value)}>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">রক্তের গ্রুপ *</label>
+                  <select className="form-control" value={reqGroup} onChange={e => setReqGroup(e.target.value)}>
                     <option value="A+">A+</option><option value="A-">A-</option>
                     <option value="B+">B+</option><option value="B-">B-</option>
                     <option value="AB+">AB+</option><option value="AB-">AB-</option>
                     <option value="O+">O+</option><option value="O-">O-</option>
                   </select>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">হাসপাতাল (যশোর) *</label>
-                  <input type="text" class="form-control" value={reqHospital} onChange={e => setReqHospital(e.target.value)} placeholder="২৫০ শয্যা হাসপাতাল, যশোর" required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">হাসপাতাল (যশোর) *</label>
+                  <input type="text" className="form-control" value={reqHospital} onChange={e => setReqHospital(e.target.value)} placeholder="২৫০ শয্যা হাসপাতাল, যশোর" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">যোগাযোগের নম্বর *</label>
-                  <input type="tel" class="form-control" value={reqPhone} onChange={e => setReqPhone(e.target.value)} placeholder="017xxxxxxxx" required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">যোগাযোগের নম্বর *</label>
+                  <input type="tel" className="form-control" value={reqPhone} onChange={e => setReqPhone(e.target.value)} placeholder="017xxxxxxxx" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">বিস্তারিত</label>
-                  <textarea class="form-control" rows="2" value={reqDetails} onChange={e => setReqDetails(e.target.value)} placeholder="জরুরি রক্তের বিবরণ"></textarea>
+                <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label className="form-label">বিস্তারিত</label>
+                  <textarea className="form-control" rows="2" value={reqDetails} onChange={e => setReqDetails(e.target.value)} placeholder="জরুরি রক্তের বিবরণ"></textarea>
                 </div>
-                <button type="submit" class="btn btn-blood" style={{ width: '100%' }}>আবেদন জমা দিন</button>
+                <button type="submit" className="btn btn-blood" style={{ width: '100%' }}>আবেদন জমা দিন</button>
               </form>
             </div>
           </div>
@@ -593,30 +677,30 @@ export default function Modals({ activeModal, onClose }) {
 
       {/* Donor Register Modal */}
       {activeModal === 'donor-register' && (
-        <div class="modal-overlay open">
-          <div class="modal-card">
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-user-plus" style={{ color: 'var(--primary)' }}></i> রক্তদাতা নিবন্ধন</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-user-plus" style={{ color: 'var(--primary)' }}></i> রক্তদাতা নিবন্ধন</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handleDonorSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">পূর্ণ নাম *</label>
-                  <input type="text" class="form-control" value={regName} onChange={e => setRegName(e.target.value)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">পূর্ণ নাম *</label>
+                  <input type="text" className="form-control" value={regName} onChange={e => setRegName(e.target.value)} required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">রক্তের গ্রুপ *</label>
-                  <select class="form-control" value={regGroup} onChange={e => setRegGroup(e.target.value)}>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">রক্তের গ্রুপ *</label>
+                  <select className="form-control" value={regGroup} onChange={e => setRegGroup(e.target.value)}>
                     <option value="A+">A+</option><option value="A-">A-</option>
                     <option value="B+">B+</option><option value="B-">B-</option>
                     <option value="AB+">AB+</option><option value="AB-">AB-</option>
                     <option value="O+">O+</option><option value="O-">O-</option>
                   </select>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">উপজেলা *</label>
-                  <select class="form-control" value={regUpazila} onChange={e => setRegUpazila(e.target.value)}>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">উপজেলা *</label>
+                  <select className="form-control" value={regUpazila} onChange={e => setRegUpazila(e.target.value)}>
                     <option value="যশোর সদর">যশোর সদর</option>
                     <option value="অভয়নগর">অভয়নগর</option>
                     <option value="বাঘারপাড়া">বাঘারপাড়া</option>
@@ -627,11 +711,11 @@ export default function Modals({ activeModal, onClose }) {
                     <option value="শার্শা">শার্শা</option>
                   </select>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">মোবাইল নম্বর *</label>
-                  <input type="tel" class="form-control" value={regPhone} onChange={e => setRegPhone(e.target.value)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">মোবাইল নম্বর *</label>
+                  <input type="tel" className="form-control" value={regPhone} onChange={e => setRegPhone(e.target.value)} required />
                 </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>রক্তদাতা নিবন্ধন করুন</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>রক্তদাতা নিবন্ধন করুন</button>
               </form>
             </div>
           </div>
@@ -640,13 +724,13 @@ export default function Modals({ activeModal, onClose }) {
 
       {/* Admin Add Activity Modal with Compressed Photo & YouTube Video Input */}
       {activeModal === 'add-activity' && (
-        <div class="modal-overlay open">
-          <div class="modal-card" style={{ maxWidth: '720px' }}>
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-plus" style={{ color: 'var(--primary)' }}></i> নতুন কাজের রেকর্ড যোগ করুন</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card" style={{ maxWidth: '720px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-plus" style={{ color: 'var(--primary)' }}></i> নতুন কাজের রেকর্ড যোগ করুন</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handleActSubmit}>
                 {/* Textbox 1: Main Title */}
                 <div className="form-group" style={{ marginBottom: '1rem' }}>
@@ -730,57 +814,54 @@ export default function Modals({ activeModal, onClose }) {
                   <input type="url" className="form-control" value={actVideo} onChange={e => setActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
                 </div>
 
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>রেকর্ড প্রকাশ ও মঙ্গোডিবিতে সেভ করুন</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>রেকর্ড প্রকাশ ও সেভ করুন</button>
               </form>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Admin Edit Activity Modal */}
+        </d      {/* Admin Edit Activity Modal */}
       {activeModal === 'edit-activity' && editingActivity && (
-        <div class="modal-overlay open">
-          <div class="modal-card" style={{ maxWidth: '720px' }}>
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-pen-to-square" style={{ color: 'var(--primary)' }}></i> কাজের রেকর্ড সম্পাদনা করুন</h3>
-              <span class="modal-close" onClick={() => { setEditingActivity(null); onClose(); }}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card" style={{ maxWidth: '720px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-pen-to-square" style={{ color: 'var(--primary)' }}></i> কাজের রেকর্ড সম্পাদনা করুন</h3>
+              <span className="modal-close" onClick={() => { setEditingActivity(null); onClose(); }}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handleEditActSubmit}>
-                <div class="grid grid-cols-2 gap-2" style={{ marginBottom: '1rem' }}>
-                  <div class="form-group">
-                    <label class="form-label">প্রধান শিরোনাম (Main Title) *</label>
-                    <input type="text" class="form-control" value={editActTitle} onChange={e => setEditActTitle(e.target.value)} required />
+                <div className="grid grid-cols-2 gap-2" style={{ marginBottom: '1rem' }}>
+                  <div className="form-group">
+                    <label className="form-label">প্রধান শিরোনাম (Main Title) *</label>
+                    <input type="text" className="form-control" value={editActTitle} onChange={e => setEditActTitle(e.target.value)} required />
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">উপ-শিরোনাম / সংক্ষিপ্ত হাইলাইট (Subtitle)</label>
-                    <input type="text" class="form-control" value={editActSub} onChange={e => setEditActSub(e.target.value)} placeholder="উপ-শিরোনাম লিখুন" />
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2" style={{ marginBottom: '1rem' }}>
-                  <div class="form-group">
-                    <label class="form-label">ক্যাটাগরি</label>
-                    <input type="text" class="form-control" value={editActCat} onChange={e => setEditActCat(e.target.value)} />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">তারিখ *</label>
-                    <input type="date" class="form-control" value={editActDate} onChange={e => setEditActDate(e.target.value)} required />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">মোট খরচ (টাকা ৳)</label>
-                    <input type="number" class="form-control" value={editActExpense} onChange={e => setEditActExpense(e.target.value)} placeholder="যেমন: ২৫০০০" />
+                  <div className="form-group">
+                    <label className="form-label">উপ-শিরোনাম / সংক্ষিপ্ত হাইলাইট (Subtitle)</label>
+                    <input type="text" className="form-control" value={editActSub} onChange={e => setEditActSub(e.target.value)} placeholder="উপ-শিরোনাম লিখুন" />
                   </div>
                 </div>
 
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">কাজের স্থান</label>
-                  <input type="text" class="form-control" value={editActLoc} onChange={e => setEditActLoc(e.target.value)} />
+                <div className="grid grid-cols-3 gap-2" style={{ marginBottom: '1rem' }}>
+                  <div className="form-group">
+                    <label className="form-label">ক্যাটাগরি</label>
+                    <input type="text" className="form-control" value={editActCat} onChange={e => setEditActCat(e.target.value)} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">তারিখ *</label>
+                    <input type="date" className="form-control" value={editActDate} onChange={e => setEditActDate(e.target.value)} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">মোট খরচ (টাকা ৳)</label>
+                    <input type="number" className="form-control" value={editActExpense} onChange={e => setEditActExpense(e.target.value)} placeholder="যেমন: ২৫০০০" />
+                  </div>
                 </div>
 
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ছবি পরিবর্তন করুন (Auto Compressed Upload)</label>
-                  <input type="file" accept="image/*" class="form-control" onChange={e => handleCompressedImageUpload(e, setEditActImg)} />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">কাজের স্থান</label>
+                  <input type="text" className="form-control" value={editActLoc} onChange={e => setEditActLoc(e.target.value)} />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">ছবি পরিবর্তন করুন (Auto Compressed Upload)</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setEditActImg)} />
                   {editActImg && (
                     <div style={{ marginTop: '0.5rem' }}>
                       <small style={{ color: 'var(--primary)', fontWeight: 600 }}>বর্তমান ছবি:</small>
@@ -789,39 +870,39 @@ export default function Modals({ activeModal, onClose }) {
                   )}
                 </div>
 
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ইউটিউব ভিডিও লিংক (YouTube Video URL)</label>
-                  <input type="url" class="form-control" value={editActVideo} onChange={e => setEditActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">ইউটিউব ভিডিও লিংক (YouTube Video URL)</label>
+                  <input type="url" className="form-control" value={editActVideo} onChange={e => setEditActVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
                 </div>
 
-                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <div class="flex justify-between items-center" style={{ marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <label class="form-label" style={{ marginBottom: 0 }}>বিবরণ (ডিটেইলস ও সেকশন) *</label>
-                    <div class="flex gap-1">
-                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('heading', setEditActDesc, editActDesc)}>
+                <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <div className="flex justify-between items-center" style={{ marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <label className="form-label" style={{ marginBottom: 0 }}>বিবরণ (ডিটেইলস ও সেকশন) *</label>
+                    <div className="flex gap-1">
+                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('heading', setEditActDesc, editActDesc)}>
                         + সেকশন টাইটেল
                       </button>
-                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('bullet', setEditActDesc, editActDesc)}>
+                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('bullet', setEditActDesc, editActDesc)}>
                         + বুলেট পয়েন্ট
                       </button>
-                      <button type="button" class="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('divider', setEditActDesc, editActDesc)}>
+                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('divider', setEditActDesc, editActDesc)}>
                         + বিভাজক
                       </button>
                     </div>
                   </div>
-                  <textarea class="form-control" rows="5" value={editActDesc} onChange={e => setEditActDesc(e.target.value)} required></textarea>
+                  <textarea className="form-control" rows="5" value={editActDesc} onChange={e => setEditActDesc(e.target.value)} required></textarea>
 
                   {editActDesc && (
                     <div style={{ marginTop: '0.75rem', padding: '1rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
                       <small style={{ color: 'var(--primary)', fontWeight: 700, display: 'block', marginBottom: '0.4rem' }}>
-                        <i class="fa-solid fa-eye"></i> লাইভ ফরম্যাটিং প্রিভিউ (Section Preview):
+                        <i className="fa-solid fa-eye"></i> লাইভ ফরম্যাটিং প্রিভিউ (Section Preview):
                       </small>
                       {renderFormattedContent(editActDesc)}
                     </div>
                   )}
                 </div>
 
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>আপডেট পরিবর্তনসমূহ সেভ করুন</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>আপডেট পরিবর্তনসমূহ সেভ করুন</button>
               </form>
             </div>
           </div>
@@ -883,31 +964,31 @@ export default function Modals({ activeModal, onClose }) {
 
       {/* Admin Add Future Plan Modal */}
       {activeModal === 'add-plan' && (
-        <div class="modal-overlay open">
-          <div class="modal-card">
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-lightbulb" style={{ color: 'var(--accent-gold)' }}></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ করুন</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-lightbulb" style={{ color: 'var(--accent-gold)' }}></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ করুন</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handlePlanSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">পরিকল্পনার শিরোনাম *</label>
-                  <input type="text" class="form-control" value={planTitle} onChange={e => setPlanTitle(e.target.value)} placeholder="যেমন: বিনামূল্যে ব্লাড ব্যাংক নির্মাণ" required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">পরিকল্পনার শিরোনাম *</label>
+                  <input type="text" className="form-control" value={planTitle} onChange={e => setPlanTitle(e.target.value)} placeholder="যেমন: বিনামূল্যে ব্লাড ব্যাংক নির্মাণ" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ক্যাটাগরি</label>
-                  <input type="text" class="form-control" value={planCat} onChange={e => setPlanCat(e.target.value)} placeholder="শিক্ষা / জনস্বাস্থ্য" />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">ক্যাটাগরি</label>
+                  <input type="text" className="form-control" value={planCat} onChange={e => setPlanCat(e.target.value)} placeholder="শিক্ষা / জনস্বাস্থ্য" />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">সম্ভাব্য টার্গেট তারিখ</label>
-                  <input type="date" class="form-control" value={planDate} onChange={e => setPlanDate(e.target.value)} />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">সম্ভাব্য টার্গেট তারিখ</label>
+                  <input type="date" className="form-control" value={planDate} onChange={e => setPlanDate(e.target.value)} />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">বিস্তারিত বিবরণ *</label>
-                  <textarea class="form-control" rows="3" value={planDesc} onChange={e => setPlanDesc(e.target.value)} placeholder="পরিকল্পনার বিবরণ লিখুন..." required></textarea>
+                <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label className="form-label">বিস্তারিত বিবরণ *</label>
+                  <textarea className="form-control" rows="3" value={planDesc} onChange={e => setPlanDesc(e.target.value)} placeholder="পরিকল্পনার বিবরণ লিখুন..." required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>পরিকল্পনা সংরক্ষণ করুন</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>পরিকল্পনা সংরক্ষণ করুন</button>
               </form>
             </div>
           </div>
@@ -916,25 +997,25 @@ export default function Modals({ activeModal, onClose }) {
 
       {/* Admin Add Donation Form Modal */}
       {activeModal === 'add-donation' && (
-        <div class="modal-overlay open">
-          <div class="modal-card">
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-hand-holding-dollar" style={{ color: 'var(--primary)' }}></i> ম্যানুয়ালি অনুদানের তথ্য হিসাবভুক্ত করুন</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-hand-holding-dollar" style={{ color: 'var(--primary)' }}></i> ম্যানুয়ালি অনুদানের তথ্য হিসাবভুক্ত করুন</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handleDonationSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">দাতার পূর্ণ নাম *</label>
-                  <input type="text" class="form-control" value={donName} onChange={e => setDonName(e.target.value)} placeholder="যেমন: মোঃ কামরুল ইসলাম" required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">দাতার পূর্ণ নাম *</label>
+                  <input type="text" className="form-control" value={donName} onChange={e => setDonName(e.target.value)} placeholder="যেমন: মোঃ কামরুল ইসলাম" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">অনুদানের পরিমাণ (টাকা) *</label>
-                  <input type="number" class="form-control" value={donAmount} onChange={e => setDonAmount(e.target.value)} placeholder="যেমন: ৫০০, ১০০০" required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">অনুদানের পরিমাণ (টাকা) *</label>
+                  <input type="number" className="form-control" value={donAmount} onChange={e => setDonAmount(e.target.value)} placeholder="যেমন: ৫০০, ১০০০" required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">পেমেন্ট মাধ্যম *</label>
-                  <select class="form-control" value={donMethod} onChange={e => setDonMethod(e.target.value)}>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">পেমেন্ট মাধ্যম *</label>
+                  <select className="form-control" value={donMethod} onChange={e => setDonMethod(e.target.value)}>
                     <option value="bKash">bKash (বিকাশ)</option>
                     <option value="Nagad">Nagad (নগদ)</option>
                     <option value="Rocket">Rocket (রকেট)</option>
@@ -942,11 +1023,83 @@ export default function Modals({ activeModal, onClose }) {
                     <option value="Cash">নগদ ক্যাশ গ্রহণ</option>
                   </select>
                 </div>
-                <div class="form-group" style={{ marginBottom: '1.5rem' }}>
-                  <label class="form-label">TrxID / রেফারেন্স (Optional)</label>
-                  <input type="text" class="form-control" value={donTrx} onChange={e => setDonTrx(e.target.value)} placeholder="যেমন: BK9X82M1 বা ক্যাশ গ্রহণ" />
+                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                  <label className="form-label">TrxID / রেফারেন্স (Optional)</label>
+                  <input type="text" className="form-control" value={donTrx} onChange={e => setDonTrx(e.target.value)} placeholder="যেমন: BK9X82M1 বা ক্যাশ গ্রহণ" />
                 </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>অনুদান হিসাবে যুক্ত করুন</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>অনুদান হিসাবে যুক্ত করুন</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}��মন: বিশেষ উপদেষ্টা / সাংগঠনিক সম্পাদক" required />
+                  </div>
+                )}
+
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">মোবাইল নম্বর</label>
+                  <input type="tel" className="form-control" value={memPhone} onChange={e => setMemPhone(e.target.value)} placeholder="যেমন: 01711-000000" />
+                </div>
+                
+                <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label className="form-label">সদস্যের ছবি আপলোড করুন (Auto Compressed)</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={e => handleCompressedImageUpload(e, setMemImg)} />
+                  {memImg && (
+                    <img src={memImg} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginTop: '0.5rem', display: 'block' }} alt="Member Preview" />
+                  )}
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>পদবী ও কর্মকর্তা কনফার্ম যোগ করুন</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Add Future Plan Modal */}
+      {activeModal === 'add-plan' && (
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-lightbulb" style={{ color: 'var(--accent-gold)' }}></i> নতুন ভবিষ্যৎ পরিকল্পনা যোগ করুন</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handlePlanSubmit}>
+               
+
+      {/* Admin Add Donation Form Modal */}
+      {activeModal === 'add-donation' && (
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-hand-holding-dollar" style={{ color: 'var(--primary)' }}></i> ম্যানুয়ালি অনুদানের তথ্য হিসাবভুক্ত করুন</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleDonationSubmit}>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">দাতার পূর্ণ নাম *</label>
+                  <input type="text" className="form-control" value={donName} onChange={e => setDonName(e.target.value)} placeholder="যেমন: মোঃ কামরুল ইসলাম" required />
+                </div>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">অনুদানের পরিমাণ (টাকা) *</label>
+                  <input type="number" className="form-control" value={donAmount} onChange={e => setDonAmount(e.target.value)} placeholder="যেমন: ৫০০, ১০০০" required />
+                </div>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">পেমент মাধ্যম *</label>
+                  <select className="form-control" value={donMethod} onChange={e => setDonMethod(e.target.value)}>
+                    <option value="bKash">bKash (বিকাশ)</option>
+                    <option value="Nagad">Nagad (নগদ)</option>
+                    <option value="Rocket">Rocket (রকেট)</option>
+                    <option value="Bank">Bank Transfer</option>
+                    <option value="Cash">নগদ ক্যাশ গ্রহণ</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                  <label className="form-label">TrxID / রেফারেন্স (Optional)</label>
+                  <input type="text" className="form-control" value={donTrx} onChange={e => setDonTrx(e.target.value)} placeholder="যেমন: BK9X82M1 বা ক্যাশ গ্রহণ" />
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>অনুদান হিসাবে যুক্ত করুন</button>
               </form>
             </div>
           </div>
@@ -955,36 +1108,36 @@ export default function Modals({ activeModal, onClose }) {
 
       {/* Admin Add Sub-User Account Modal (RBAC) */}
       {activeModal === 'add-sub-user' && (
-        <div class="modal-overlay open">
-          <div class="modal-card">
-            <div class="modal-header">
-              <h3 class="modal-title"><i class="fa-solid fa-user-shield" style={{ color: 'var(--primary)' }}></i> নতুন এডমিন সাব-অ্যাকাউন্ট (RBAC)</h3>
-              <span class="modal-close" onClick={onClose}>&times;</span>
+        <div className="modal-overlay open">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-user-shield" style={{ color: 'var(--primary)' }}></i> নতুন এডমিন সাব-অ্যাকাউন্ট (RBAC)</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <form onSubmit={handleSubUserSubmit}>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">নাম *</label>
-                  <input type="text" class="form-control" value={subName} onChange={e => setSubName(e.target.value)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">নাম *</label>
+                  <input type="text" className="form-control" value={subName} onChange={e => setSubName(e.target.value)} required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">ব্যবহারকারী নাম (Username) *</label>
-                  <input type="text" class="form-control" value={subUsername} onChange={e => setSubUsername(e.target.value)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">ব্যবহারকারী নাম (Username) *</label>
+                  <input type="text" className="form-control" value={subUsername} onChange={e => setSubUsername(e.target.value)} required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1rem' }}>
-                  <label class="form-label">পাসওয়ার্ড *</label>
-                  <input type="password" class="form-control" value={subPass} onChange={e => setSubPass(e.target.value)} required />
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">পাসওয়ার্ড *</label>
+                  <input type="password" className="form-control" value={subPass} onChange={e => setSubPass(e.target.value)} required />
                 </div>
-                <div class="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <label class="form-label">অর্পিত রোল (Assigned Role & Permissions) *</label>
-                  <select class="form-control" value={subRole} onChange={e => setSubRole(e.target.value)}>
+                <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                  <label className="form-label">অর্পিত রোল (Assigned Role & Permissions) *</label>
+                  <select className="form-control" value={subRole} onChange={e => setSubRole(e.target.value)}>
                     <option value="BLOOD_ADMIN">রক্তদান ব্যবস্থাপক (Blood Manager)</option>
                     <option value="MEDIA_ADMIN">ছবি ও গ্যালারি সম্পাদক (Media Admin)</option>
                     <option value="CONTENT_ADMIN">সংবাদ ও পোস্ট সম্পাদক (Content Admin)</option>
                     <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
                   </select>
                 </div>
-                <button type="submit" class="btn btn-primary" style={{ width: '100%' }}>অ্যাকাউন্ট তৈরি করুন</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>অ্যাকাউন্ট তৈরি করুন</button>
               </form>
             </div>
           </div>
