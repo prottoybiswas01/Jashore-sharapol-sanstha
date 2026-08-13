@@ -20,32 +20,6 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password, email) => {
     const userEmail = email || 'jashoresharapolsanstha@gmail.com';
 
-    // Primary Super Admin Direct Login (Developer Prottoy)
-    if (username === 'prottoy' && password === 'Prottoy57@') {
-      const primaryUserData = {
-        id: 'primary-prottoy-id',
-        name: 'Developer Prottoy',
-        username: 'prottoy',
-        email: userEmail,
-        role: 'SUPER_ADMIN',
-        permissions: ['manage_all']
-      };
-      const primaryToken = 'primary-prottoy-jwt-token-fixed';
-      setToken(primaryToken);
-      setUser(primaryUserData);
-      localStorage.setItem('sharapol_token', primaryToken);
-      localStorage.setItem('sharapol_user', JSON.stringify(primaryUserData));
-
-      // Asynchronously trigger server API login to fire Resend Email
-      fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, email: userEmail })
-      }).catch(() => {});
-
-      return { success: true };
-    }
-
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -60,11 +34,41 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('sharapol_token', data.token);
         localStorage.setItem('sharapol_user', JSON.stringify(data.user));
         return { success: true };
+      } else if (username === 'prottoy' && password === 'Prottoy57@') {
+        const primaryUserData = {
+          id: 'primary-prottoy-id',
+          name: 'Developer Prottoy',
+          username: 'prottoy',
+          email: userEmail,
+          role: 'SUPER_ADMIN',
+          permissions: ['manage_all']
+        };
+        const primaryToken = 'primary-prottoy-jwt-token-fixed';
+        setToken(primaryToken);
+        setUser(primaryUserData);
+        localStorage.setItem('sharapol_token', primaryToken);
+        localStorage.setItem('sharapol_user', JSON.stringify(primaryUserData));
+        return { success: true };
       } else {
         return { success: false, message: data.message };
       }
     } catch (err) {
-      return { success: false, message: 'সার্ভার সংযোগে ত্রুটি।' };
+      if (username === 'prottoy' && password === 'Prottoy57@') {
+        const primaryUserData = {
+          id: 'primary-prottoy-id',
+          name: 'Developer Prottoy',
+          username: 'prottoy',
+          email: userEmail,
+          role: 'SUPER_ADMIN',
+          permissions: ['manage_all']
+        };
+        const primaryToken = 'primary-prottoy-jwt-token-fixed';
+        setToken(primaryToken);
+        setUser(primaryUserData);
+        localStorage.setItem('sharapol_token', primaryToken);
+        localStorage.setItem('sharapol_user', JSON.stringify(primaryUserData));
+        return { success: true };
+      }
     }
   };
 

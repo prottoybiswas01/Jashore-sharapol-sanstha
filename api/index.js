@@ -701,9 +701,14 @@ app.put('/api/committee/:id', verifyToken, checkPermission('manage_committee'), 
   }
 });
 
-app.delete('/api/committee/:id', async (req, res) => {
+app.delete('/api/committee/:id', verifyToken, checkPermission('manage_committee'), async (req, res) => {
   try {
-    const deleted = await CommitteeMember.findByIdAndDelete(req.params.id);
+    let deleted = null;
+    try {
+      deleted = await CommitteeMember.findByIdAndDelete(req.params.id);
+    } catch (err) {
+      deleted = await CommitteeMember.findOneAndDelete({ $or: [{ _id: req.params.id }, { phone: req.params.id }] });
+    }
     if (deleted && deleted.phone) {
       await User.updateOne({ phone: deleted.phone }, { committeeRole: '' });
     }
@@ -848,6 +853,15 @@ app.put('/api/ideas/:id/status', verifyToken, checkPermission('manage_committee'
     res.json({ success: true, message: 'আইডিয়ার স্ট্যাটাস সফলভাবে আপডেট করা হয়েছে!', idea });
   } catch (error) {
     res.status(500).json({ success: false, message: 'স্ট্যাটাস আপডেট ব্যর্থ হয়েছে।' });
+  }
+});
+
+app.delete('/api/ideas/:id', verifyToken, checkPermission('manage_committee'), async (req, res) => {
+  try {
+    await MemberIdea.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'আইডিয়াটি MongoDB থেকে স্থায়ীভাবে মুছে ফেলা হয়েছে।' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'মুছে ফেলা সম্ভব হয়নি।' });
   }
 });
 

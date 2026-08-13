@@ -8,7 +8,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
   const { 
     settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, ideas,
     deleteActivity, deleteFuturePlan, deleteCommitteeMember, assignUserCommitteeRole, deleteBloodDonor, deleteBloodRequest,
-    deleteSubAdminUser, fetchAdminUsers, showToast, setEditingActivity, updateIdeaStatus
+    deleteDonation, deleteSubAdminUser, deleteIdea, fetchAdminUsers, showToast, setEditingActivity, updateIdeaStatus
   } = useData();
 
   const [username, setUsername] = useState('');
@@ -824,6 +824,13 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                               onClick={() => updateIdeaStatus(idea._id || idea.id, 'বিবেচনাধীন', 'পর্যবেক্ষণে রয়েছে।')}
                             >
                               পেন্ডিং রাখুন
+                            </button>
+                            <button 
+                              className="btn btn-outline btn-sm" 
+                              style={{ fontSize: '0.78rem', padding: '0.25rem 0.6rem', color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}
+                              onClick={() => deleteIdea(idea._id || idea.id)}
+                            >
+                              <i className="fa-solid fa-trash"></i> মুছে ফেলুন
                             </button>
                           </div>
                         </td>

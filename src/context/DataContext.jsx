@@ -172,8 +172,10 @@ export const DataProvider = ({ children }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setActivities(prev => prev.filter(a => (a._id || a.id) !== id));
+        setActivities(prev => prev.filter(a => String(a._id || a.id) !== String(id)));
         showToast('রেকর্ডটি MongoDB থেকে মুছে ফেলা হয়েছে।', 'info');
+      } else {
+        showToast(data.message || 'মুছে ফেলতে ব্যর্থ হয়েছে।', 'error');
       }
     } catch (e) {
       showToast('মুছে ফেলা সম্ভব হয়নি।', 'error');
@@ -208,10 +210,14 @@ export const DataProvider = ({ children }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setPlans(prev => prev.filter(p => (p._id || p.id) !== id));
+        setPlans(prev => prev.filter(p => String(p._id || p.id) !== String(id)));
         showToast('পরিকল্পনা মুছে ফেলা হয়েছে।', 'info');
+      } else {
+        showToast(data.message || 'মুছে ফেলতে ব্যর্থ হয়েছে।', 'error');
       }
-    } catch (e) {}
+    } catch (e) {
+      showToast('মুছে ফেলা সম্ভব হয়নি।', 'error');
+    }
   };
 
   const addCommitteeMember = async (member) => {
@@ -235,16 +241,21 @@ export const DataProvider = ({ children }) => {
   };
 
   const deleteCommitteeMember = async (id) => {
-    // Immediately remove from local React state for instantaneous feedback
-    setCommittee(prev => prev.filter(c => c._id !== id && c.id !== id && String(c._id || c.id) !== String(id)));
-    showToast('সদস্যের তথ্য মুছে ফেলা হয়েছে।', 'info');
-
     try {
-      await fetch(`/api/committee/${id}`, {
+      const res = await fetch(`/api/committee/${id}`, {
         method: 'DELETE',
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
+        headers: { Authorization: `Bearer ${token}` }
       });
-    } catch (e) {}
+      const data = await res.json();
+      if (data.success) {
+        setCommittee(prev => prev.filter(c => String(c._id || c.id) !== String(id)));
+        showToast('সদস্যের তথ্য MongoDB থেকে মুছে ফেলা হয়েছে।', 'info');
+      } else {
+        showToast(data.message || 'মুছে ফেলতে ব্যর্থ হয়েছে।', 'error');
+      }
+    } catch (e) {
+      showToast('মুছে ফেলা সম্ভব হয়নি।', 'error');
+    }
   };
 
   const addBloodDonor = async (donor) => {
@@ -272,10 +283,14 @@ export const DataProvider = ({ children }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setDonors(prev => prev.filter(d => (d._id || d.id) !== id));
+        setDonors(prev => prev.filter(d => String(d._id || d.id) !== String(id)));
         showToast('রক্তদাতার নাম মুছে ফেলা হয়েছে।', 'info');
+      } else {
+        showToast(data.message || 'মুছে ফেলতে ব্যর্থ হয়েছে।', 'error');
       }
-    } catch (e) {}
+    } catch (e) {
+      showToast('মুছে ফেলা সম্ভব হয়নি।', 'error');
+    }
   };
 
   const addBloodRequest = async (req) => {
@@ -303,10 +318,14 @@ export const DataProvider = ({ children }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setBloodRequests(prev => prev.filter(r => (r._id || r.id) !== id));
-        showToast('রক্তের আবেদন সম্পন্ন নিশ্চিত করা হয়েছে!');
+        setBloodRequests(prev => prev.filter(r => String(r._id || r.id) !== String(id)));
+        showToast('রক্তের আবেদন মুছে ফেলা হয়েছে।', 'info');
+      } else {
+        showToast(data.message || 'মুছে ফেলতে ব্যর্থ হয়েছে।', 'error');
       }
-    } catch (e) {}
+    } catch (e) {
+      showToast('মুছে ফেলা সম্ভব হয়নি।', 'error');
+    }
   };
 
   const addDonation = async (don) => {
@@ -323,6 +342,24 @@ export const DataProvider = ({ children }) => {
       }
     } catch (e) {
       showToast('অনুদানের তথ্য জমা দিতে ব্যর্থ হয়েছে।', 'error');
+    }
+  };
+
+  const deleteDonation = async (id) => {
+    try {
+      const res = await fetch(`/api/donations/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDonations(prev => prev.filter(don => String(don._id || don.id) !== String(id)));
+        showToast('অনুদানের তথ্য MongoDB থেকে মুছে ফেলা হয়েছে।', 'info');
+      } else {
+        showToast(data.message || 'মুছে ফেলতে ব্যর্থ হয়েছে।', 'error');
+      }
+    } catch (e) {
+      showToast('মুছে ফেলা সম্ভব হয়নি।', 'error');
     }
   };
 
@@ -356,10 +393,14 @@ export const DataProvider = ({ children }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setSubAdminUsers(prev => prev.filter(u => (u._id || u.id) !== id));
-        showToast('সাব-অ্যাকাউন্ট মুছে ফেলা হয়েছে।', 'info');
+        setSubAdminUsers(prev => prev.filter(u => String(u._id || u.id) !== String(id)));
+        showToast('এডমিন অ্যাকাউন্ট মুছে ফেলা হয়েছে।', 'info');
+      } else {
+        showToast(data.message || 'মুছে ফেলতে ব্যর্থ হয়েছে।', 'error');
       }
-    } catch (e) {}
+    } catch (e) {
+      showToast('মুছে ফেলা সম্ভব হয়নি।', 'error');
+    }
   };
 
   const assignUserCommitteeRole = async (userId, committeeRole) => {
@@ -371,7 +412,7 @@ export const DataProvider = ({ children }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setSubAdminUsers(prev => prev.map(u => (u._id || u.id) === userId ? { ...u, committeeRole } : u));
+        setSubAdminUsers(prev => prev.map(u => String(u._id || u.id) === String(userId) ? { ...u, committeeRole } : u));
         // Refetch committee list to reflect immediately
         fetch('/api/committee').then(r => r.json()).then(resCom => {
           if (resCom && resCom.success) setCommittee(resCom.committee);
@@ -416,13 +457,31 @@ export const DataProvider = ({ children }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setIdeas(prev => prev.map(i => (i._id === ideaId || i.id === ideaId) ? data.idea : i));
+        setIdeas(prev => prev.map(i => String(i._id || i.id) === String(ideaId) ? data.idea : i));
         showToast('আইডিয়ার স্ট্যাটাস আপডেট করা হয়েছে!');
       } else {
         showToast(data.message, 'error');
       }
     } catch (e) {
       showToast('স্ট্যাটাস আপডেট ব্যর্থ হয়েছে।', 'error');
+    }
+  };
+
+  const deleteIdea = async (id) => {
+    try {
+      const res = await fetch(`/api/ideas/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIdeas(prev => prev.filter(i => String(i._id || i.id) !== String(id)));
+        showToast('আইডিয়া/প্রস্তাবনা MongoDB থেকে মুছে ফেলা হয়েছে।', 'info');
+      } else {
+        showToast(data.message || 'মুছে ফেলতে ব্যর্থ হয়েছে।', 'error');
+      }
+    } catch (e) {
+      showToast('মুছে ফেলা সম্ভব হয়নি।', 'error');
     }
   };
 
@@ -433,8 +492,8 @@ export const DataProvider = ({ children }) => {
       isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, ideas, selectedActivity, editingActivity, toastMessage,
       setSelectedActivity, setEditingActivity, showToast, updateSiteSettings, addActivity, updateActivity, likeActivity, deleteActivity, addFuturePlan, deleteFuturePlan,
       addCommitteeMember, deleteCommitteeMember, assignUserCommitteeRole, addBloodDonor, deleteBloodDonor,
-      addBloodRequest, deleteBloodRequest, addDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers,
-      submitMemberIdea, updateIdeaStatus
+      addBloodRequest, deleteBloodRequest, addDonation, deleteDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers,
+      submitMemberIdea, updateIdeaStatus, deleteIdea
     }}>
       {children}
     </DataContext.Provider>
