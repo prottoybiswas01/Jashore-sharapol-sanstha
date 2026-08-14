@@ -773,7 +773,7 @@ export default function Modals({ activeModal, onClose }) {
                 {/* Textbox 1: Main Title */}
                 <div className="form-group" style={{ marginBottom: '1rem' }}>
                   <label className="form-label" style={{ fontWeight: 700, color: 'var(--primary-dark)', fontSize: '0.95rem' }}>
-                    [টেক্সটবক্স ১] ১. কাজের প্রধান শিরোনাম (Main Title) *
+                    কাজের প্রধান শিরোনাম (Main Title) *
                   </label>
                   <input type="text" className="form-control" value={actTitle} onChange={e => setActTitle(e.target.value)} placeholder="যেমন: বিনামূল্যে রক্তদান ও স্বাস্থ্য পরীক্ষা ক্যাম্প" required />
                 </div>
@@ -781,30 +781,17 @@ export default function Modals({ activeModal, onClose }) {
                 {/* Textbox 2: Subtitle */}
                 <div className="form-group" style={{ marginBottom: '1rem' }}>
                   <label className="form-label" style={{ fontWeight: 700, color: 'var(--primary-dark)', fontSize: '0.95rem' }}>
-                    [টেক্সটবক্স ২] ২. কাজের উপ-শিরোনাম / সংক্ষিপ্ত পয়েন্ট (Subtitle)
+                    কাজের উপ-শিরোনাম / সংক্ষিপ্ত পয়েন্ট (Subtitle)
                   </label>
-                  <input type="text" className="form-control" value={actSub} onChange={e => setActSub(e.target.value)} placeholder="যেমন: চাঁচড়া মোড় কেন্দ্রিক ২০০ পরিবারকে স্বাস্থ্য সেবা প্রদান" />
+                  <input type="text" className="form-control" value={actSub} onChange={e => setActSub(e.target.value)} placeholder="যেমন: সাড়াপোল রূপদিয়া কেন্দ্রিক ২০০ পরিবারকে স্বাস্থ্য সেবা প্রদান" />
                 </div>
 
                 {/* Textbox 3: Details & Description */}
                 <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <div className="flex justify-between items-center" style={{ marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <label className="form-label" style={{ marginBottom: 0, fontWeight: 700, color: 'var(--primary-dark)', fontSize: '0.95rem' }}>
-                      [টেক্সটবক্স ৩] ৩. কাজের বিস্তারিত বিবরণ ও সেকশন (Details) *
-                    </label>
-                    <div className="flex gap-1">
-                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('heading', setActDesc, actDesc)}>
-                        + সেকশন টাইটেল
-                      </button>
-                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('bullet', setActDesc, actDesc)}>
-                        + বুলেট পয়েন্ট
-                      </button>
-                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('divider', setActDesc, actDesc)}>
-                        + বিভাজক
-                      </button>
-                    </div>
-                  </div>
-                  <textarea className="form-control" rows="4" value={actDesc} onChange={e => setActDesc(e.target.value)} placeholder="## সেকশন টাইটেল&#10;* **পয়েন্ট নাম:** বিস্তারিত বিবরণ..." required></textarea>
+                  <label className="form-label" style={{ fontWeight: 700, color: 'var(--primary-dark)', fontSize: '0.95rem', marginBottom: '0.4rem' }}>
+                    কাজের বিস্তারিত বিবরণ (Details) *
+                  </label>
+                  <textarea className="form-control" rows="5" value={actDesc} onChange={e => setActDesc(e.target.value)} placeholder="কাজের বিস্তারিত বিবরণ ও তথ্য এখানে লিখুন..." required></textarea>
 
                   {actDesc && (
                     <div style={{ marginTop: '0.75rem', padding: '1rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
@@ -917,21 +904,10 @@ export default function Modals({ activeModal, onClose }) {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-                  <div className="flex justify-between items-center" style={{ marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <label className="form-label" style={{ marginBottom: 0 }}>বিবরণ (ডিটেইলস ও সেকশন) *</label>
-                    <div className="flex gap-1">
-                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('heading', setEditActDesc, editActDesc)}>
-                        + সেকশন টাইটেল
-                      </button>
-                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('bullet', setEditActDesc, editActDesc)}>
-                        + বুলেট পয়েন্ট
-                      </button>
-                      <button type="button" className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.15rem 0.45rem' }} onClick={() => insertFormat('divider', setEditActDesc, editActDesc)}>
-                        + বিভাজক
-                      </button>
-                    </div>
-                  </div>
-                  <textarea className="form-control" rows="5" value={editActDesc} onChange={e => setEditActDesc(e.target.value)} required></textarea>
+                  <label className="form-label" style={{ fontWeight: 700, color: 'var(--primary-dark)', fontSize: '0.95rem', marginBottom: '0.4rem' }}>
+                    কাজের বিস্তারিত বিবরণ (Details) *
+                  </label>
+                  <textarea className="form-control" rows="5" value={editActDesc} onChange={e => setEditActDesc(e.target.value)} placeholder="কাজের বিস্তারিত বিবরণ ও তথ্য এখানে লিখুন..." required></textarea>
 
                   {editActDesc && (
                     <div style={{ marginTop: '0.75rem', padding: '1rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
