@@ -50,7 +50,7 @@ export default function Committee() {
         </div>
 
         {/* Quick Designation Filter Pills */}
-        <div className="flex justify-center gap-2 flex-wrap" style={{ marginBottom: '2.5rem' }}>
+        <div className="committee-filter-pills" style={{ marginBottom: '2.5rem' }}>
           <button 
             className={`btn btn-sm ${filterRole === 'ALL' ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => setFilterRole('ALL')}

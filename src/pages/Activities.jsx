@@ -19,7 +19,7 @@ export default function Activities({ onOpenModal }) {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex justify-center gap-2 flex-wrap" style={{ marginBottom: '2rem' }}>
+        <div className="activities-tab-pills" style={{ marginBottom: '2rem' }}>
           <button 
             className={`btn ${activeTab === 'completed' ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => setActiveTab('completed')}

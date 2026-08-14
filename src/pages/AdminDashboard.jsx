@@ -104,6 +104,11 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
         )}
       </div>
 
+      {/* Mobile Backdrop Overlay */}
+      {isMobileSidebarOpen && (
+        <div className="admin-sidebar-overlay" onClick={() => setIsMobileSidebarOpen(false)}></div>
+      )}
+
       <div className="admin-layout">
         {/* Sidebar Nav */}
         <aside className={`admin-sidebar ${isMobileSidebarOpen ? 'mobile-open' : ''}`}>

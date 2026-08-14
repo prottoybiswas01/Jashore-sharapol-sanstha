@@ -154,7 +154,7 @@ export default function UserProfile({ onNavigate }) {
         </div>
 
         {/* 2-Column Split: Submit Idea / Proposal & View Submitted Status */}
-        <div className="grid grid-cols-2 gap-3" style={{ alignItems: 'start' }}>
+        <div className="user-profile-grid">
           
           {/* Column 1: Submit New Idea to Executive Committee */}
           <div style={{ background: 'var(--bg-card)', padding: '1.75rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
