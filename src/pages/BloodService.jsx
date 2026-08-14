@@ -105,23 +105,39 @@ export default function BloodService({ onOpenModal }) {
           </h3>
           <div className="grid grid-cols-3 gap-3">
             {filteredDonors.length === 0 ? (
-              <div style={{ gridColumn: '1/-1', padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>দুঃখিত, নির্ধারিত ফিল্টারে কোনো রক্তদাতা পাওয়া যায়নি।</div>
+              <div style={{ gridColumn: '1/-1', background: 'var(--bg-card)', padding: '3rem 1.5rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
+                <i className="fa-solid fa-droplet-slash" style={{ fontSize: '2.5rem', color: 'var(--blood-red)', marginBottom: '0.75rem', display: 'block' }}></i>
+                <p style={{ fontWeight: 600, fontSize: '1rem' }}>নির্ধারিত ফিল্টারে কোনো স্বেচ্ছাসেবী রক্তদাতা পাওয়া যায়নি</p>
+                <button className="btn btn-outline btn-sm" style={{ marginTop: '0.75rem' }} onClick={() => { setFilterGroup('ALL'); setFilterUpazila('ALL'); }}>
+                  ফিল্টার রিসেট করুন
+                </button>
+              </div>
             ) : (
               filteredDonors.map(d => (
-                <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} key={d.id}>
+                <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', transition: 'var(--transition-normal)' }} key={d.id || d._id} className="donor-card">
                   <div>
                     <div className="flex justify-between items-center" style={{ marginBottom: '0.75rem' }}>
-                      <span className="badge badge-blood" style={{ fontSize: '1rem', padding: '0.3rem 0.8rem' }}>{d.bloodGroup}</span>
+                      <span className="badge badge-blood" style={{ fontSize: '1.05rem', padding: '0.35rem 0.85rem', fontWeight: 800 }}>
+                        <i className="fa-solid fa-droplet"></i> {d.bloodGroup}
+                      </span>
                       <span className="badge badge-primary"><i className="fa-solid fa-location-dot"></i> {d.upazila}</span>
                     </div>
-                    <h4 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.3rem' }}>{d.name}</h4>
+                    <h4 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {d.name}
+                      <span title="রক্তদানে প্রস্তুত" style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px #22c55e' }}></span>
+                    </h4>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                      সর্বশেষ রক্তদান: {d.lastDonation || 'তথ্য নেই'}
+                      <i className="fa-regular fa-calendar-check"></i> সর্বশেষ রক্তদান: {d.lastDonation || 'তথ্য নেই'}
                     </p>
                   </div>
-                  <a href={`tel:${d.phone}`} className="btn btn-outline btn-sm" style={{ width: '100%' }}>
-                    <i className="fa-solid fa-phone"></i> {d.phone}
-                  </a>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <a href={`tel:${d.phone}`} className="btn btn-outline btn-sm" style={{ flex: 1 }}>
+                      <i className="fa-solid fa-phone"></i> {d.phone}
+                    </a>
+                    <a href={`https://wa.me/88${d.phone ? d.phone.replace(/[^0-9]/g, '') : ''}`} target="_blank" rel="noreferrer" className="btn btn-sm" style={{ background: '#25D366', color: 'white', border: 0 }} title="WhatsApp মেসেজ">
+                      <i className="fa-brands fa-whatsapp"></i>
+                    </a>
+                  </div>
                 </div>
               ))
             )}

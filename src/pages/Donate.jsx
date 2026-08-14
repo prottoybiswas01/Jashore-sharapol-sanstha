@@ -7,6 +7,7 @@ export default function Donate() {
   const [donAmount, setDonAmount] = useState('');
   const [donMethod, setDonMethod] = useState('bKash');
   const [donTrx, setDonTrx] = useState('');
+  const [copiedId, setCopiedId] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,9 +22,11 @@ export default function Donate() {
     setDonName(''); setDonAmount(''); setDonTrx('');
   };
 
-  const copyText = (text) => {
+  const copyText = (text, cardId) => {
     navigator.clipboard.writeText(text);
+    setCopiedId(cardId);
     showToast(`কপি করা হয়েছে: ${text}`, 'info');
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (
@@ -48,8 +51,8 @@ export default function Donate() {
             <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #fbcfe8', borderLeft: '6px solid #e2136e', marginBottom: '1rem', boxShadow: 'var(--shadow-sm)' }}>
               <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.5rem' }}>
                 <span className="badge" style={{ background: '#fce7f3', color: '#e2136e', fontWeight: 700 }}>bKash (বিকাশ)</span>
-                <button className="btn btn-outline btn-sm" style={{ color: '#e2136e', borderColor: '#e2136e' }} onClick={() => copyText('01893851111')}>
-                  <i className="fa-regular fa-copy"></i> অনুলিপি করুন
+                <button className="btn btn-outline btn-sm" style={{ color: '#e2136e', borderColor: '#e2136e' }} onClick={() => copyText('01893851111', 'bkash')}>
+                  {copiedId === 'bkash' ? <><i className="fa-solid fa-check" style={{ color: '#22c55e' }}></i> অনুলিপি সম্পন্ন!</> : <><i className="fa-regular fa-copy"></i> অনুলিপি করুন</>}
                 </button>
               </div>
               <h4 style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>বিকাশ পারসোনাল / মার্চেন্ট নম্বর</h4>
@@ -61,8 +64,8 @@ export default function Donate() {
             <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #ffedd5', borderLeft: '6px solid #f7941d', marginBottom: '1rem', boxShadow: 'var(--shadow-sm)' }}>
               <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.5rem' }}>
                 <span className="badge" style={{ background: '#ffedd5', color: '#c2410c', fontWeight: 700 }}>Nagad (নগদ)</span>
-                <button className="btn btn-outline btn-sm" style={{ color: '#c2410c', borderColor: '#f7941d' }} onClick={() => copyText('01893851111')}>
-                  <i className="fa-regular fa-copy"></i> অনুলিপি করুন
+                <button className="btn btn-outline btn-sm" style={{ color: '#c2410c', borderColor: '#f7941d' }} onClick={() => copyText('01893851111', 'nagad')}>
+                  {copiedId === 'nagad' ? <><i className="fa-solid fa-check" style={{ color: '#22c55e' }}></i> অনুলিপি সম্পন্ন!</> : <><i className="fa-regular fa-copy"></i> অনুলিপি করুন</>}
                 </button>
               </div>
               <h4 style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>নগদ পারসোনাল নম্বর</h4>
@@ -74,8 +77,8 @@ export default function Donate() {
             <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #f3e8ff', borderLeft: '6px solid #8c3494', marginBottom: '1rem', boxShadow: 'var(--shadow-sm)' }}>
               <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.5rem' }}>
                 <span className="badge" style={{ background: '#f3e8ff', color: '#8c3494', fontWeight: 700 }}>Rocket (রকেট)</span>
-                <button className="btn btn-outline btn-sm" style={{ color: '#8c3494', borderColor: '#8c3494' }} onClick={() => copyText('01893851111')}>
-                  <i className="fa-regular fa-copy"></i> অনুলিপি করুন
+                <button className="btn btn-outline btn-sm" style={{ color: '#8c3494', borderColor: '#8c3494' }} onClick={() => copyText('01893851111', 'rocket')}>
+                  {copiedId === 'rocket' ? <><i className="fa-solid fa-check" style={{ color: '#22c55e' }}></i> অনুলিপি সম্পন্ন!</> : <><i className="fa-regular fa-copy"></i> অনুলিপি করুন</>}
                 </button>
               </div>
               <h4 style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>রকেট পারসোনাল নম্বর</h4>
@@ -87,8 +90,8 @@ export default function Donate() {
             <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #e0f2fe', borderLeft: '6px solid #0284c7', marginBottom: '1rem', boxShadow: 'var(--shadow-sm)' }}>
               <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.5rem' }}>
                 <span className="badge" style={{ background: '#e0f2fe', color: '#0369a1', fontWeight: 700 }}>Upay (উপায়)</span>
-                <button className="btn btn-outline btn-sm" style={{ color: '#0369a1', borderColor: '#0284c7' }} onClick={() => copyText('01893851111')}>
-                  <i className="fa-regular fa-copy"></i> অনুলিপি করুন
+                <button className="btn btn-outline btn-sm" style={{ color: '#0369a1', borderColor: '#0284c7' }} onClick={() => copyText('01893851111', 'upay')}>
+                  {copiedId === 'upay' ? <><i className="fa-solid fa-check" style={{ color: '#22c55e' }}></i> অনুলিপি সম্পন্ন!</> : <><i className="fa-regular fa-copy"></i> অনুলিপি করুন</>}
                 </button>
               </div>
               <h4 style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>উপায় পারসোনাল নম্বর</h4>
