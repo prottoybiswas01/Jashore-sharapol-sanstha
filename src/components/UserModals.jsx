@@ -119,6 +119,7 @@ export default function Modals({ activeModal, onClose }) {
   const [loginPass, setLoginPass] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isIDCardOpen, setIsIDCardOpen] = useState(false);
+  const [calcResult, setCalcResult] = useState(null);
 
   useEffect(() => {
     const handleIDCardEvent = () => setIsIDCardOpen(true);
@@ -1110,15 +1111,15 @@ export default function Modals({ activeModal, onClose }) {
           <div className="modal-card" style={{ maxWidth: '440px' }}>
             <div className="modal-header">
               <h3 className="modal-title"><i className="fa-solid fa-calculator" style={{ color: 'var(--primary)' }}></i> পরবর্তী রক্তদানের তারিখ হিসাব</h3>
-              <span className="modal-close" onClick={onClose}>&times;</span>
+              <span className="modal-close" onClick={() => { setCalcResult(null); onClose(); }}>&times;</span>
             </div>
-            <div className="modal-body" style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.2rem' }}>
+            <div className="modal-body">
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.2rem', textAlign: 'center' }}>
                 রক্তদান করার পর শরীর সম্পূর্ণ স্বাভাবিক হতে ৩ মাস (৯০ দিন) সময় লাগে। নিচে আপনার সর্বশেষ রক্তদানের তারিখ নির্বাচন করুন:
               </p>
               <div className="form-group" style={{ marginBottom: '1.25rem', textAlign: 'left' }}>
                 <label className="form-label">সর্বশেষ রক্তদানের তারিখ *</label>
-                <input type="date" className="form-control" id="bloodCalcInput" />
+                <input type="date" className="form-control" id="bloodCalcInput" onChange={() => setCalcResult(null)} />
               </div>
               <button className="btn btn-primary" style={{ width: '100%', marginBottom: '1rem' }} onClick={() => {
                 const val = document.getElementById('bloodCalcInput')?.value;
@@ -1131,17 +1132,46 @@ export default function Modals({ activeModal, onClose }) {
                 const today = new Date();
                 const diffTime = next - today;
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
                 const nextStr = next.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
 
-                if (diffDays <= 0) {
-                  alert(`🎉 অভিনন্দন! আপনি বর্তমানে রক্তদানের জন্য সম্পূর্ণ উপযুক্ত।`);
-                } else {
-                  alert(`📅 আপনার পরবর্তী রক্তদানের সম্ভাব্য তারিখ: ${nextStr}\n(আর ${diffDays} দিন বাকি রয়েছে)`);
-                }
+                setCalcResult({
+                  isEligible: diffDays <= 0,
+                  diffDays: diffDays > 0 ? diffDays : 0,
+                  nextStr
+                });
               }}>
                 <i className="fa-solid fa-wand-magic-sparkles"></i> সময়সূচী হিসাব করুন
               </button>
+
+              {calcResult && (
+                <div style={{ 
+                  background: calcResult.isEligible ? 'rgba(34, 197, 94, 0.1)' : 'rgba(234, 88, 12, 0.1)', 
+                  border: `1.5px dashed ${calcResult.isEligible ? '#22c55e' : '#ea580c'}`, 
+                  borderRadius: 'var(--radius-md)', 
+                  padding: '1.25rem', 
+                  marginTop: '1rem', 
+                  textAlign: 'center' 
+                }}>
+                  {calcResult.isEligible ? (
+                    <>
+                      <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🎉</div>
+                      <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#15803d', margin: 0 }}>অভিনন্দন! আপনি প্রস্তুত</h4>
+                      <p style={{ fontSize: '0.88rem', color: 'var(--text-main)', marginTop: '0.35rem' }}>
+                        আপনি বর্তমানে রক্তদানের জন্য সম্পূর্ণ শারীরিকভাবে উপযুক্ত। কোনো জরুরি প্রয়োজনে আত্মনিয়োগ করতে পারেন!
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>⏳</div>
+                      <small style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>পরবর্তী রক্তদানের সম্ভাব্য তারিখ:</small>
+                      <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#c2410c', margin: '0.2rem 0' }}>{calcResult.nextStr}</h4>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', margin: 0 }}>
+                        (আর মাত্র <strong>{calcResult.diffDays} দিন</strong> অপেক্ষা করতে হবে)
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
