@@ -108,7 +108,7 @@ export default function Modals({ activeModal, onClose }) {
   const { 
     settings, updateSiteSettings, addActivity, updateActivity, likeActivity, addFuturePlan, 
     addCommitteeMember, addBloodDonor, addBloodRequest, addDonation, createSubAdminUser,
-    selectedActivity, setSelectedActivity, editingActivity, setEditingActivity
+    selectedActivity, setSelectedActivity, editingActivity, setEditingActivity, showToast
   } = useData();
 
   const { register, login } = useAuth();
@@ -150,7 +150,7 @@ export default function Modals({ activeModal, onClose }) {
         const compressedBase64 = await compressImageFile(file, maxDim, maxDim, quality);
         setImageState(compressedBase64);
       } catch (err) {
-        alert('ছবি প্রসেসিং করতে সমস্যা হয়েছে।');
+        showToast('ছবি প্রসেসিং করতে সমস্যা হয়েছে।', 'error');
       }
     }
   };
@@ -231,11 +231,11 @@ export default function Modals({ activeModal, onClose }) {
       image: pubImg
     });
     if (res.success) {
-      alert(res.message);
+      showToast(res.message, 'success');
       onClose();
       setPubName(''); setPubUsername(''); setPubEmail(''); setPubPass(''); setPubPhone(''); setPubImg('');
     } else {
-      alert(res.message);
+      showToast(res.message, 'error');
     }
   };
 
@@ -278,7 +278,7 @@ export default function Modals({ activeModal, onClose }) {
     e.preventDefault();
     const finalRole = memRoleSelect === 'OTHER' ? customMemRole : memRoleSelect;
     if (!finalRole) {
-      alert('অনুগ্রহ করে পদবী নির্বাচন অথবা লিখুন।');
+      showToast('অনুগ্রহ করে পদবী নির্বাচন অথবা লিখুন।', 'error');
       return;
     }
     addCommitteeMember({ 

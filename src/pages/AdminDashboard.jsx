@@ -34,7 +34,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
     e.preventDefault();
     const res = await login(username, password, email);
     if (!res.success) {
-      alert(res.message);
+      showToast(res.message, 'error');
     }
   };
 

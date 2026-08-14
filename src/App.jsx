@@ -91,9 +91,9 @@ function MainApp() {
       {/* Toast Notification Container */}
       {toastMessage && (
         <div className="toast-container">
-          <div className="toast">
-            <i className="fa-solid fa-circle-check" style={{ color: '#10b981' }}></i>
-            <span>{toastMessage.message}</span>
+          <div className={`toast ${toastMessage.type === 'error' ? 'toast-error' : 'toast-success'}`}>
+            <i className={`fa-solid ${toastMessage.type === 'error' ? 'fa-circle-xmark' : 'fa-circle-check'}`} style={{ color: toastMessage.type === 'error' ? '#ef4444' : '#10b981', fontSize: '1.25rem' }}></i>
+            <span style={{ fontWeight: 600 }}>{toastMessage.message}</span>
           </div>
         </div>
       )}
