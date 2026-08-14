@@ -1,0 +1,20 @@
+{
+  "short_name": "দুরন্ত",
+  "name": "দুরন্ত (Duronto) - সাড়াপোল রূপদিয়া সেবা সংস্থা",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#ea580c",
+  "display": "standalone"
+}

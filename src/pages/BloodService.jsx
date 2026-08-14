@@ -27,8 +27,32 @@ export default function BloodService({ onOpenModal }) {
               <i className="fa-solid fa-circle-exclamation"></i> জরুরি রক্তের আবেদন পোস্ট করুন
             </button>
             <button className="btn btn-outline" style={{ color: 'white', borderColor: 'white' }} onClick={() => onOpenModal('donor-register')}>
-              <i className="fa-solid fa-user-plus"></i> রক্তদাতা হিসেবে নাম নথিভুক্ত করুন
+              <i className="fa-solid fa-user-plus"></i> রক্তদাতা নাম নথিভুক্ত করুন
             </button>
+            <button className="btn btn-sm" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.4)', backdropFilter: 'blur(8px)' }} onClick={() => onOpenModal('blood-calculator')}>
+              <i className="fa-solid fa-calculator"></i> পরবর্তী রক্তদানের তারিখ গণক
+            </button>
+          </div>
+        </div>
+
+        {/* Ambulance & Oxygen Emergency Services Banner */}
+        <div style={{ background: 'var(--bg-card)', padding: '1.25rem 1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', marginBottom: '2.5rem', boxShadow: 'var(--shadow-sm)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
+              <i className="fa-solid fa-truck-medical"></i>
+            </div>
+            <div>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>জরুরি অ্যাম্বুলেন্স ও অক্সিজেন ব্যাংক (যশোর-রূপদিয়া)</h4>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>২৪/৭ ফ্রি অক্সিজেন সিলিন্ডার ও সাশ্রয়ী অ্যাম্বুলেন্স সহায়তার জন্য সরাসরি যোগাযোগ করুন</p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <a href="tel:01893851111" className="btn btn-primary btn-sm">
+              <i className="fa-solid fa-phone"></i> অ্যাম্বুলেন্স: 01893851111
+            </a>
+            <a href="tel:01893851111" className="btn btn-outline btn-sm">
+              <i className="fa-solid fa-cloud-bolt"></i> অক্সিজেন সেবা
+            </a>
           </div>
         </div>
 

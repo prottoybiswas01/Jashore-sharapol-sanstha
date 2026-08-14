@@ -139,15 +139,24 @@ export default function UserProfile({ onNavigate }) {
                 {user.committeeRole && (
                   <span className="badge badge-primary"><i className="fa-solid fa-award" style={{ marginRight: '0.3rem' }}></i> {user.committeeRole}</span>
                 )}
+                <span className="badge" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700 }}>
+                  <i className="fa-solid fa-certificate"></i> স্টার ভলান্টিয়ার
+                </span>
               </div>
 
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.75rem' }}>
                 <code>@{user.username}</code> &bull; <i className="fa-solid fa-shield-halved" style={{ color: 'var(--primary)' }}></i> নিবন্ধিত অফিশিয়াল সদস্য
               </p>
 
-              <div className="flex items-center gap-3 flex-wrap" style={{ fontSize: '0.88rem', color: 'var(--text-main)' }}>
+              <div className="flex items-center gap-3 flex-wrap" style={{ fontSize: '0.88rem', color: 'var(--text-main)', marginBottom: '1rem' }}>
                 {user.phone && <span><i className="fa-solid fa-phone" style={{ color: 'var(--primary)' }}></i> {user.phone}</span>}
                 {user.email && <span><i className="fa-solid fa-envelope" style={{ color: 'var(--primary)' }}></i> {user.email}</span>}
+              </div>
+
+              <div>
+                <button className="btn btn-primary btn-sm" onClick={() => window.dispatchEvent(new CustomEvent('open-id-card-modal'))}>
+                  <i className="fa-solid fa-id-card"></i> ডিজিটাল মেম্বার আইডি কার্ড দেখুন
+                </button>
               </div>
             </div>
           </div>

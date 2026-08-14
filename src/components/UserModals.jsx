@@ -111,13 +111,20 @@ export default function Modals({ activeModal, onClose }) {
     selectedActivity, setSelectedActivity, editingActivity, setEditingActivity, showToast
   } = useData();
 
-  const { register, login } = useAuth();
+  const { user: currentUser, register, login } = useAuth();
 
   // Public User Auth Form State (Login / Register Switcher)
   const [authMode, setAuthMode] = useState('login');
   const [loginUser, setLoginUser] = useState('');
   const [loginPass, setLoginPass] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isIDCardOpen, setIsIDCardOpen] = useState(false);
+
+  useEffect(() => {
+    const handleIDCardEvent = () => setIsIDCardOpen(true);
+    window.addEventListener('open-id-card-modal', handleIDCardEvent);
+    return () => window.removeEventListener('open-id-card-modal', handleIDCardEvent);
+  }, []);
 
   useEffect(() => {
     if (activeModal === 'public-login') {
@@ -1092,6 +1099,106 @@ export default function Modals({ activeModal, onClose }) {
                 </div>
                 <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>অ্যাকাউন্ট তৈরি করুন</button>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Blood Eligibility Calculator Modal */}
+      {activeModal === 'blood-calculator' && (
+        <div className="modal-overlay open">
+          <div className="modal-card" style={{ maxWidth: '440px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title"><i className="fa-solid fa-calculator" style={{ color: 'var(--primary)' }}></i> পরবর্তী রক্তদানের তারিখ হিসাব</h3>
+              <span className="modal-close" onClick={onClose}>&times;</span>
+            </div>
+            <div className="modal-body" style={{ textAlign: 'center' }}>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.2rem' }}>
+                রক্তদান করার পর শরীর সম্পূর্ণ স্বাভাবিক হতে ৩ মাস (৯০ দিন) সময় লাগে। নিচে আপনার সর্বশেষ রক্তদানের তারিখ নির্বাচন করুন:
+              </p>
+              <div className="form-group" style={{ marginBottom: '1.25rem', textAlign: 'left' }}>
+                <label className="form-label">সর্বশেষ রক্তদানের তারিখ *</label>
+                <input type="date" className="form-control" id="bloodCalcInput" />
+              </div>
+              <button className="btn btn-primary" style={{ width: '100%', marginBottom: '1rem' }} onClick={() => {
+                const val = document.getElementById('bloodCalcInput')?.value;
+                if (!val) {
+                  showToast('অনুগ্রহ করে তারিখ নির্বাচন করুন', 'error');
+                  return;
+                }
+                const last = new Date(val);
+                const next = new Date(last.getTime() + (90 * 24 * 60 * 60 * 1000));
+                const today = new Date();
+                const diffTime = next - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                const nextStr = next.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                if (diffDays <= 0) {
+                  alert(`🎉 অভিনন্দন! আপনি বর্তমানে রক্তদানের জন্য সম্পূর্ণ উপযুক্ত।`);
+                } else {
+                  alert(`📅 আপনার পরবর্তী রক্তদানের সম্ভাব্য তারিখ: ${nextStr}\n(আর ${diffDays} দিন বাকি রয়েছে)`);
+                }
+              }}>
+                <i className="fa-solid fa-wand-magic-sparkles"></i> সময়সূচী হিসাব করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Volunteer Digital ID Card Modal */}
+      {(activeModal === 'volunteer-idcard' || isIDCardOpen) && (
+        <div className="modal-overlay open">
+          <div className="modal-card" style={{ maxWidth: '420px', padding: '1rem' }}>
+            <div className="modal-header" style={{ marginBottom: '0.75rem' }}>
+              <h3 className="modal-title"><i className="fa-solid fa-id-card" style={{ color: 'var(--primary)' }}></i> অফিশিয়াল মেম্বার আইডি কার্ড</h3>
+              <span className="modal-close" onClick={() => { setIsIDCardOpen(false); onClose(); }}>&times;</span>
+            </div>
+            <div className="modal-body">
+              <div className="id-card-container" id="printable-id-card">
+                <div className="id-card-header">
+                  <h4 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, textTransform: 'uppercase' }}>দুরন্ত (Duronto)</h4>
+                  <small style={{ opacity: 0.9, fontSize: '0.75rem' }}>সাড়াপোল • রূপদিয়া • যশোর সেবা সংস্থা</small>
+                </div>
+                <div className="id-card-avatar-wrap">
+                  <img src={currentUser?.image || '/logo.png'} alt={currentUser?.name} className="id-card-avatar" />
+                </div>
+                <div className="id-card-body">
+                  <div className="id-card-name">{currentUser?.name || 'মোঃ কামরুল ইসলাম'}</div>
+                  <div className="id-card-role">{currentUser?.committeeRole || currentUser?.role || 'সম্মানিত সাধারণ সদস্য'}</div>
+
+                  <div className="id-card-details-grid">
+                    <div className="id-card-detail-item">
+                      <span>আইডি নম্বর:</span>
+                      <strong>DUR-{currentUser?.id ? String(currentUser.id).padStart(4, '0') : '2026-0814'}</strong>
+                    </div>
+                    <div className="id-card-detail-item">
+                      <span>মোবাইল নম্বর:</span>
+                      <strong>{currentUser?.phone || '01893851111'}</strong>
+                    </div>
+                    <div className="id-card-detail-item">
+                      <span>স্থান:</span>
+                      <strong>সাড়াপোল, রূপদিয়া</strong>
+                    </div>
+                    <div className="id-card-detail-item">
+                      <span>স্ট্যাটাস:</span>
+                      <strong style={{ color: '#4ade80' }}>✔ ভেরিফাইড</strong>
+                    </div>
+                  </div>
+
+                  <div className="id-card-footer">
+                    <span>জরুরি হেল্পলাইন: 01893851111</span>
+                    <i className="fa-solid fa-qrcode" style={{ fontSize: '1.5rem', color: '#f8fafc' }}></i>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
+                <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => window.print()}>
+                  <i className="fa-solid fa-print"></i> আইডি কার্ড প্রিন্ট / ডাউনলোড করুন
+                </button>
+              </div>
             </div>
           </div>
         </div>

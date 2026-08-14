@@ -122,6 +122,18 @@ function MainApp() {
         <Footer onNavigate={handleNavigate} onOpenModal={handleOpenModal} />
       )}
 
+      {/* Floating Glassmorphic WhatsApp Support Widget */}
+      <a 
+        href="https://wa.me/8801893851111" 
+        target="_blank" 
+        rel="noreferrer" 
+        className="floating-whatsapp-widget"
+        title="সরাসরি ওয়াটসঅ্যাপে মেসেজ পাঠান"
+      >
+        <i className="fa-brands fa-whatsapp"></i>
+        <span className="floating-whatsapp-badge">সাপোর্ট চ্যাট</span>
+      </a>
+
       {/* Dialog Modals */}
       <Modals activeModal={activeModal} onClose={handleCloseModal} />
     </div>
