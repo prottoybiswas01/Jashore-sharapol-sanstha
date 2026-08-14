@@ -10,6 +10,7 @@ const siteSettingsSchema = new mongoose.Schema({
   aboutTitle: { type: String, default: 'যশোর শারাপোল সংস্থা সম্পর্কে' },
   aboutDescription: { type: String, default: "'যশোর শারাপোল সংস্থা' যশোর জেলার একটি সেবামুখী ও অরাজনৈতিক সামাজিক কল্যাণমূলক সংস্থা। এলাকার মানুষের পাশে দাঁড়ানো, জরুরি রক্তদানে তাৎক্ষণিক সহায়তা প্রদান, সুবিধাবঞ্চিত শিশুদের শিক্ষা সহায়তা এবং পরিবেশ রক্ষায় উদ্যোগ নেওয়া আমাদের মূল অঙ্গীকার।" },
   contactPhone: { type: String, default: '01893851111' },
+  whatsappPhone: { type: String, default: '01987919011' },
   contactEmail: { type: String, default: 'info@jashoresharapol.org' },
   contactAddress: { type: String, default: 'কেন্দ্রীয় কার্যালয়: সাড়াপোল, রূপদিয়া, যশোর।' }
 }, { timestamps: true });

@@ -215,6 +215,7 @@ export default function Modals({ activeModal, onClose }) {
     heroDescription: settings?.heroDescription || '',
     aboutDescription: settings?.aboutDescription || '',
     contactPhone: settings?.contactPhone || '',
+    whatsappPhone: settings?.whatsappPhone || '01987919011',
     contactEmail: settings?.contactEmail || '',
     contactAddress: settings?.contactAddress || '',
     heroImageUrl: settings?.heroImageUrl || ''
@@ -228,6 +229,7 @@ export default function Modals({ activeModal, onClose }) {
         heroDescription: settings.heroDescription || '',
         aboutDescription: settings.aboutDescription || '',
         contactPhone: settings.contactPhone || '',
+        whatsappPhone: settings.whatsappPhone || '01987919011',
         contactEmail: settings.contactEmail || '',
         contactAddress: settings.contactAddress || '',
         heroImageUrl: settings.heroImageUrl || ''
@@ -692,6 +694,10 @@ export default function Modals({ activeModal, onClose }) {
                 <div className="form-group" style={{ marginBottom: '1rem' }}>
                   <label className="form-label">যোগাযোগের ফোন (Helpline)</label>
                   <input type="text" className="form-control" value={siteForm.contactPhone} onChange={e => setSiteForm({ ...siteForm, contactPhone: e.target.value })} required />
+                </div>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">হোয়াটসঅ্যাপ সাপোর্ট নম্বর (WhatsApp Support)</label>
+                  <input type="text" className="form-control" value={siteForm.whatsappPhone} onChange={e => setSiteForm({ ...siteForm, whatsappPhone: e.target.value })} required />
                 </div>
                 <div className="form-group" style={{ marginBottom: '1rem' }}>
                   <label className="form-label">যোগাযোগের ঠিকানা (Address)</label>

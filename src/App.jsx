@@ -17,7 +17,7 @@ import UserProfile from './pages/UserProfile';
 function MainApp() {
   const [currentSection, setCurrentSection] = useState('home');
   const [activeModal, setActiveModal] = useState(null);
-  const { isLoading, toastMessage } = useData();
+  const { settings, isLoading, toastMessage } = useData();
 
   // Check URL pathname for /admin or #admin on load
   useEffect(() => {
@@ -124,11 +124,11 @@ function MainApp() {
 
       {/* Floating Glassmorphic WhatsApp Support Widget */}
       <a 
-        href="https://wa.me/8801893851111" 
+        href={`https://wa.me/88${(settings?.whatsappPhone || '01987919011').replace(/[^0-9]/g, '')}`} 
         target="_blank" 
         rel="noreferrer" 
         className="floating-whatsapp-widget"
-        title="সরাসরি ওয়াটসঅ্যাপে মেসেজ পাঠান"
+        title="সরাসরি ওয়াটসঅ্যাপে মেসেজ পাঠান (01987919011)"
       >
         <i className="fa-brands fa-whatsapp"></i>
         <span className="floating-whatsapp-badge">সাপোর্ট চ্যাট</span>

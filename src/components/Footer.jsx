@@ -21,7 +21,7 @@ export default function Footer({ onNavigate, onOpenModal }) {
           <div className="flex gap-2" style={{ fontSize: '1.25rem', color: '#cbd5e1' }}>
             <a href="#" aria-label="Facebook"><i className="fa-brands fa-facebook"></i></a>
             <a href="#" aria-label="YouTube"><i className="fa-brands fa-youtube"></i></a>
-            <a href="#" aria-label="WhatsApp"><i className="fa-brands fa-whatsapp"></i></a>
+            <a href={`https://wa.me/88${(settings?.whatsappPhone || '01987919011').replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" aria-label="WhatsApp" title="WhatsApp Support: 01987919011"><i className="fa-brands fa-whatsapp"></i></a>
           </div>
         </div>
 
