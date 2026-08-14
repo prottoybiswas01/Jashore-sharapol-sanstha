@@ -163,43 +163,48 @@ export default function UserProfile({ onNavigate }) {
       <div className="container" style={{ maxWidth: '960px' }}>
         
         {/* User Profile Header Card */}
-        <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)', marginBottom: '2rem' }}>
-          <div className="flex items-center gap-4 flex-wrap">
-            <div style={{ position: 'relative' }}>
+        <div className="user-profile-header-card">
+          <div className="user-profile-card-header">
+            <div className="user-avatar-wrapper">
               {user.image ? (
                 <img 
                   src={user.image} 
                   alt={user.name} 
-                  style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--primary-light)', boxShadow: 'var(--shadow-sm)' }} 
+                  className="user-avatar-img"
                 />
               ) : (
-                <div className="avatar-placeholder" style={{ width: '100px', height: '100px', borderRadius: '50%', border: '4px solid var(--primary-light)', fontSize: '2.5rem' }}>
+                <div className="user-avatar-placeholder">
                   <i className="fa-solid fa-user"></i>
                 </div>
               )}
-              <label style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--primary)', color: 'white', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }} title="ছবি পরিবর্তন করুন">
+              <label className="user-avatar-edit-badge" title="ছবি পরিবর্তন করুন">
                 <i className="fa-solid fa-camera" style={{ fontSize: '0.85rem' }}></i>
                 <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} disabled={isUploadingPhoto} />
               </label>
             </div>
 
-            <div style={{ flex: 1, minWidth: '220px' }}>
-              <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: '0.35rem' }}>
-                <h2 style={{ fontSize: '1.6rem', fontWeight: 800 }}>{user.name}</h2>
-                <span className="badge badge-gold"><i className="fa-solid fa-crown" style={{ color: '#b45309', marginRight: '0.3rem' }}></i> {user.role}</span>
+            <div className="user-info-wrapper">
+              <h2 className="user-name">{user.name}</h2>
+              
+              <div className="user-badges-row">
+                <span className="badge badge-gold">
+                  <i className="fa-solid fa-crown" style={{ color: '#b45309', marginRight: '0.3rem' }}></i> {user.role}
+                </span>
                 {user.committeeRole && (
-                  <span className="badge badge-primary"><i className="fa-solid fa-award" style={{ marginRight: '0.3rem' }}></i> {user.committeeRole}</span>
+                  <span className="badge badge-primary">
+                    <i className="fa-solid fa-award" style={{ marginRight: '0.3rem' }}></i> {user.committeeRole}
+                  </span>
                 )}
-                <span className="badge" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700 }}>
-                  <i className="fa-solid fa-certificate"></i> স্টার ভলান্টিয়ার
+                <span className="badge badge-star">
+                  <i className="fa-solid fa-certificate" style={{ marginRight: '0.3rem' }}></i> স্টার ভলান্টিয়ার
                 </span>
               </div>
 
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.75rem' }}>
+              <p className="user-meta-info">
                 <code>@{user.username}</code> &bull; <i className="fa-solid fa-shield-halved" style={{ color: 'var(--primary)' }}></i> নিবন্ধিত অফিশিয়াল সদস্য
               </p>
 
-              <div className="flex items-center gap-3 flex-wrap" style={{ fontSize: '0.88rem', color: 'var(--text-main)', marginBottom: '1rem' }}>
+              <div className="user-contact-details">
                 {user.phone && <span><i className="fa-solid fa-phone" style={{ color: 'var(--primary)' }}></i> {user.phone}</span>}
                 {user.email && <span><i className="fa-solid fa-envelope" style={{ color: 'var(--primary)' }}></i> {user.email}</span>}
               </div>

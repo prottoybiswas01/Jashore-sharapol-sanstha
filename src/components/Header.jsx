@@ -20,16 +20,6 @@ export default function Header({ currentSection, onNavigate, onOpenModal }) {
 
   return (
     <>
-      {/* Top Live Announcement Marquee Banner */}
-      <div className="marquee-notice-bar">
-        <span className="marquee-label">
-          <i className="fa-solid fa-bullhorn" style={{ color: '#fef08a' }}></i> জরুরি ঘোষণা
-        </span>
-        <div className="marquee-content">
-          সাড়াপোল ও রূপদিয়া এলাকায় জরুরি রক্তের প্রয়োজনে কল করুন: <strong>01893851111</strong> &bull; মানবসেবায় আত্মনিয়োগ করতে রক্তদাতা হিসেবে আজই নাম রেজিস্টার করুন!
-        </div>
-      </div>
-
       {/* Mobile Drawer Backdrop */}
       <div 
         className={`nav-backdrop ${isMobileMenuOpen ? 'open' : ''}`}
