@@ -805,6 +805,18 @@ app.delete('/api/donations/:id', verifyToken, checkPermission('manage_all'), asy
   }
 });
 
+app.put('/api/donations/:id/status', verifyToken, checkPermission('manage_all'), async (req, res) => {
+  try {
+    const { status } = req.body;
+    const donation = await Donation.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    if (!donation) return res.status(404).json({ success: false, message: 'অনুদানের তথ্য পাওয়া যায়নি।' });
+    res.json({ success: true, message: `অনুদানের স্ট্যাটাস '${status}' হিসেবে আপডেট হয়েছে!`, donation });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'স্ট্যাটাস আপডেট করা সম্ভব হয়নি।' });
+  }
+});
+
+
 // ----------------------------------------------------
 // Member Ideas & Proposals Routes
 // ----------------------------------------------------

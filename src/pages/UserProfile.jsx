@@ -11,6 +11,15 @@ export default function UserProfile({ onNavigate }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
+  // Facebook-style Photo Adjuster Modal state
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+  const [rawImageSrc, setRawImageSrc] = useState(null);
+  const [zoom, setZoom] = useState(1);
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
   if (!user) {
     return (
       <div style={{ padding: '4rem 1.25rem', textAlign: 'center', maxWidth: '480px', margin: '0 auto' }}>
@@ -26,66 +35,108 @@ export default function UserProfile({ onNavigate }) {
     );
   }
 
-  // Ultra-fast, 150x150 px client-side Canvas compression (Target size: ~3-5 KB)
-  const handleProfilePhotoUpload = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    setIsUploadingPhoto(true);
     const reader = new FileReader();
     reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 150;
-        const MAX_HEIGHT = 150;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Compress to 0.5 quality JPEG (~3KB size)
-        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
-
-        // Send to backend API
-        fetch('/api/users/profile-image', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ image: compressedBase64 })
-        })
-          .then(r => r.json())
-          .then(data => {
-            setIsUploadingPhoto(false);
-            if (data.success) {
-              updateUserImage(compressedBase64);
-              showToast('প্রোফাইল ছবি সফলভাবে আপডেট করা হয়েছে!');
-            } else {
-              showToast(data.message || 'ছবি আপলোড করা যায়নি।', 'error');
-            }
-          })
-          .catch(() => {
-            setIsUploadingPhoto(false);
-            showToast('ছবি আপলোডে নেটওয়ার্ক ত্রুটি।', 'error');
-          });
-      };
-      img.src = event.target.result;
+      setRawImageSrc(event.target.result);
+      setZoom(1);
+      setOffsetX(0);
+      setOffsetY(0);
+      setIsCropModalOpen(true);
     };
     reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - offsetX, y: e.clientY - offsetY });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    setOffsetX(e.clientX - dragStart.x);
+    setOffsetY(e.clientY - dragStart.y);
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.touches[0].clientX - offsetX, y: e.touches[0].clientY - offsetY });
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    setOffsetX(e.touches[0].clientX - dragStart.x);
+    setOffsetY(e.touches[0].clientY - dragStart.y);
+  };
+
+  const handleTouchEnd = () => setIsDragging(false);
+
+  const handleSaveCroppedPhoto = () => {
+    if (!rawImageSrc) return;
+    setIsUploadingPhoto(true);
+
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const CROP_SIZE = 200;
+      canvas.width = CROP_SIZE;
+      canvas.height = CROP_SIZE;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, CROP_SIZE, CROP_SIZE);
+
+      ctx.save();
+      ctx.translate(CROP_SIZE / 2, CROP_SIZE / 2);
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(zoom, zoom);
+
+      const aspect = img.width / img.height;
+      let drawW = CROP_SIZE;
+      let drawH = CROP_SIZE;
+      if (aspect > 1) {
+        drawH = CROP_SIZE;
+        drawW = CROP_SIZE * aspect;
+      } else {
+        drawW = CROP_SIZE;
+        drawH = CROP_SIZE / aspect;
+      }
+
+      ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+      ctx.restore();
+
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+      fetch('/api/users/profile-image', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ image: compressedBase64 })
+      })
+        .then(r => r.json())
+        .then(data => {
+          setIsUploadingPhoto(false);
+          setIsCropModalOpen(false);
+          if (data.success) {
+            updateUserImage(compressedBase64);
+            showToast('প্রোফাইল ছবি সফলভাবে আপডেট করা হয়েছে!');
+          } else {
+            showToast(data.message || 'ছবি আপলোড করা যায়নি।', 'error');
+          }
+        })
+        .catch(() => {
+          setIsUploadingPhoto(false);
+          setIsCropModalOpen(false);
+          showToast('ছবি আপলোডে নেটওয়ার্ক ত্রুটি।', 'error');
+        });
+    };
+    img.src = rawImageSrc;
   };
 
   const handleIdeaSubmit = async (e) => {
@@ -128,7 +179,7 @@ export default function UserProfile({ onNavigate }) {
               )}
               <label style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--primary)', color: 'white', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }} title="ছবি পরিবর্তন করুন">
                 <i className="fa-solid fa-camera" style={{ fontSize: '0.85rem' }}></i>
-                <input type="file" accept="image/*" onChange={handleProfilePhotoUpload} style={{ display: 'none' }} disabled={isUploadingPhoto} />
+                <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} disabled={isUploadingPhoto} />
               </label>
             </div>
 
@@ -250,6 +301,102 @@ export default function UserProfile({ onNavigate }) {
         </div>
 
       </div>
+
+      {/* Facebook-style Profile Photo Adjustment Modal */}
+      {isCropModalOpen && (
+        <div className="modal-overlay open">
+          <div className="modal-card" style={{ maxWidth: '440px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title">
+                <i className="fa-solid fa-crop" style={{ color: 'var(--primary)' }}></i> প্রোফাইল ছবি অ্যাডজাস্ট করুন
+              </h3>
+              <span className="modal-close" onClick={() => setIsCropModalOpen(false)}>&times;</span>
+            </div>
+            <div className="modal-body text-center">
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                ছবিটি মাউস/টাচ দিয়ে ড্র্যাগ করে পজিশন সরান অথবা জুম স্লাইডার ব্যবহার করে অ্যাডজাস্ট করুন
+              </p>
+
+              {/* Circular Viewport Preview Frame */}
+              <div 
+                style={{ 
+                  width: '200px', 
+                  height: '200px', 
+                  borderRadius: '50%', 
+                  border: '4px solid var(--primary)', 
+                  overflow: 'hidden', 
+                  margin: '0 auto 1.25rem', 
+                  position: 'relative', 
+                  cursor: isDragging ? 'grabbing' : 'grab',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                  background: '#0f172a'
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <img 
+                  src={rawImageSrc} 
+                  alt="Crop Preview" 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    transform: `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`,
+                    transition: isDragging ? 'none' : 'transform 0.1s ease',
+                    userSelect: 'none',
+                    pointerEvents: 'none'
+                  }} 
+                />
+              </div>
+
+              {/* Zoom Slider */}
+              <div style={{ marginBottom: '1.25rem', background: 'var(--bg-main)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                <div className="flex justify-between items-center" style={{ fontSize: '0.85rem', color: 'var(--text-main)', marginBottom: '0.35rem' }}>
+                  <span><i className="fa-solid fa-magnifying-glass-plus" style={{ color: 'var(--primary)' }}></i> জুম ইন / আউট (Zoom)</span>
+                  <strong style={{ color: 'var(--primary)' }}>{Math.round(zoom * 100)}%</strong>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="3" 
+                  step="0.05" 
+                  value={zoom} 
+                  onChange={e => setZoom(parseFloat(e.target.value))} 
+                  style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }} 
+                />
+              </div>
+
+              {/* Directional Nudge Buttons */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <small style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem', fontSize: '0.78rem' }}>পজিশন অ্যাডজাস্ট করুন:</small>
+                <div className="flex justify-center gap-2 flex-wrap">
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => setOffsetX(prev => prev - 10)} title="বাঁয়ে সরান"><i className="fa-solid fa-arrow-left"></i></button>
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => setOffsetY(prev => prev - 10)} title="উপরে সরান"><i className="fa-solid fa-arrow-up"></i></button>
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => setOffsetY(prev => prev + 10)} title="নিচে সরান"><i className="fa-solid fa-arrow-down"></i></button>
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => setOffsetX(prev => prev + 10)} title="ডানে সরান"><i className="fa-solid fa-arrow-right"></i></button>
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => { setZoom(1); setOffsetX(0); setOffsetY(0); }} title="রিসেট"><i className="fa-solid fa-rotate-right"></i> রিসেট</button>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleSaveCroppedPhoto} disabled={isUploadingPhoto}>
+                  <i className={isUploadingPhoto ? "fa-solid fa-spinner fa-spin" : "fa-solid fa-check"}></i> 
+                  {isUploadingPhoto ? 'সংরক্ষণ হচ্ছে...' : 'ছবি সেভ করুন'}
+                </button>
+                <button className="btn btn-outline" onClick={() => setIsCropModalOpen(false)} disabled={isUploadingPhoto}>
+                  বাতিল
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

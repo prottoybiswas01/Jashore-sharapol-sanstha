@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import html2canvas from 'html2canvas';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { compressImageFile } from '../utils/imageCompressor';
@@ -120,6 +121,30 @@ export default function Modals({ activeModal, onClose }) {
   const [loginError, setLoginError] = useState('');
   const [isIDCardOpen, setIsIDCardOpen] = useState(false);
   const [calcResult, setCalcResult] = useState(null);
+  const [isDownloadingCard, setIsDownloadingCard] = useState(false);
+
+  const handleDownloadIDCard = async () => {
+    const cardElement = document.getElementById('printable-id-card');
+    if (!cardElement) return;
+    setIsDownloadingCard(true);
+    try {
+      const canvas = await html2canvas(cardElement, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: null,
+        logging: false
+      });
+      const link = document.createElement('a');
+      link.download = `Duronto_Member_ID_Card_${currentUser?.name || 'Member'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('অফিশিয়াল আইডি কার্ডটি PNG ছবি হিসেবে ডাউনলোড হয়েছে!');
+    } catch (err) {
+      showToast('আইডি কার্ড ইমেজ ফাইল তৈরি করা সম্ভব হয়নি।', 'error');
+    } finally {
+      setIsDownloadingCard(false);
+    }
+  };
 
   useEffect(() => {
     const handleIDCardEvent = () => setIsIDCardOpen(true);
@@ -1224,9 +1249,18 @@ export default function Modals({ activeModal, onClose }) {
                 </div>
               </div>
 
-              <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
-                <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => window.print()}>
-                  <i className="fa-solid fa-print"></i> আইডি কার্ড প্রিন্ট / ডাউনলোড করুন
+              <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ width: '100%', background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none', padding: '0.75rem', fontWeight: 700 }} 
+                  onClick={handleDownloadIDCard}
+                  disabled={isDownloadingCard}
+                >
+                  <i className={isDownloadingCard ? "fa-solid fa-spinner fa-spin" : "fa-solid fa-file-image"}></i> 
+                  {isDownloadingCard ? ' ছবি তৈরি হচ্ছে...' : ' 🖼️ PNG ছবি ডাউনলোড করুন (1-Tap Download)'}
+                </button>
+                <button className="btn btn-outline" style={{ width: '100%', padding: '0.65rem' }} onClick={() => window.print()}>
+                  <i className="fa-solid fa-print"></i> 🖨️ আইডি কার্ড প্রিন্ট ডকুমেন্ট
                 </button>
               </div>
             </div>

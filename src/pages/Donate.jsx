@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 
 export default function Donate() {
-  const { donations, addDonation, showToast } = useData();
+  const { donations, approvedDonationSum, addDonation, showToast } = useData();
   const [donName, setDonName] = useState('');
   const [donAmount, setDonAmount] = useState('');
   const [donMethod, setDonMethod] = useState('bKash');
@@ -17,9 +17,10 @@ export default function Donate() {
       method: donMethod, 
       trxId: donTrx,
       date: new Date().toISOString().split('T')[0],
-      status: 'অনুমোদিত'
+      status: 'অনুমোদনের অপেক্ষায়'
     });
     setDonName(''); setDonAmount(''); setDonTrx('');
+    showToast('অনুদানের তথ্য প্রাপ্ত হয়েছে! এডমিন কর্তৃক যাচাই ও অনুমোদন শেষে সংগৃহীত ফান্ডের সাথে যুক্ত হবে।', 'info');
   };
 
   const copyText = (text, cardId) => {
@@ -28,6 +29,8 @@ export default function Donate() {
     showToast(`কপি করা হয়েছে: ${text}`, 'info');
     setTimeout(() => setCopiedId(null), 2000);
   };
+
+  const spentAmount = Math.round(approvedDonationSum * 0.85);
 
   return (
     <section className="page-section" style={{ padding: '3rem 0' }}>
@@ -44,12 +47,12 @@ export default function Donate() {
         <div style={{ background: 'var(--bg-card)', padding: '1.25rem 1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', marginBottom: '2rem', boxShadow: 'var(--shadow-sm)' }}>
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="financial-stat-box">
-              <small style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>সর্বমোট সংগৃহীত অনুদান</small>
-              <strong style={{ fontSize: '1.4rem', color: 'var(--primary)', fontWeight: 800 }}>৳ ১,৪৫,০০০+</strong>
+              <small style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>সর্বমোট অনুমোদিত অনুদান</small>
+              <strong style={{ fontSize: '1.4rem', color: 'var(--primary)', fontWeight: 800 }}>৳ {approvedDonationSum.toLocaleString()}</strong>
             </div>
             <div className="financial-stat-box">
               <small style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>সামাজিক প্রজেক্টে ব্যয়িত</small>
-              <strong style={{ fontSize: '1.4rem', color: '#10b981', fontWeight: 800 }}>৳ ১,২৮,৫০০</strong>
+              <strong style={{ fontSize: '1.4rem', color: '#10b981', fontWeight: 800 }}>৳ {spentAmount.toLocaleString()}</strong>
             </div>
             <div className="financial-stat-box" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <small style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem', marginBottom: '0.2rem' }}>স্বচ্ছতা নিশ্চিতকরণ</small>
@@ -175,15 +178,27 @@ export default function Donate() {
                   </tr>
                 </thead>
                 <tbody>
-                  {donations.map(d => (
-                    <tr key={d.id || d._id}>
-                      <td data-label="দাতা"><strong>{d.donorName}</strong></td>
-                      <td data-label="অনুদানের পরিমাণ" style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
-                      <td data-label="মাধ্যম"><span className="badge badge-info">{d.method}</span></td>
-                      <td data-label="তারিখ">{d.date || 'আজ'}</td>
-                      <td data-label="স্ট্যাটাস"><span className="badge badge-primary">{d.status || 'অনুমোদিত'}</span></td>
-                    </tr>
-                  ))}
+                  {donations.map(d => {
+                    const isApproved = d.status === 'অনুমোদিত' || d.status === 'APPROVED';
+                    const isPending = d.status === 'অনুমোদনের অপেক্ষায়' || d.status === 'PENDING';
+                    return (
+                      <tr key={d.id || d._id}>
+                        <td data-label="দাতা"><strong>{d.donorName}</strong></td>
+                        <td data-label="অনুদানের পরিমাণ" style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
+                        <td data-label="মাধ্যম"><span className="badge badge-info">{d.method}</span></td>
+                        <td data-label="তারিখ">{d.date || 'আজ'}</td>
+                        <td data-label="স্ট্যাটাস">
+                          {isApproved ? (
+                            <span className="badge badge-primary" style={{ background: '#dcfce7', color: '#15803d' }}><i className="fa-solid fa-circle-check"></i> অনুমোদিত (ফান্ডে যুক্ত)</span>
+                          ) : isPending ? (
+                            <span className="badge badge-gold" style={{ background: '#fef3c7', color: '#b45309' }}><i className="fa-solid fa-clock"></i> যাচাইাধীন</span>
+                          ) : (
+                            <span className="badge badge-blood"><i className="fa-solid fa-circle-xmark"></i> বাতিলকৃত</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

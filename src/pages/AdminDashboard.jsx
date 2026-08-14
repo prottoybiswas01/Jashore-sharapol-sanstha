@@ -6,7 +6,7 @@ import { EXECUTIVE_DESIGNATIONS } from '../constants/committeeRoles';
 export default function AdminDashboard({ onOpenModal, onNavigate }) {
   const { user, login, logout, hasPermission, token } = useAuth();
   const { 
-    settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, ideas,
+    settings, activities, plans, committee, donors, bloodRequests, donations, approvedDonationSum, updateDonationStatus, subAdminUsers, ideas,
     deleteActivity, deleteFuturePlan, deleteCommitteeMember, assignUserCommitteeRole, deleteBloodDonor, deleteBloodRequest,
     deleteDonation, deleteSubAdminUser, deleteIdea, fetchAdminUsers, showToast, setEditingActivity, updateIdeaStatus
   } = useData();
@@ -88,7 +88,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
     );
   }
 
-  const totalDonationSum = donations.reduce((sum, d) => sum + (parseInt(d.amount) || 0), 0);
+  const totalDonationSum = approvedDonationSum;
 
   return (
     <div>
@@ -580,10 +580,12 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
         {/* 7. FINANCIAL DONATIONS LEDGER */}
         {activeAdminTab === 'donations' && hasPermission('manage_all') && (
           <div>
-            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <div>
                 <h2>অনুদানের হিসাব ও রিয়েল-টাইম রেজিস্টার</h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>মোট সর্বমোট সংগৃহীত অনুদান: <strong style={{ color: 'var(--primary)' }}>৳ {totalDonationSum.toLocaleString()}</strong></p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                  মোট সর্বমোট অনুমোদিত অনুদান: <strong style={{ color: 'var(--primary)' }}>৳ {approvedDonationSum.toLocaleString()}</strong>
+                </p>
               </div>
               <button className="btn btn-primary btn-sm" onClick={() => onOpenModal('add-donation')}><i className="fa-solid fa-plus"></i> ম্যানুয়ালি অনুদান যোগ</button>
             </div>
@@ -598,22 +600,52 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                     <th>TrxID / রেফারেন্স</th>
                     <th>তারিখ</th>
                     <th>স্ট্যাটাস</th>
+                    <th style={{ textAlign: 'right' }}>অ্যাকশন</th>
                   </tr>
                 </thead>
                 <tbody>
                   {donations.length === 0 ? (
-                    <tr><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>বর্তমানে কোনো অনুদান রেকর্ড জমা নেই।</td></tr>
+                    <tr><td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>বর্তমানে কোনো অনুদান রেকর্ড জমা নেই।</td></tr>
                   ) : (
-                    donations.map(d => (
-                      <tr key={d.id || d._id}>
-                        <td data-label="দাতা"><strong>{d.donorName}</strong></td>
-                        <td data-label="অনুদানের পরিমাণ" style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
-                        <td data-label="পেমেন্ট মাধ্যম"><span className="badge badge-info">{d.method}</span></td>
-                        <td data-label="TrxID"><code>{d.trxId || 'N/A'}</code></td>
-                        <td data-label="তারিখ">{d.date || 'আজ'}</td>
-                        <td data-label="স্ট্যাটাস"><span className="badge badge-primary">{d.status || 'অনুমোদিত'}</span></td>
-                      </tr>
-                    ))
+                    donations.map(d => {
+                      const isApproved = d.status === 'অনুমোদিত' || d.status === 'APPROVED';
+                      const isPending = d.status === 'অনুমোদনের অপেক্ষায়' || d.status === 'PENDING';
+                      return (
+                        <tr key={d.id || d._id}>
+                          <td data-label="দাতা"><strong>{d.donorName}</strong></td>
+                          <td data-label="অনুদানের পরিমাণ" style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
+                          <td data-label="পেমেন্ট মাধ্যম"><span className="badge badge-info">{d.method}</span></td>
+                          <td data-label="TrxID"><code>{d.trxId || 'N/A'}</code></td>
+                          <td data-label="তারিখ">{d.date || 'আজ'}</td>
+                          <td data-label="স্ট্যাটাস">
+                            {isApproved ? (
+                              <span className="badge badge-primary" style={{ background: '#dcfce7', color: '#15803d' }}><i className="fa-solid fa-circle-check"></i> অনুমোদিত</span>
+                            ) : isPending ? (
+                              <span className="badge badge-gold" style={{ background: '#fef3c7', color: '#b45309' }}><i className="fa-solid fa-clock"></i> যাচাইাধীন</span>
+                            ) : (
+                              <span className="badge badge-blood"><i className="fa-solid fa-circle-xmark"></i> বাতিলকৃত</span>
+                            )}
+                          </td>
+                          <td data-label="অ্যাকশন">
+                            <div className="flex items-center gap-1" style={{ justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                              {!isApproved && (
+                                <button className="btn btn-primary btn-sm" style={{ padding: '0.2rem 0.5rem', fontSize: '0.78rem', background: '#22c55e', borderColor: '#22c55e' }} onClick={() => updateDonationStatus(d._id || d.id, 'অনুমোদিত')} title="অনুমোদন করুন">
+                                  <i className="fa-solid fa-check"></i> অনুমোদন
+                                </button>
+                              )}
+                              {isApproved && (
+                                <button className="btn btn-outline btn-sm" style={{ padding: '0.2rem 0.5rem', fontSize: '0.78rem', color: '#ea580c', borderColor: '#ea580c' }} onClick={() => updateDonationStatus(d._id || d.id, 'বাতিলকৃত')} title="বাতিল করুন">
+                                  <i className="fa-solid fa-ban"></i> বাতিল
+                                </button>
+                              )}
+                              <button className="btn btn-outline btn-sm" onClick={() => deleteDonation(d._id || d.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)', padding: '0.2rem 0.5rem', fontSize: '0.78rem' }} title="মুছে ফেলুন">
+                                <i className="fa-solid fa-trash"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

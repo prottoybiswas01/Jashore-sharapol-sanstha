@@ -363,6 +363,28 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const updateDonationStatus = async (id, status) => {
+    try {
+      const res = await fetch(`/api/donations/${id}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDonations(prev => prev.map(d => String(d._id || d.id) === String(id) ? { ...d, status } : d));
+        showToast(status === 'অনুমোদিত' ? 'অনুদানের আবেদন অনুমোদিত হয়েছে এবং ফান্ডে যুক্ত হয়েছে!' : 'অনুদানের আবেদন স্ট্যাটাস পরিবর্তন করা হয়েছে।', status === 'অনুমোদিত' ? 'success' : 'info');
+      } else {
+        showToast(data.message || 'স্ট্যাটাস আপডেট ব্যর্থ হয়েছে।', 'error');
+      }
+    } catch (e) {
+      showToast('নেটওয়ার্ক সমস্যার কারণে আপডেট সম্ভব হয়নি।', 'error');
+    }
+  };
+
   const createSubAdminUser = async (userData) => {
     try {
       const res = await fetch('/api/users', {
@@ -487,12 +509,15 @@ export const DataProvider = ({ children }) => {
 
   const [editingActivity, setEditingActivity] = useState(null);
 
+  const approvedDonations = donations.filter(d => d.status === 'অনুমোদিত' || d.status === 'APPROVED');
+  const approvedDonationSum = approvedDonations.reduce((sum, d) => sum + (parseInt(d.amount || 0)), 0);
+
   return (
     <DataContext.Provider value={{
-      isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, subAdminUsers, ideas, selectedActivity, editingActivity, toastMessage,
+      isLoading, settings, activities, plans, committee, donors, bloodRequests, donations, approvedDonations, approvedDonationSum, subAdminUsers, ideas, selectedActivity, editingActivity, toastMessage,
       setSelectedActivity, setEditingActivity, showToast, updateSiteSettings, addActivity, updateActivity, likeActivity, deleteActivity, addFuturePlan, deleteFuturePlan,
       addCommitteeMember, deleteCommitteeMember, assignUserCommitteeRole, addBloodDonor, deleteBloodDonor,
-      addBloodRequest, deleteBloodRequest, addDonation, deleteDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers,
+      addBloodRequest, deleteBloodRequest, addDonation, updateDonationStatus, deleteDonation, createSubAdminUser, deleteSubAdminUser, fetchAdminUsers,
       submitMemberIdea, updateIdeaStatus, deleteIdea
     }}>
       {children}
