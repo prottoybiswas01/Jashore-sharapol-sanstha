@@ -142,11 +142,11 @@ export default function Donate() {
                 <tbody>
                   {donations.map(d => (
                     <tr key={d.id || d._id}>
-                      <td><strong>{d.donorName}</strong></td>
-                      <td style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
-                      <td><span className="badge badge-info">{d.method}</span></td>
-                      <td>{d.date || 'আজ'}</td>
-                      <td><span className="badge badge-primary">{d.status || 'অনুমোদিত'}</span></td>
+                      <td data-label="দাতা"><strong>{d.donorName}</strong></td>
+                      <td data-label="অনুদানের পরিমাণ" style={{ color: 'var(--primary)', fontWeight: 700 }}>৳ {parseInt(d.amount || 0).toLocaleString()}</td>
+                      <td data-label="মাধ্যম"><span className="badge badge-info">{d.method}</span></td>
+                      <td data-label="তারিখ">{d.date || 'আজ'}</td>
+                      <td data-label="স্ট্যাটাস"><span className="badge badge-primary">{d.status || 'অনুমোদিত'}</span></td>
                     </tr>
                   ))}
                 </tbody>

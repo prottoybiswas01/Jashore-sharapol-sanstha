@@ -278,21 +278,21 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   <tbody>
                     {activities.map(a => (
                       <tr key={a.id || a._id}>
-                        <td><img src={a.image} style={{ width: '50px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} alt={a.title} /></td>
-                        <td>
+                        <td data-label="ছবি"><img src={a.image} style={{ width: '50px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} alt={a.title} /></td>
+                        <td data-label="শিরোনাম">
                           <strong>{a.title}</strong>
                           {a.subtitle && <small style={{ display: 'block', color: 'var(--text-muted)' }}>{a.subtitle}</small>}
                         </td>
-                        <td>{a.category}</td>
-                        <td>{a.date}</td>
-                        <td>
+                        <td data-label="ক্যাটাগরি">{a.category}</td>
+                        <td data-label="তারিখ">{a.date}</td>
+                        <td data-label="মোট খরচ">
                           {a.expense > 0 ? (
                             <strong style={{ color: '#b45309' }}>৳ {parseInt(a.expense).toLocaleString()}</strong>
                           ) : (
                             <span style={{ color: 'var(--text-muted)' }}>-</span>
                           )}
                         </td>
-                        <td>
+                        <td data-label="অ্যাকশন">
                           <div className="flex items-center gap-1">
                             <button className="btn btn-outline btn-sm" onClick={() => { setEditingActivity(a); onOpenModal('edit-activity'); }} style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }} title="সম্পাদনা করুন">
                               <i className="fa-solid fa-pen-to-square"></i>
@@ -337,11 +337,11 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   <tbody>
                     {plans.map(p => (
                       <tr key={p.id || p._id}>
-                        <td><strong>{p.title}</strong></td>
-                        <td>{p.category}</td>
-                        <td>{p.targetDate || '-'}</td>
-                        <td><span className="badge badge-gold">{p.status || 'চলমান'}</span></td>
-                        <td>
+                        <td data-label="পরিকল্পনার শিরোনাম"><strong>{p.title}</strong></td>
+                        <td data-label="ক্যাটাগরি">{p.category}</td>
+                        <td data-label="টার্গেট তারিখ">{p.targetDate || '-'}</td>
+                        <td data-label="স্ট্যাটাস"><span className="badge badge-gold">{p.status || 'চলমান'}</span></td>
+                        <td data-label="অ্যাকশন">
                           <button className="btn btn-outline btn-sm" onClick={() => deleteFuturePlan(p._id || p.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }}>
                             <i className="fa-solid fa-trash"></i>
                           </button>
@@ -420,15 +420,15 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                         })
                         .map(u => (
                           <tr key={u._id || u.id}>
-                            <td>
+                            <td data-label="ইউজার নাম">
                               <strong>{u.name}</strong>
                               <small style={{ display: 'block', color: 'var(--text-muted)' }}>@{u.username}</small>
                             </td>
-                            <td>
+                            <td data-label="মোবাইল/ইমেইল">
                               <div>{u.phone || 'মোবাইল নেই'}</div>
                               {u.email && <small style={{ color: 'var(--text-muted)' }}>{u.email}</small>}
                             </td>
-                            <td>
+                            <td data-label="বর্তমান পদবী">
                               {u.committeeRole ? (
                                 <span className="badge badge-gold" style={{ fontWeight: 700 }}>
                                   <i className="fa-solid fa-crown" style={{ marginRight: '0.3rem' }}></i> {u.committeeRole}
@@ -439,10 +439,10 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                                 </span>
                               )}
                             </td>
-                            <td>
+                            <td data-label="পদবী বরাদ্দ">
                               <select 
                                 className="form-control" 
-                                style={{ padding: '0.35rem 0.6rem', fontSize: '0.85rem', width: 'auto', minWidth: '220px' }}
+                                style={{ padding: '0.35rem 0.6rem', fontSize: '0.85rem', width: '100%', maxWidth: '240px' }}
                                 value={u.committeeRole || ''}
                                 onChange={(e) => assignUserCommitteeRole(u._id || u.id, e.target.value)}
                               >
@@ -486,7 +486,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                     <tbody>
                       {committee.map(c => (
                         <tr key={c.id || c._id}>
-                          <td>
+                          <td data-label="ছবি">
                             {c.image ? (
                               <img src={c.image} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} />
                             ) : (
@@ -495,10 +495,10 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                               </div>
                             )}
                           </td>
-                          <td><strong>{c.name}</strong></td>
-                          <td><span className="badge badge-primary">{c.role}</span></td>
-                          <td>{c.phone}</td>
-                          <td>
+                          <td data-label="নাম"><strong>{c.name}</strong></td>
+                          <td data-label="পদবী"><span className="badge badge-primary">{c.role}</span></td>
+                          <td data-label="মোবাইল">{c.phone}</td>
+                          <td data-label="অ্যাকশন">
                             <button className="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c._id || c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="পদবী প্রত্যাহার / মুছে ফেলুন">
                               <i className="fa-solid fa-trash"></i>
                             </button>
@@ -783,7 +783,7 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   <tbody>
                     {ideas.map(idea => (
                       <tr key={idea._id || idea.id}>
-                        <td>
+                        <td data-label="সদস্য">
                           <div className="flex items-center gap-2" style={{ whiteSpace: 'nowrap' }}>
                             {idea.memberPhoto ? (
                               <img 
@@ -802,15 +802,15 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                             </div>
                           </div>
                         </td>
-                        <td><strong style={{ color: 'var(--primary-dark)' }}>{idea.title}</strong></td>
-                        <td style={{ minWidth: '220px', fontSize: '0.85rem' }}>{idea.details}</td>
-                        <td>
+                        <td data-label="শিরোনাম"><strong style={{ color: 'var(--primary-dark)' }}>{idea.title}</strong></td>
+                        <td data-label="বিবরণ" style={{ minWidth: '220px', fontSize: '0.85rem' }}>{idea.details}</td>
+                        <td data-label="স্ট্যাটাস">
                           <span className={`badge ${idea.status === 'অনুমোদিত ও গ্রহণযোগ্য' ? 'badge-primary' : 'badge-gold'}`} style={{ whiteSpace: 'nowrap' }}>
                             {idea.status}
                           </span>
                         </td>
-                        <td>
-                          <div className="flex flex-col gap-1" style={{ minWidth: '180px' }}>
+                        <td data-label="অ্যাকশন">
+                          <div className="flex flex-col gap-1" style={{ minWidth: '180px', width: '100%' }}>
                             <button 
                               className="btn btn-primary btn-sm" 
                               style={{ fontSize: '0.78rem', padding: '0.25rem 0.6rem' }}

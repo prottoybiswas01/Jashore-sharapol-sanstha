@@ -110,7 +110,7 @@ export default function JashoreMap() {
       </div>
 
       {/* Filter Category Pills */}
-      <div className="flex justify-center gap-2 flex-wrap" style={{ marginBottom: '1.5rem' }}>
+      <div className="map-filter-pills">
         <button 
           className={`btn btn-sm ${filterType === 'all' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setFilterType('all')}
@@ -131,7 +131,7 @@ export default function JashoreMap() {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 items-center">
+      <div className="map-grid-container grid grid-cols-2 gap-4 items-center">
         {/* Vector SVG Bangladesh & Jashore Upazilas Map */}
         <div style={{ textAlignment: 'center', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', padding: '1rem', border: '1px solid var(--border-color)' }}>
           <svg viewBox="0 0 450 480" style={{ width: '100%', maxHeight: '420px', filter: 'drop-shadow(0 8px 16px rgba(5, 150, 105, 0.12))' }}>

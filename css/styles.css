@@ -1323,6 +1323,21 @@ input, select, textarea {
   margin-bottom: 2rem;
 }
 
+/* Map Filter Pills Container */
+.map-filter-pills {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .map-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* Data Tables Styling */
 .table-responsive {
   width: 100%;
@@ -1371,6 +1386,20 @@ input, select, textarea {
   background: rgba(5, 150, 105, 0.04);
 }
 
+/* Admin Mobile Sub-bar Layout */
+.admin-mobile-bar {
+  display: none;
+  padding: 0.85rem 1rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 70px;
+  z-index: 900;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 992px) {
   .admin-stats-grid {
@@ -1411,16 +1440,6 @@ input, select, textarea {
   }
 }
 
-@media (max-width: 576px) {
-  .admin-stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .quick-actions-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 640px) {
   .hero-btn-group {
     flex-direction: column;
@@ -1437,8 +1456,32 @@ input, select, textarea {
     gap: 0.5rem;
   }
   .admin-mobile-bar .btn {
-    font-size: 0.8rem;
-    padding: 0.35rem 0.65rem;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.75rem;
+  }
+  .map-filter-pills {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  .map-filter-pills .btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.82rem;
+    padding: 0.45rem 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1462,12 +1505,24 @@ input, select, textarea {
    Transforms raw data tables into modern compact cards on mobile phones
    ========================================================================== */
 @media (max-width: 768px) {
+  html, body {
+    font-size: 15px;
+  }
+
   .container {
     padding: 0 0.85rem;
   }
-  
+
+  input, select, textarea {
+    font-size: 16px !important; /* Prevents auto-zoom on mobile Safari */
+  }
+
+  .btn {
+    min-height: 40px;
+  }
+
   .admin-content {
-    padding: 0.85rem 0.6rem !important;
+    padding: 1rem 0.65rem !important;
   }
 
   .admin-stats-grid {
@@ -1488,6 +1543,8 @@ input, select, textarea {
   .table-responsive {
     border: none;
     overflow-x: visible;
+    background: transparent;
+    box-shadow: none;
   }
 
   .data-table, 
@@ -1500,6 +1557,10 @@ input, select, textarea {
     width: 100%;
   }
 
+  .data-table min-width {
+    min-width: 0 !important;
+  }
+
   .data-table thead {
     display: none;
   }
@@ -1508,7 +1569,7 @@ input, select, textarea {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 0.85rem 1rem;
+    padding: 1rem;
     margin-bottom: 0.85rem;
     box-shadow: var(--shadow-sm);
     transition: var(--transition-fast);
@@ -1522,9 +1583,11 @@ input, select, textarea {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.45rem 0;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
     border: none;
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.07);
     font-size: 0.88rem;
     text-align: right;
   }
@@ -1539,14 +1602,35 @@ input, select, textarea {
     justify-content: flex-end;
   }
 
+  /* Empty state handling inside table cards */
+  .data-table td[colspan], 
+  .data-table td:only-child {
+    display: block !important;
+    text-align: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 1.25rem 0.5rem !important;
+    border-bottom: none !important;
+  }
+
+  .data-table td[colspan]::before,
+  .data-table td:only-child::before {
+    display: none !important;
+  }
+
   .data-table td[data-label]::before {
     content: attr(data-label);
     font-weight: 700;
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     text-align: left;
-    margin-right: 0.75rem;
+    margin-right: 0.5rem;
     flex-shrink: 0;
+  }
+
+  .data-table td select.form-control {
+    width: 100%;
+    margin-top: 0.2rem;
   }
 
   /* Compact Modal Cards on Mobile */
@@ -1569,3 +1653,4 @@ input, select, textarea {
     justify-content: flex-start;
   }
 }
+
