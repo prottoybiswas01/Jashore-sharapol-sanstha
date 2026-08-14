@@ -2,16 +2,16 @@ import mongoose from 'mongoose';
 
 // 1. Site Settings Schema (Dynamic CMS)
 const siteSettingsSchema = new mongoose.Schema({
-  topTickerNotice: { type: String, default: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম | রক্তের জন্য যোগাযোগ করুন: 01711-123456' },
+  topTickerNotice: { type: String, default: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম | রক্তের জন্য যোগাযোগ করুন: 01893851111' },
   heroBadgeText: { type: String, default: 'যশোর জেলা কেন্দ্রিক সামাজিক সংগঠন' },
   heroTitleText: { type: String, default: 'এক সাথে গড়ি উন্নত ও মানবিক যশোর' },
   heroDescription: { type: String, default: 'যশোর শারাপোল সংস্থা একটি সেবামূলক সামাজিক সংগঠন। রক্তদান, শীতার্ত মানুষের পাশে দাঁড়ানো, শিক্ষা সহায়তা ও এলাকার সার্বিক উন্নয়নে আমরা নিবেদিত।' },
   heroImageUrl: { type: String, default: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80' },
   aboutTitle: { type: String, default: 'যশোর শারাপোল সংস্থা সম্পর্কে' },
   aboutDescription: { type: String, default: "'যশোর শারাপোল সংস্থা' যশোর জেলার একটি সেবামুখী ও অরাজনৈতিক সামাজিক কল্যাণমূলক সংস্থা। এলাকার মানুষের পাশে দাঁড়ানো, জরুরি রক্তদানে তাৎক্ষণিক সহায়তা প্রদান, সুবিধাবঞ্চিত শিশুদের শিক্ষা সহায়তা এবং পরিবেশ রক্ষায় উদ্যোগ নেওয়া আমাদের মূল অঙ্গীকার।" },
-  contactPhone: { type: String, default: '01711-123456' },
+  contactPhone: { type: String, default: '01893851111' },
   contactEmail: { type: String, default: 'info@jashoresharapol.org' },
-  contactAddress: { type: String, default: 'কেন্দ্রীয় কার্যালয়: চাঁচড়া মোড়, যশোর সদর, যশোর।' }
+  contactAddress: { type: String, default: 'কেন্দ্রীয় কার্যালয়: সাড়াপোল, রূপদিয়া, যশোর।' }
 }, { timestamps: true });
 
 // 2. User & RBAC Schema

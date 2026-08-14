@@ -47,10 +47,10 @@ export default function Footer({ onNavigate, onOpenModal }) {
         <div>
           <h4 className="footer-title">যোগাযোগের ঠিকানা</h4>
           <p style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-            <i className="fa-solid fa-location-dot" style={{ color: 'var(--primary)' }}></i> {settings.contactAddress || 'চাঁচড়া মোড়, যশোর সদর, যশোর।'}
+            <i className="fa-solid fa-location-dot" style={{ color: 'var(--primary)' }}></i> {settings.contactAddress || 'সাড়াপোল, রূপদিয়া, যশোর।'}
           </p>
           <p style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-            <i className="fa-solid fa-phone" style={{ color: 'var(--primary)' }}></i> হেল্পলাইন: {settings.contactPhone || '01711-123456'}
+            <i className="fa-solid fa-phone" style={{ color: 'var(--primary)' }}></i> হেল্পলাইন: {settings.contactPhone || '01893851111'}
           </p>
           <p style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>
             <i className="fa-solid fa-envelope" style={{ color: 'var(--primary)' }}></i> ইমেইল: jashoresharapolsanstha@gmail.com

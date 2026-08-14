@@ -8,16 +8,16 @@ export const DataProvider = ({ children }) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [settings, setSettings] = useState({
-    topTickerNotice: 'দুরন্ত সংস্থায় আপনাকে স্বাগতম | Help • Educate • Empower | রক্তের জন্য যোগাযোগ করুন: 01711-123456',
+    topTickerNotice: 'দুরন্ত সংস্থায় আপনাকে স্বাগতম | Help • Educate • Empower | রক্তের জন্য যোগাযোগ করুন: 01893851111',
     heroBadgeText: 'অরাজনৈতিক সামাজিক উন্নয়ন সংগঠন',
     heroTitleText: 'এক সাথে গড়ি উন্নত, শিক্ষিত ও মানবিক সমাজ',
     heroDescription: 'দুরন্ত (Duronto) একটি সেবামূলক সামাজিক কল্যাণ সংগঠন। রক্তদান, শীতার্ত মানুষের পাশে দাঁড়ানো, সুবিধা বঞ্চিত শিশুদের শিক্ষা সহায়তা ও সমাজের সার্বিক উন্নয়নে আমরা নিবেদিত।',
     heroImageUrl: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80',
     aboutTitle: 'দুরন্ত (Duronto) সম্পর্কে',
     aboutDescription: "'দুরন্ত (Duronto)' একটি সেবামুখী ও অরাজনৈতিক সামাজিক কল্যাণমূলক প্রতিষ্ঠান। এলাকার মানুষের পাশে দাঁড়ানো, জরুরি রক্তদানে তাৎক্ষণিক সহায়তা প্রদান, সুবিধার বঞ্চিত শিশুদের শিক্ষা সামগ্রী সহায়তা এবং দারিদ্র্য বিমোচনে উদ্যোগ নেওয়া আমাদের মূল অঙ্গীকার।",
-    contactPhone: '01711-123456',
+    contactPhone: '01893851111',
     contactEmail: 'jashoresharapolsanstha@gmail.com',
-    contactAddress: 'কেন্দ্রীয় কার্যালয়: চাঁচড়া মোড়, যশোর সদর, যশোর।'
+    contactAddress: 'কেন্দ্রীয় কার্যালয়: সাড়াপোল, রূপদিয়া, যশোর।'
   });
 
   const [activities, setActivities] = useState([]);

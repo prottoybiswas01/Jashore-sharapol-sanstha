@@ -48,12 +48,12 @@ export default function Donate() {
             <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #fbcfe8', borderLeft: '6px solid #e2136e', marginBottom: '1rem', boxShadow: 'var(--shadow-sm)' }}>
               <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.5rem' }}>
                 <span className="badge" style={{ background: '#fce7f3', color: '#e2136e', fontWeight: 700 }}>bKash (বিকাশ)</span>
-                <button className="btn btn-outline btn-sm" style={{ color: '#e2136e', borderColor: '#e2136e' }} onClick={() => copyText('01711123456')}>
+                <button className="btn btn-outline btn-sm" style={{ color: '#e2136e', borderColor: '#e2136e' }} onClick={() => copyText('01893851111')}>
                   <i className="fa-regular fa-copy"></i> অনুলিপি করুন
                 </button>
               </div>
               <h4 style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>বিকাশ পারসোনাল / মার্চেন্ট নম্বর</h4>
-              <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#e2136e', fontFamily: 'var(--font-latin)' }}>01711-123456</p>
+              <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#e2136e', fontFamily: 'var(--font-latin)' }}>01893851111</p>
               <small style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>* অ্যাপ বা USSD (*247#) থেকে Send Money বা Cash In করুন</small>
             </div>
 
@@ -61,12 +61,12 @@ export default function Donate() {
             <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #ffedd5', borderLeft: '6px solid #f7941d', marginBottom: '1rem', boxShadow: 'var(--shadow-sm)' }}>
               <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.5rem' }}>
                 <span className="badge" style={{ background: '#ffedd5', color: '#c2410c', fontWeight: 700 }}>Nagad (নগদ)</span>
-                <button className="btn btn-outline btn-sm" style={{ color: '#c2410c', borderColor: '#f7941d' }} onClick={() => copyText('01711123456')}>
+                <button className="btn btn-outline btn-sm" style={{ color: '#c2410c', borderColor: '#f7941d' }} onClick={() => copyText('01893851111')}>
                   <i className="fa-regular fa-copy"></i> অনুলিপি করুন
                 </button>
               </div>
               <h4 style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>নগদ পারসোনাল নম্বর</h4>
-              <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f7941d', fontFamily: 'var(--font-latin)' }}>01711-123456</p>
+              <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f7941d', fontFamily: 'var(--font-latin)' }}>01893851111</p>
               <small style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>* অ্যাপ বা USSD (*167#) থেকে Send Money করুন</small>
             </div>
 
@@ -74,13 +74,26 @@ export default function Donate() {
             <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #f3e8ff', borderLeft: '6px solid #8c3494', marginBottom: '1rem', boxShadow: 'var(--shadow-sm)' }}>
               <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.5rem' }}>
                 <span className="badge" style={{ background: '#f3e8ff', color: '#8c3494', fontWeight: 700 }}>Rocket (রকেট)</span>
-                <button className="btn btn-outline btn-sm" style={{ color: '#8c3494', borderColor: '#8c3494' }} onClick={() => copyText('017111234567')}>
+                <button className="btn btn-outline btn-sm" style={{ color: '#8c3494', borderColor: '#8c3494' }} onClick={() => copyText('01893851111')}>
                   <i className="fa-regular fa-copy"></i> অনুলিপি করুন
                 </button>
               </div>
               <h4 style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>রকেট পারসোনাল নম্বর</h4>
-              <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#8c3494', fontFamily: 'var(--font-latin)' }}>01711-123456-7</p>
+              <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#8c3494', fontFamily: 'var(--font-latin)' }}>01893851111</p>
               <small style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>* রকেট অ্যাপ বা USSD (*322#) থেকে Send Money করুন</small>
+            </div>
+
+            {/* Upay Card */}
+            <div style={{ background: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #e0f2fe', borderLeft: '6px solid #0284c7', marginBottom: '1rem', boxShadow: 'var(--shadow-sm)' }}>
+              <div className="flex justify-between items-center flex-wrap gap-1" style={{ marginBottom: '0.5rem' }}>
+                <span className="badge" style={{ background: '#e0f2fe', color: '#0369a1', fontWeight: 700 }}>Upay (উপায়)</span>
+                <button className="btn btn-outline btn-sm" style={{ color: '#0369a1', borderColor: '#0284c7' }} onClick={() => copyText('01893851111')}>
+                  <i className="fa-regular fa-copy"></i> অনুলিপি করুন
+                </button>
+              </div>
+              <h4 style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>উপায় পারসোনাল নম্বর</h4>
+              <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0284c7', fontFamily: 'var(--font-latin)' }}>01893851111</p>
+              <small style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>* উপায় অ্যাপ বা USSD (*268#) থেকে Send Money করুন</small>
             </div>
           </div>
 
@@ -104,6 +117,7 @@ export default function Donate() {
                   <option value="bKash">bKash (বিকাশ)</option>
                   <option value="Nagad">Nagad (নগদ)</option>
                   <option value="Rocket">Rocket (রকেট)</option>
+                  <option value="Upay">Upay (উপায়)</option>
                   <option value="Bank">Bank Transfer</option>
                 </select>
               </div>

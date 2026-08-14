@@ -293,7 +293,7 @@ export default function JashoreMap() {
           <div style={{ background: 'var(--primary-light)', padding: '1rem 1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <i className="fa-solid fa-circle-info" style={{ color: 'var(--primary-dark)', fontSize: '1.25rem' }}></i>
             <div style={{ fontSize: '0.85rem', color: 'var(--primary-dark)', lineHeight: '1.4' }}>
-              <strong>জরুরি প্রয়োজনে যোগাযোগ:</strong> {current.name}-এ রক্তের প্রয়োজন হলে হটলাইন <code>01711-123456</code> অথবা ওয়েবসাইটের <strong>"রক্তের প্রয়োজন?"</strong> বাটনে ক্লিক করুন।
+              <strong>জরুরি প্রয়োজনে যোগাযোগ:</strong> {current.name}-এ রক্তের প্রয়োজন হলে হটলাইন <code>01893851111</code> অথবা ওয়েবসাইটের <strong>"রক্তের প্রয়োজন?"</strong> বাটনে ক্লিক করুন।
             </div>
           </div>
         </div>

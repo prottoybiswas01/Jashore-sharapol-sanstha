@@ -65,16 +65,16 @@ connectDB().then(async (res) => {
       const settingsCount = await SiteSettings.countDocuments();
       if (settingsCount === 0) {
         await SiteSettings.create({
-          topTickerNotice: 'দুরন্ত সংস্থায় আপনাকে স্বাগতম | Help • Educate • Empower | রক্তের জন্য যোগাযোগ করুন: 01711-123456',
+          topTickerNotice: 'দুরন্ত সংস্থায় আপনাকে স্বাগতম | Help • Educate • Empower | রক্তের জন্য যোগাযোগ করুন: 01893851111',
           heroBadgeText: 'অরাজনৈতিক সামাজিক উন্নয়ন সংগঠন',
           heroTitleText: 'এক সাথে গড়ি উন্নত, শিক্ষিত ও মানবিক সমাজ',
           heroDescription: 'দুরন্ত (Duronto) একটি সেবামূলক সামাজিক কল্যাণ সংগঠন। রক্তদান, শীতার্ত মানুষের পাশে দাঁড়ানো, সুবিধা বঞ্চিত শিশুদের শিক্ষা সহায়তা ও সমাজের সার্বিক উন্নয়নে আমরা নিবেদিত।',
           heroImageUrl: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80',
           aboutTitle: 'দুরন্ত (Duronto) সম্পর্কে',
           aboutDescription: "'দুরন্ত (Duronto)' একটি সেবামুখী ও অরাজনৈতিক সামাজিক কল্যাণমূলক প্রতিষ্ঠান। এলাকার মানুষের পাশে দাঁড়ানো, জরুরি রক্তদানে তাৎক্ষণিক সহায়তা প্রদান, সুবিধার বঞ্চিত শিশুদের শিক্ষা সামগ্রী সহায়তা এবং দারিদ্র্য বিমোচনে উদ্যোগ নেওয়া আমাদের মূল অঙ্গীকার।",
-          contactPhone: '01711-123456',
+          contactPhone: '01893851111',
           contactEmail: 'jashoresharapolsanstha@gmail.com',
-          contactAddress: 'কেন্দ্রীয় কার্যালয়: চাঁচড়া মোড়, যশোর সদর, যশোর।'
+          contactAddress: 'কেন্দ্রীয় কার্যালয়: সাড়াপোল, রূপদিয়া, যশোর।'
         });
         console.log('✅ Initial Duronto SiteSettings created in MongoDB Atlas Cloud');
       }
@@ -196,7 +196,7 @@ app.post('/api/auth/register', async (req, res) => {
               জরুরি রক্তের প্রয়োজনে এলাকার অসহায় মানুষের পাশে দাঁড়ানোর উদাত্ত আহ্বানে সাড়া দেওয়ার জন্য আমাদের লাল সালাম।
             </p>
             <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-              © 2026 যশোর শারাপোল সংস্থা | চাঁচড়া মোড়, যশোর সদর।
+              © 2026 যশোর শারাপোল সংস্থা | সাড়াপোল, রূপদিয়া, যশোর।
             </div>
           </div>
         </div>
@@ -276,7 +276,7 @@ app.post('/api/auth/login', async (req, res) => {
                 সামাজিক উন্নয়নে আপনার আন্তরিক উপস্থিতি ও নেতৃত্ব আমাদের সংস্থাকে আরও সমৃদ্ধ করবে। 
               </p>
               <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                © 2026 যশোর শারাপোল সংস্থা | চাঁচড়া মোড়, যশোর সদর।
+                © 2026 যশোর শারাপোল সংস্থা | সাড়াপোল, রূপদিয়া, যশোর।
               </div>
             </div>
           </div>
@@ -326,7 +326,7 @@ app.post('/api/auth/login', async (req, res) => {
               সামাজিক উন্নয়নে আপনার আন্তরিক উপস্থিতি ও সহায়তা আমাদের সংস্থাকে আরও সমৃদ্ধ করবে। 
             </p>
             <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-              © 2026 যশোর শারাপোল সংস্থা | চাঁচড়া মোড়, যশোর সদর।
+              © 2026 যশোর শারাপোল সংস্থা | সাড়াপোল, রূপদিয়া, যশোর।
             </div>
           </div>
         </div>
@@ -558,7 +558,7 @@ app.get('/api/settings', async (req, res) => {
     let settings = await SiteSettings.findOne();
     if (!settings) {
       settings = await SiteSettings.create({
-        topTickerNotice: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম | রক্তের জন্য যোগাযোগ করুন: 01711-123456',
+        topTickerNotice: 'যশোর শারাপোল সংস্থায় আপনাকে স্বাগতম | রক্তের জন্য যোগাযোগ করুন: 01893851111',
         heroTitleText: 'এক সাথে গড়ি উন্নত ও মানবিক যশোর',
         heroDescription: 'যশোর শারাপোল সংস্থা একটি সেবামূলক সামাজিক সংগঠন।'
       });

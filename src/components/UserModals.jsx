@@ -660,6 +660,10 @@ export default function Modals({ activeModal, onClose }) {
                   <label className="form-label">যোগাযোগের ফোন (Helpline)</label>
                   <input type="text" className="form-control" value={siteForm.contactPhone} onChange={e => setSiteForm({ ...siteForm, contactPhone: e.target.value })} required />
                 </div>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label className="form-label">যোগাযোগের ঠিকানা (Address)</label>
+                  <input type="text" className="form-control" value={siteForm.contactAddress} onChange={e => setSiteForm({ ...siteForm, contactAddress: e.target.value })} required />
+                </div>
                 <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>সেভ ও লাইভ ওয়েবসাইট আপডেট করুন</button>
               </form>
             </div>
@@ -1063,6 +1067,7 @@ export default function Modals({ activeModal, onClose }) {
                     <option value="bKash">bKash (বিকাশ)</option>
                     <option value="Nagad">Nagad (নগদ)</option>
                     <option value="Rocket">Rocket (রকেট)</option>
+                    <option value="Upay">Upay (উপায়)</option>
                     <option value="Bank">Bank Transfer</option>
                     <option value="Cash">নগদ ক্যাশ গ্রহণ</option>
                   </select>
