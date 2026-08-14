@@ -400,69 +400,61 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                   বর্তমানে কোনো নিবন্ধিত ইউজার পাওয়া যায়নি। ওয়েবসাইট বা মডালে নিবন্ধিত ইউজারদের তালিকা এখানে দেখাবে।
                 </div>
               ) : (
-                <div className="table-responsive">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>নিবন্ধিত ইউজার নাম</th>
-                        <th>মোবাইল / ইমেইল</th>
-                        <th>বর্তমান অর্পিত কমিটি পদবী</th>
-                        <th>অফিশিয়াল পদবী বরাদ্দ করুন (Assign Post)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {subAdminUsers
-                        .filter(u => u.username !== 'prottoy' && u.username !== 'admin')
-                        .filter(u => {
-                          if (!committeeSearchQuery.trim()) return true;
-                          const q = committeeSearchQuery.toLowerCase();
-                          return (
-                            (u.name && u.name.toLowerCase().includes(q)) ||
-                            (u.username && u.username.toLowerCase().includes(q)) ||
-                            (u.email && u.email.toLowerCase().includes(q)) ||
-                            (u.phone && u.phone.includes(q))
-                          );
-                        })
-                        .map(u => (
-                          <tr key={u._id || u.id}>
-                            <td data-label="ইউজার নাম">
-                              <strong>{u.name}</strong>
-                              <small style={{ display: 'block', color: 'var(--text-muted)' }}>@{u.username}</small>
-                            </td>
-                            <td data-label="মোবাইল/ইমেইল">
-                              <div>{u.phone || 'মোবাইল নেই'}</div>
-                              {u.email && <small style={{ color: 'var(--text-muted)' }}>{u.email}</small>}
-                            </td>
-                            <td data-label="বর্তমান পদবী">
-                              {u.committeeRole ? (
-                                <span className="badge badge-gold" style={{ fontWeight: 700 }}>
-                                  <i className="fa-solid fa-crown" style={{ marginRight: '0.3rem' }}></i> {u.committeeRole}
-                                </span>
-                              ) : (
-                                <span className="badge" style={{ background: 'var(--bg-main)', color: 'var(--text-muted)' }}>
-                                  সাধারণ সদস্য (পদবী নেই)
-                                </span>
-                              )}
-                            </td>
-                            <td data-label="পদবী বরাদ্দ">
-                              <select 
-                                className="form-control" 
-                                style={{ padding: '0.35rem 0.6rem', fontSize: '0.85rem', width: '100%', maxWidth: '240px' }}
-                                value={u.committeeRole || ''}
-                                onChange={(e) => assignUserCommitteeRole(u._id || u.id, e.target.value)}
-                              >
-                                <option value="">-- কোনো পদবী নেই (Remove Post) --</option>
-                                {EXECUTIVE_DESIGNATIONS.map(d => (
-                                  <option key={d.id} value={d.title}>
-                                    {d.title}
-                                  </option>
-                                ))}
-                              </select>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
+                <div className="admin-compact-grid">
+                  {subAdminUsers
+                    .filter(u => u.username !== 'prottoy' && u.username !== 'admin')
+                    .filter(u => {
+                      if (!committeeSearchQuery.trim()) return true;
+                      const q = committeeSearchQuery.toLowerCase();
+                      return (
+                        (u.name && u.name.toLowerCase().includes(q)) ||
+                        (u.username && u.username.toLowerCase().includes(q)) ||
+                        (u.email && u.email.toLowerCase().includes(q)) ||
+                        (u.phone && u.phone.includes(q))
+                      );
+                    })
+                    .map(u => (
+                      <div className="admin-compact-card" key={u._id || u.id}>
+                        <div className="admin-compact-header">
+                          <div className="admin-compact-user">
+                            <div className="admin-compact-avatar">
+                              {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+                            </div>
+                            <div className="admin-compact-meta">
+                              <h4>{u.name}</h4>
+                              <p><i className="fa-solid fa-phone" style={{ fontSize: '0.72rem' }}></i> {u.phone || 'মোবাইল নেই'} {u.email ? `• ${u.email}` : ''}</p>
+                            </div>
+                          </div>
+                          <div>
+                            {u.committeeRole ? (
+                              <span className="badge badge-gold" style={{ fontSize: '0.75rem', fontWeight: 700 }}>
+                                <i className="fa-solid fa-crown"></i> {u.committeeRole}
+                              </span>
+                            ) : (
+                              <span className="badge" style={{ background: 'var(--bg-main)', color: 'var(--text-muted)', fontSize: '0.72rem' }}>
+                                সাধারণ সদস্য
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="admin-compact-actions">
+                          <label>পদবী বরাদ্দ:</label>
+                          <select 
+                            className="form-control" 
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.82rem', width: 'auto', flex: 1, maxWidth: '200px' }}
+                            value={u.committeeRole || ''}
+                            onChange={(e) => assignUserCommitteeRole(u._id || u.id, e.target.value)}
+                          >
+                            <option value="">-- পদবী সরান (Remove) --</option>
+                            {EXECUTIVE_DESIGNATIONS.map(d => (
+                              <option key={d.id} value={d.title}>
+                                {d.title}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               )}
             </div>
@@ -474,44 +466,35 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
               </h3>
               {committee.length === 0 ? (
                 <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
-                  বর্তমানে কোনো সংরক্ষিত সদস্য তালিকা নেই। ওপরের টেবিল থেকে ইউজারদের পদবী সিলেক্ট করুন অথবা "+ নতুন পদবী যোগ" বাটনে ক্লিক করুন।
+                  বর্তমানে কোনো সংরক্ষিত সদস্য তালিকা নেই। ওপরের কার্ডগুলো থেকে ইউজারদের পদবী সিলেক্ট করুন অথবা "+ নতুন পদবী যোগ" বাটনে ক্লিক করুন।
                 </div>
               ) : (
-                <div className="table-responsive">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>ছবি</th>
-                        <th>নাম</th>
-                        <th>অর্পিত পদবী (Executive Role)</th>
-                        <th>মোবাইল নম্বর</th>
-                        <th>অ্যাকশন</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {committee.map(c => (
-                        <tr key={c.id || c._id}>
-                          <td data-label="ছবি">
-                            {c.image ? (
-                              <img src={c.image} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt={c.name} />
-                            ) : (
-                              <div className="avatar-placeholder avatar-placeholder-md">
-                                <i className="fa-solid fa-user"></i>
-                              </div>
-                            )}
-                          </td>
-                          <td data-label="নাম"><strong>{c.name}</strong></td>
-                          <td data-label="পদবী"><span className="badge badge-primary">{c.role}</span></td>
-                          <td data-label="মোবাইল">{c.phone}</td>
-                          <td data-label="অ্যাকশন">
-                            <button className="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c._id || c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="পদবী প্রত্যাহার / মুছে ফেলুন">
-                              <i className="fa-solid fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="admin-compact-grid">
+                  {committee.map(c => (
+                    <div className="admin-compact-card" key={c.id || c._id}>
+                      <div className="admin-compact-header">
+                        <div className="admin-compact-user">
+                          {c.image ? (
+                            <img src={c.image} className="admin-compact-avatar" alt={c.name} />
+                          ) : (
+                            <div className="admin-compact-avatar">
+                              {c.name ? c.name.charAt(0).toUpperCase() : 'M'}
+                            </div>
+                          )}
+                          <div className="admin-compact-meta">
+                            <h4>{c.name}</h4>
+                            <p><i className="fa-solid fa-phone" style={{ fontSize: '0.72rem' }}></i> {c.phone || 'মোবাইল তথ্য নেই'}</p>
+                          </div>
+                        </div>
+                        <span className="badge badge-primary" style={{ fontSize: '0.78rem' }}>{c.role}</span>
+                      </div>
+                      <div className="admin-compact-actions" style={{ justifyContent: 'flex-end' }}>
+                        <button className="btn btn-outline btn-sm" onClick={() => deleteCommitteeMember(c._id || c.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)', fontSize: '0.8rem', padding: '0.2rem 0.6rem' }} title="পদবী প্রত্যাহার / মুছে ফেলুন">
+                          <i className="fa-solid fa-trash"></i> মুছে ফেলুন
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -687,70 +670,58 @@ export default function AdminDashboard({ onOpenModal, onNavigate }) {
                 .sort((a, b) => (a.username === 'prottoy' ? -1 : b.username === 'prottoy' ? 1 : 0));
 
               return (
-                <div className="table-responsive">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>নাম</th>
-                        <th>ইউজারনাম / ইমেইল</th>
-                        <th>বর্তমান রোল (Assigned Role)</th>
-                        <th>রোল প্রমোট / পরিবর্তন করুন</th>
-                        <th>অ্যাকশন</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredUsers.map(u => {
-                        const isPrimary = u.username === 'prottoy';
-                        return (
-                          <tr key={u._id || u.id} style={u.username === 'prottoy' ? { background: 'rgba(16, 185, 129, 0.06)' } : {}}>
-                            <td data-label="নাম">
-                              <strong style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>{u.name}</strong>
-                              {u.username === 'prottoy' && (
-                                <div style={{ marginTop: '0.2rem' }}>
-                                  <span className="badge badge-primary" style={{ fontSize: '0.72rem', whiteSpace: 'nowrap' }}>
-                                    <i className="fa-solid fa-crown" style={{ color: 'var(--accent-gold)' }}></i> প্রধান নির্দেশক ও সুপার এডমিন
-                                  </span>
-                                </div>
-                              )}
-                            </td>
-                            <td data-label="ইউজারনাম/ইমেইল">
-                              <code style={{ whiteSpace: 'nowrap' }}>{u.username}</code>
-                              {u.email && <small style={{ display: 'block', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{u.email}</small>}
-                            </td>
-                            <td data-label="বর্তমান রোল"><span className="badge badge-gold" style={{ whiteSpace: 'nowrap' }}>{u.role}</span></td>
-                            <td data-label="রোল পরিবর্তন">
-                              {!isPrimary ? (
+                <div className="admin-compact-grid">
+                  {filteredUsers.map(u => {
+                    const isPrimary = u.username === 'prottoy';
+                    return (
+                      <div className="admin-compact-card" key={u._id || u.id} style={isPrimary ? { border: '1px solid var(--primary-light)', background: 'rgba(16, 185, 129, 0.05)' } : {}}>
+                        <div className="admin-compact-header">
+                          <div className="admin-compact-user">
+                            <div className="admin-compact-avatar" style={isPrimary ? { background: 'var(--primary)', color: 'white' } : {}}>
+                              {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+                            </div>
+                            <div className="admin-compact-meta">
+                              <h4>
+                                {u.name}
+                                {isPrimary && <i className="fa-solid fa-crown" style={{ color: 'var(--accent-gold)' }} title="প্রধান নির্দেশক"></i>}
+                              </h4>
+                              <p><code>@{u.username}</code> {u.email ? `• ${u.email}` : ''}</p>
+                            </div>
+                          </div>
+                          <span className="badge badge-gold" style={{ fontSize: '0.75rem', fontWeight: 700 }}>{u.role}</span>
+                        </div>
+                        <div className="admin-compact-actions">
+                          {!isPrimary ? (
+                            <>
+                              <label>রোল প্রমোট:</label>
+                              <div className="flex items-center gap-2" style={{ flex: 1, justifyContent: 'flex-end' }}>
                                 <select 
                                   className="form-control" 
-                                  style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem', minWidth: '190px' }}
+                                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', width: 'auto', flex: 1, maxWidth: '190px' }}
                                   value={u.role}
                                   onChange={(e) => handlePromoteRole(u._id || u.id, e.target.value)}
                                 >
-                                  <option value="GENERAL_MEMBER">সাধারণ মেম্বার (General Member)</option>
-                                  <option value="BLOOD_ADMIN">রক্তদান ম্যানেজার (Blood Manager)</option>
-                                  <option value="MEDIA_ADMIN">মিডিয়া এডমিন (Media Admin)</option>
-                                  <option value="CONTENT_ADMIN">পোস্ট সম্পাদক (Content Admin)</option>
-                                  <option value="SUPER_ADMIN">সুপার এডমিন (Super Admin)</option>
+                                  <option value="GENERAL_MEMBER">সাধারণ মেম্বার</option>
+                                  <option value="BLOOD_ADMIN">রক্তদান ম্যানেজার</option>
+                                  <option value="MEDIA_ADMIN">মিডিয়া এডমিন</option>
+                                  <option value="CONTENT_ADMIN">পোস্ট সম্পাদক</option>
+                                  <option value="SUPER_ADMIN">সুপার এডমিন</option>
                                 </select>
-                              ) : (
-                                <small style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem', whiteSpace: 'nowrap', display: 'inline-block' }}>
-                                  <i className="fa-solid fa-shield-halved" style={{ color: 'var(--accent-gold)', marginRight: '0.2rem' }}></i> 
-                                  প্রধান সুপার এডমিন
-                                </small>
-                              )}
-                            </td>
-                            <td data-label="অ্যাকশন">
-                              {!isPrimary && (
-                                <button className="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u._id || u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)' }} title="মুছে ফেলুন">
+                                <button className="btn btn-outline btn-sm" onClick={() => deleteSubAdminUser(u._id || u.id)} style={{ color: 'var(--blood-red)', borderColor: 'var(--blood-red)', padding: '0.25rem 0.5rem' }} title="মুছে ফেলুন">
                                   <i className="fa-solid fa-trash"></i>
                                 </button>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                              </div>
+                            </>
+                          ) : (
+                            <small style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.82rem', width: '100%', textAlign: 'right' }}>
+                              <i className="fa-solid fa-shield-halved" style={{ color: 'var(--accent-gold)', marginRight: '0.3rem' }}></i> 
+                              প্রধান নির্দেশক ও সুপার এডমিন (Protected)
+                            </small>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               );
             })()}
